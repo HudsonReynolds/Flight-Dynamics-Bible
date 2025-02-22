@@ -66,7 +66,7 @@
     basicstyle=\ttfamily\footnotesize,
     breakatwhitespace=false,         
     breaklines=true,                 
-    captionpos=b,                    
+    captionpos=t,                    
     keepspaces=true,                 
     numbers=left,                    
     numbersep=5pt,                  
@@ -77,6 +77,8 @@
 }
 
 \setlength{\parskip}{12pt}
+
+\setlength{\headheight}{14pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Chapter quote at the start of chapter        %
@@ -113,7 +115,7 @@
 \fancyhead[R]{}
 \fancyhead[L]{\thechapter\ --\ \leftmark}
 
-\frontmatter
+%\frontmatter
 \maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,11 +131,13 @@
 
 \begin{spacing}{.5}
     \tableofcontents
+    \listoftables
+    \listoffigures
 \end{spacing}
-\
-% \listoftables
 
-\mainmatter
+
+
+%\mainmatter
 
 %%%%%%%%%%%
 % Preface %
@@ -228,7 +232,7 @@ In Figure 1 below, we show an example of a very simple 1-DoF system free body di
 
 \tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     %\includegraphics[width=0.5\linewidth]{}
     
@@ -292,7 +296,7 @@ Force & Functional Form \\
 \end{table}
 The notation here is important to understand. In future AAE classes at Purdue, this is likely the notation that you will see. Terms with the subscript $\infty$ denote \textit{freestream} quantities, those that are freely flowing far away from the body of interest. Also of note is the unit step function, which is a function which has value zero until reaching time $t_b$, where it thereafter equals one. The quantity  $\rho$ refers to the density of the fluid, and $S$ to the \textit{reference area}. The \textit{drag coefficient} is $C_D$, a term which encapsulates the very complex nature of the fluid flow around an object. Calculating the value of  will be explored more deeply in later sections of this document. For now, we may assume a constant value.
 
-It is helpful to think about these quantities as vectors, because we can add them together to achieve a resultant.\footnote{More formally, we define this as a linear space, where multiplicative and additive properties are preserved. This formal definition allows us to apply this to any arbitrarily number of dimensions. } In the 1-dimensional case this is quite trivial since all vectors along the  unit vector, but this will become increasingly important as we move to higher dimensions.
+It is helpful to think about these quantities as vectors, because we can add them together to achieve a resultant.\footnote{More formally, we define this as a linear space, where multiplicative and additive properties are preserved. This formal definition allows us to apply this to any arbitrarily number of dimensions. } In the 1-dimensional case this is quite trivial since all vectors along the $\hat{y}$ unit vector, but this will become increasingly important as we move to higher dimensions.
 \subsection{Numerical Integration in the 1-DoF}
 Now we will move into something that you may have not seen before. Given all the forces, we normally apply Newton’s 2\textsuperscript{nd} Law, $\sum{\vec{F}}=m\vec{a}$ , to arrive at an expression for the acceleration as shown in \eqref{eq2}. Doing so might look something like this:
 \begin{gather}
@@ -301,7 +305,6 @@ F_T \cdot [1-u(t-t_b)]-\frac{1}{2}\rho_{\infty}V_{\infty}^2SC_D-mg=m\vec{a}\labe
 \end{gather}
  From here, we use integration to find the velocity and then position of the object with time. Formally, we might define this formally as:
  $$\vec{V}=\int{\vec{a}}{dt}$$
-
 However, you may notice something strange with our equation. In our expression for acceleration, we need to know the velocity. However, we do not know the velocity without integrating the equation first. This puts us in a chicken v. egg situation, so we must take a different approach to the problem. \footnote{Sometimes systems like this can be solved with traditional ODE methods. However, most complex systems like our 6-DoF have no known analytical solutions. We will focus on numerical integration because it will be more useful in general. }
 
 The way we resolve this is to make an approximation of the solution in a process called \textit{Numerical Integration. }Here, we will outline the simplest type of numerical integration, known as Euler’s Method. This section aims to show how to implement Euler’s method in code, and the mathematical reasoning will be given a more formal treatment in section 5. We will describe more complex numerical integration schemes and why you might want to use them, but it’s good to see the code for a simple case first.
@@ -337,7 +340,7 @@ We also show this example in MATLAB Script \ref{Script 1} below. Note that $\fra
 
 \lstset{style=mystyle}
 
-\lstinputlisting[language=Matlab]{OneDofEuler.m}\label{Script 1}
+\lstinputlisting[language=Matlab, caption=1 DoF]{OneDofEuler.m}\label{Script 1}
 
 There are a few important things to note about the MATLAB implementation of the script. Firstly, the only force that is defined outside of the loop is gravity, because the magnitude and direction of this force is independent of the current state of the system. We contrast this with the drag force and the thrust, which must be calculated on every iteration through the algorithm to find an updated value for the force.
 
@@ -365,12 +368,12 @@ For Newtonian Dynamics, the most complex case is full 3D translational motion. L
     \end{bmatrix}
 \end{gather}
 This is done not only for the sake of compactness, but also to facilitate the use of matrix operations for translation between reference frames. This concept is further explored in section 3. For this reason, expressing these elements in vectors will become crucial as we move forward. In MATLAB, we express a tri-dimensional column vector as:
-\begin{lstlisting}
+\begin{lstlisting}[language=Matlab]
 pos=[0;0;0];
 \end{lstlisting}
 Where each semicolon represents a new row of the vector. We define a row vector by using a comma instead of a semicolon: 
 
-\begin{lstlisting}
+\begin{lstlisting}[language=Matlab]
 pos=[0,0,0];
 \end{lstlisting}
 Often, it is useful to convert between a row and column vector in MATLAB because some functions will expect the input to be in a different format. We can do so with a transposition. In MATLAB, this looks like: 
@@ -385,7 +388,7 @@ We present below a modified version of the 1-DoF below in full 3D in Figure \ref
 
 \tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
 %uncomment if require: \path (0,308); %set diagram left start at 0, and has height of 308
@@ -574,13 +577,44 @@ $$M=\vec{r}\times \vec{F}_R$$
 We note that the direction of this moment is in the $-\hat{z}$ direction due to the nature of the cross product.
 
 One thing to note is that some quantities are more easily defined with respect to vectors that are defined with respect to the vehicle (which we will call the \textit{body frame}), such as the vector $\hat{X}$. As seen in \eqref{eq:alpha} and \eqref{eq:Lift}, we often want to use these vectors in the body frame for computation. As such, we will need a method in which we can convert between the body and inertial frames. This conversion between frames is explored in section \ref{sec:attitude dynamics}.
-\subsection{}
-
+\subsection{State Vector}
+As a last note for this section, we will briefly discuss the concept of a \textit{state vector}. The state vector is a column vector that contains information about the current state of the our system. In the example of our 3-DoF, we will likely include the position, velocity, rotation, and rotation rate of the system in the state vector. This would look like:
+$$\vec{X}=\begin{bmatrix}
+    x\\y\\z\\\dot{x}\\\dot{y}\\\dot{z}\\\theta\\\dot{\theta}
+\end{bmatrix}$$
+It is also useful to define the derivative of our state vector, which would just be the derivative of each of its elements. This is expressed as
+$$\dot{\vec{X}}=\begin{bmatrix}
+    \dot{x}\\\dot{y}\\\dot{z}\\\ddot{x}\\\ddot{y}\\\ddot{z}\\\dot{\theta}\\\ddot{\theta}
+\end{bmatrix}$$
+For the sake of compactness, these vectors are generally not written in their full form. In this text, we will often refer to a state vector as just $\vec{X}$. Note that we also use the vector $\hat{X}$ to denote a unit vector in the body frame, so the difference in the hat becomes an important distinction here.
 \chapter{Attitude Dynamics}\label{sec:attitude dynamics}
 \begin{chapquote}{Lord Kelvin, 1892}
 ``Quaternions came from Hamilton after his really good work had been done; and, though beautifully ingenious, have been an unmixed evil to those who have touched them in any way, including Clerk Maxwell.''
 \end{chapquote}
+Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. However, we hope here more than anywhere, our centralization of all basic necessary information to understand the topic eases the pain a little.\footnote{For further understanding, see section 8 for more provided materials. } In fact, don’t be afraid to reach out to either Hudson Reynolds (@Hudson Reynolds) or I (@Preston Wright) on Slack with questions! A final note on the section: many of the derivations closely follow both the process and notation of resources which will become available to you throughout your time here at Purdue AAE. These are the AAE340 class script by Professors Frueh and Longuski, and the AAE590 Attitude Dynamics and Control script by Professor Frueh.
 \section{Frame of Reference}
+Before attempting to describe the orientation of any random body in space, we must first discuss how and why this is possible. A frame of reference is an \textit{orthonormal} set within three-dimensional space. The orthonormal nature of the basis vectors that create every frame of reference allows for any other vector in three-dimensional space to be described as a linear combination of those three basis vectors (hence why we call it a basis for 3-space). This tool becomes incredibly useful within the study of Newtonian and Attitude Dynamics, as every state vector can be broken down into three set “scalar” directions. Naturally, the question arises of how we determine which set directions to utilize, and so we will be discussing a few frames of reference critical to the creation of a 6-DoF and Aerospace engineering as a whole.
+\subsection{The Inertial Frame}
+The first and most important frame of reference is the \textit{inertial frame}. Typically denoted by $e$ or $i$ (we avoid $i$ in this case because of our heavy use of complex numbers), or in our case $(\hat{x},\hat{y},\hat{z})$, this motionless frame is the one that allows for the use of Newton’s second law in the first place, as the frame itself has “zero” translational and rotational movement.\footnote{An inertial frame can have some constant velocity and still be inertial. Of course, the earth has some velocity around the sun and with respect to the distant stars which we can approximate as constant for our time scales and thus ignore.} We say “zero” as this motion must be negligible in relation to the vehicle of interest. For example, this specific 6-DoF sets the inertial frame to be anchored within the Earth on the launch pad. And while we are well aware the Earth is moving and rotating through space at a non-zero rate, this motion is negligible relative to the motion of our vehicle which remains close to Earth within the atmosphere for a short period of time. Therefore, we can assume that the Earth acts appropriately as an inertial frame of reference, and Newton’s second law is valid for this frame. 
+
+Returning to the specific example of a 6-DoF, the directions you set your basis vectors to point in are mostly left to the coder’s discretion. If your chosen directions retain the orthonormal nature of a frame of reference, as well as obeying \textit{the right-hand rule}, the choice is all yours. Within the example we are following, our inertial frame’s origin is anchored within the launch pad as previously stated. The first inertial basis vector points up perpendicular to the Earth’s surface, the second inertial basis vector points due East, while the third inertial basis vector follows the right-hand rule and points due North. An image for quick reference is provided below:
+
+%% insert TikZ image here
+
+\subsection{The Body Frame}
+The second most important frame of reference is the \textit{body frame}. Typically denoted by $b$, or in our case $(\hat{X},\hat{Y},\hat{Z})$, this frame of reference is always anchored at some point in the vehicle and allows us to describe the state vector in relation to the vehicle itself. This frame is moving and rotating with respect to the inertial frame. For every body frame you create – from a frame for the entire vehicle to a frame for a small electronic part – you want simplicity. This means that in aerospace, it is necessary for a general body frame to have a basis vector pointing along the longitudinal axis of the vehicle, as well as one out a wing. In addition, it means at a zero angle of rotation, every basis vector of the body frame is parallel to the corresponding basis vector in the inertial frame. This is imperative to rotational dynamics, as the offset of each basis vector in the body frame will correspond to the pitch, yaw, and roll of the vehicle. But more on that later.
+
+%% Figure
+For our current model, the body frame of our 6-DoF has its origin in the nose of the vehicle. It has the first body basis vector, $\hat{X}$, pointing up along the longitudinal axis of the rocket following standard convention. The second basis vector, $\hat{Y}$, points right due East when on the launch pad, and the third, $\hat{Z}$, points due North on the launch pad. We use the cardinal directions of the launchpad as not only are there no conventional wings on the rocket, but it allows body frame to be defined parellel to the corresponding inertial frame basis vectors. Note that they won’t remain pointing in these directions as the rocket moves through space, and they may not even begin parallel to the inertial axis to begin with if the rocket launches from a tilt.
+
+%% Another Figure
+\subsection{The Wind Frame}
+The last and by far least important frame of reference is the \textit{wind frame.} This frame of reference, like the body frame, is always anchored at some point in the vehicle. Also like the body frame, it moves and rotates with the vehicle and allows for a new way of describing the state vector. Unlike the body frame, the most important definition is not along the longitudinal axis of the vehicle. As indicated by its name, the necessary orientation of a basis vector points in the direction of the free stream velocity. Relating this to the body frame, this translates to an offset from the body frame by the angle of attack and sideslip. This frame is often useful for aircraft, but we do not use it in our 6DoF. As this isn’t as useful as the other two reference frames, we won’t elaborate on this frame any further, and it won’t be used in our example 6-DoF.
+
+%% Wind being added technically converts us to wind frame, no?
+\section{2-D Rotations}
+
+
 \section{2-D Rotations}
 \section{Euler Angles}
 \section{Quaternions}
@@ -588,6 +622,10 @@ It was a gorgeous October day in Dublin, and William Hamilton was on a stroll wi
 
 
 \chapter{Aerodynamic Modeling}
+
+\begin{chapquote}{Werner Heisenberg}
+"When I meet God, I am going to ask him two questions: Why relativity? And why turbulence? I really believe he will have an answer for the first."
+\end{chapquote}
 In section 2.2 we discussed the 4 fundamental forces on a vehicle and how we define their directions. In that section we did not define the magnitude of the aerodynamic forces, $F_L$ and $F_D$. The magnitude of these forces are quite difficult to calculate and require the most approximation to do correctly. The governing equation for calculating the magnitude of our aerodynamics is $\frac{1}{2}\rho_{\infty}V^2_{\infty}SC_X$, where $C_X$ is either $C_L$ or $C_D$.
 
 Despite the innocuous appearance of this equation, calculating the aerodynamics of our system is deceptively hard because the calculation of  is very complicated. In fact, without real data, any calculation that we made of these values will just be an approximation.\footnote{Even with wind tunnel data, it is still likely that some approximations need to be made. Aerodynamics in general has no definite answers.} That being said, there are approaches we can take which will get us close enough to true values to prove useful.
@@ -614,6 +652,49 @@ For more information and derivations about the following section, refer to (3). 
 We have previously discussed the simplest integration scheme, the explicit Euler method, which we used in section 2.1.1. Understanding the Euler method is key to understanding and using more complex integration schemes, so we recommend writing a few of your own Euler integration scripts in MATLAB or a coding language of your choice to really solidify your knowledge before moving on to more complex integration schemes. 
 
 We formalize the explicit Euler integration below. Given a linear ODE:
+$$y'=f\left(x,y\right)$$
+
+With inital condition:
+$$y(x_0)=y_0$$
+We perform Euler integration first by defining an interval over which to perform the numerical integration. For Euler integration, we equally space these points by our timestep, $dt$. We can parameterize these points as:
+$$x_i=x_0+i\Delta t$$
+Our next step is to find the value of the tangent line at each point. This is trivial, since our differential equation tells us what $y'$ looks like at any value. All we have to do is evaluate:
+$$y'=f\left(x_i,y(x_i)\right)$$
+The problem here is that $y(x_i)$ is an unknown quantity (if we knew it, we wouldn’t have to do integration). So, to find the value of $y(x_i)$ we take an iterative approach. We know the starting value, $y(x_0)=y_0$, so we can find an approximation of the new value by multiplying the timestep by the current slope. For the first timestep this will look like:
+$$y_1=y_0+\Delta t\cdot f(x_0,y_0)$$
+Now that we’ve found an approximation for , we can extend this to find approximations for $y_2$, $y_3$, and so on. This formula is generally extensible as:
+$$y_{n+1}=y_i+\Delta t \cdot f(x_i,y_i)$$
+We represent this Euler integration scheme graphically with a simple example. Suppose our differential equation is $y'=2x$ with initial condition $y(0)=0$. In this example, we can see from inspection that the solution curve is $y=x^2$. Performing Euler integration with a $\Delta t$ of 0.5 yields the black approximation in Figure \ref{fig:Euler}.
+
+
+\begin{figure}[ht]
+    \centering
+    
+\includegraphics[width=\linewidth]{Euler.png}
+    \caption{Euler Method Numerical Approximation}
+    \label{fig:Euler}
+\end{figure}
+
+As can be seen from the figure, large timesteps quickly lead to error in the solution. For a strictly convex curve, our Euler approximation will always give us an under approximation of the solution. In some cases, however, our solution may diverge so greatly that it becomes unstable and values tend toward infinity.\footnote{This is especially true for periodic functions where we sample below the Nyquist limit}
+
+In Table 2 below, we describe the benefits and drawbacks of Euler integration.
+
+%% add stupid table here
+
+\subsection{Errors in the Euler Method}
+We will use the example of the Euler Method to demonstrate error in numerical integrators. These same concepts will apply when we move on to higher order integrators. 
+
+Errors in the integration scheme come from two different sources:
+
+1. Euler integration schemes only account for linear terms because it only considers the slope of the tangent line at a point. Thus, any quadratic order terms or higher will not be accounted for. Thus, the error is proportional to the timestep squared, $\Delta t^2$.\footnote{This intuitive explanation is not entirely correct, see (3) for a full derivation using the Taylor Series. We also note that the technically correct way to denote this is $O(\Delta t^2)$, meaning the error is of order $\Delta t^2$} We call this error \textit{truncation error.}
+
+2. Another problem is the fact that computers don’t have infinite precision. The loss of precision during computing is called \textit{roundoff error.}
+
+It is worth noting that these errors are per timestep! So over the course of a full simulation, our errors will grow much larger than the error bounds that we’ve calculated above. In fact, for the Euler Method described above, the global error is proportional to the timestep, $\Delta t$.
+
+We can of course, reduce errors in the simulation by reducing our timestep, $\Delta t$. However, this will also increase the computation time. Additionally, doing so will not reduce the roundoff error in the simulation. With more calculations being done, the roundoff error will have a larger impact. Thus, it is worthwhile to investigate other integration schemes.
+
+
 
 \section{Improved Euler / RK2}
 Given the limitations of the Explicit Euler method, we will start by investigating the improved Euler Method. This improved Euler method is the first of a family of integration schemes known as Runge-Kutta (RK) integration schemes. The number, 2, represents the order of the integration scheme, which we will explore more later.
@@ -627,7 +708,6 @@ So, we can write the average slope as
     m=\frac{y_1'+y_2'}{2}
 \end{equation}
 Where
-
 \begin{gather}
     y_1'=f\left(x_i,y(x_i)\right)\\
     y_2'=f\left(x_{i+1},y(x_{i+1})\right)
@@ -642,9 +722,9 @@ We can write this then as:
 \end{equation}
 To rewrite this equation in a way that is better suited for code:
 \begin{gather}\label{eq:rk2}
-    k_1=f(x_i,y_i)\\\\
-    k_2=f(x+\Delta t, y_i+\Delta tk_1)\\\\
-    y_{i+1}=y_i+\frac{\Delta t}{2}(k_1+k_2)
+    y_{i+1}=y_i+\frac{\Delta t}{2}(k_1+k_2)\\\\
+    k_1=f(x_i,y_i)\\
+    k_2=f(x+\Delta t, y_i+\Delta tk_1)
 \end{gather}
 We can note here that this method requires at least two evaluations since $k_2$ is dependent on $k_1$. However, this is often still more computationally efficient than the Explicit Euler method because larger time steps can be used with lesser error.
 
@@ -671,6 +751,8 @@ In this example, when we call this operation, the value of b is 16.
 
 A useful feature of function handles for numerical integration is that they allow us to pass in only the variables needed for numerical integration and pass other variables in the expression as constants. In general, we want our numerical scheme to only accept our state vector and the time vector. This is the same thing that ode45 does, so it is best practice to do the same thing here.
 
+%% more on the code needed here
+
 \section{RK4 Integration}
 RK4 integration is the last major integration scheme that we will explore. RK4 integration is often the best balance between the precision of the algorithm and the speed of computation. 
 
@@ -695,7 +777,7 @@ The form of these equations is shown in \eqref{eq:RK4}.
 \end{gather}
 An implementation of this algorithm into code is shown below.
 \begin{lstlisting}[language=Matlab]
-    %% RK4 Integrator
+%% RK4 Integrator
 % numerically integrates a first order initial value problem
 % inputs:
 % fun - function of integration
@@ -713,23 +795,24 @@ function out = rk4(fun, dt, tIn, xIn)
     out = xIn + (dt / 6)*(f1 + 2*f2 + 2*f3+f4);
 end
 \end{lstlisting}
-
 Often, we use a function in MATLAB called ode45 to perform RK4 integration. This function has the benefit that it will change the step size to produce high accuracy when needed and decrease computation time otherwise.
 
-To show
+An understanding of the operation of ode45 is best motivated by an example. We include an example of a Lorenz Attractor in the Appendix \ref{sec:Lorenz Attractor RK4 Example} as an example of ode45. We recommend reading through this code and running it, as well as changing parameters to see how it affects the outputs.
 \section{Other Integration Schemes}
 
 \section{Code Optimization with Numerical Integration}
 \subsection{Monte Carlo Simulation}
 Often, we want to run many simulations with various parameters to gain a better understanding of our system. We call this method of running many simulations the \textit{Monte Carlo} method. Using the Monte Carlo method, we can ascertain information about the likelihood of certain events or approximate quantities that are hard to find analytically by running a large number of simulations and performing statistical analysis on the results. In this document, we will not dive into the methods of statistical analysis and the best ways to perform Monte Carlo simulations. This topic is very deep and is the focus of many peoples’ whole careers.
 
-However, even with only rudimentary analysis, Monte Carlo can prove very useful. We will use the example of Monte Carlo to motivate the need for fast simulations. Often, we run upwards of 1000 simulations and fast computation is necessary to perform this large number of simulations. 
+However, even with only rudimentary analysis, Monte Carlo can prove very useful. We will use the example of Monte Carlo to motivate the need for fast simulations. Often, we run upwards of 1000 simulations and fast computation is necessary to perform this large number of simulations. In this section, we will dive into the various methods to optimize MATLAB code and best practices for flight dynamics.
 \subsection{Array and Function Optimizations}
 MATLAB is generally quite computationally efficient at computing arrays and matrices. After all, MATLAB is ‘MATrix LABoratory’. However, we still need to be mindful of optimizations to our code.
 
 It is best practice to only import what you need for a function or subroutine. For example, if you have wind data for all of the months out of the year, it is desirable to cull that down to the specific month before running the simulation.
 
-Additionally, it is also beneficial for any imported data or long matrices to be passed into a function rather than called inside a function. \textbf{This is especially important inside the numerical integration scheme! }Running readmatrix inside of ode45 or whatever numerical integration scheme you are using can slow down code upwards of 500\% depending on the length of the matrices being read.
+Additionally, it is also beneficial for any imported data or long matrices to be passed into a function rather than called inside a function. \textbf{This is especially important inside the numerical integration scheme! }Running readmatrix inside of ode45 or whichever other numerical integration scheme you are using can slow down code upwards of 500\% depending on the length of the matrices being read.
+
+Instead, it is best to pass these arrays into the function. Performing readmatrix can be slow because it must check if the values are numeric and organize them into tables. By passing only MATLAB arrays, computations are much faster.
 \subsection{Flame Graphs for Optimization}
 One important method of optimization is the MATLAB profiler. The primary capability of the profiler is the flame graph. An example of the flame graph is shown below in Figure 15.
 
@@ -748,6 +831,18 @@ However, other operations, such as atmosisa, should not comprise a large portion
 \chapter{Appendix}
 \section{Code}
 This section contains lengthier segments of example code from either the 6-DoF itself or a proof/example relating to it. Refer to the section numbers to find the appropriate implementation of each code segment.
+\subsection{Lorenz Attractor RK4 Example}\label{sec:Lorenz Attractor RK4 Example}
+\lstinputlisting[language=Matlab, caption = Lorenz Attractor]{LorenzAttractor.m}\label{code:Lorenz}
+
+We also have a script to display the results of this in a nice animation:
+
+\lstinputlisting[language=Matlab, caption =Lorenz Animation]{LorenzAnimation.m}\label{code:LorenzAnim}
+
+
+
+
+
+
 
 
 
