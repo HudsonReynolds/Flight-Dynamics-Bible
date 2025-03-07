@@ -53,7 +53,7 @@ set(findall(hfig,'-property','TickLabelInterpreter'),'TickLabelInterpreter','lat
 set(hfig,'Units','centimeters','Position',[3 3 picturewidth hw_ratio*picturewidth])
 pos = get(hfig,'Position');
 set(hfig,'PaperPositionMode','Auto','PaperUnits','centimeters','PaperSize',[pos(3), pos(4)])
-print(hfig,fname,'-dpng','-r400')
+print(hfig,fname,'-dpng','-r600')
 
 
 % functions
