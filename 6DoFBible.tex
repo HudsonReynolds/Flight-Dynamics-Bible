@@ -161,6 +161,8 @@
 % finish the 6-DoF Section, add code and attach code in google drive as well
 
 %
+\pagenumbering{roman}
+
 \begin{dedication}
     This document is dedicated to Purdue Space Program Liquids. PSP Liquids has given us a vast amount of experience and means to explore the realm of Flight Dynamics. We hope that we can contribute to the wealth of information provided by PSP with this document.
 \end{dedication}
@@ -213,6 +215,8 @@ Some other areas are also covered in this document but are not fully explained b
 \end{itemize}
 
 \chapter{Overview}
+
+\pagenumbering{arabic}
 
 \begin{chapquote}{Carl Sagan}
 ''If you wish to make an apple pie from scratch, you must first invent the universe.''
@@ -657,7 +661,18 @@ For the sake of compactness, these vectors are generally not written in their fu
 \begin{chapquote}{Lord Kelvin, 1892}
 ''Quaternions came from Hamilton after his really good work had been done; and, though beautifully ingenious, have been an unmixed evil to those who have touched them in any way, including Clerk Maxwell.''
 \end{chapquote}
-Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. However, we hope that, here more than anywhere, our centralization of all basic necessary information to understand the topic eases the pain a little.\footnote{For further understanding, see section 8 for more provided materials. } In fact, don’t be afraid to reach out to either Hudson Reynolds (@Hudson Reynolds) or I (@Preston Wright) on Slack with questions! A final note on the section: many of the derivations closely follow both the process and notation of resources which will become available to you throughout your time here at Purdue AAE. These are the AAE340 class script by Professors Frueh and Longuski, and the AAE590 Attitude Dynamics and Control script by Professor Frueh.
+Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. However, we hope that, here more than anywhere, our centralization of all basic necessary information to understand the topic eases the pain a little.\footnote{For further understanding, see section 8 for more provided materials. } In fact, don’t be afraid to reach out to either Hudson Reynolds (@Hudson Reynolds) or I (@Preston Wright) on Slack with questions! A final note on the section: many of the derivations closely follow both the process and notation of resources which will become available to you throughout your time here at Purdue AAE. These are the AAE340 class script by Professors Frueh and Longuski, and the AAE590 Attitude Dynamics and Control script by Professor Frueh. In addition, a handbook delving into all the nitty-gritty details of attitude determination and dynamics, following the derivations here and then some, is also available to aid in your understanding! % It's happening
+
+
+
+
+% All editing for this section/relating to this section is now being done in a separate document
+
+
+
+
+
+
 \section{Frame of Reference}\label{sec:Frame of Reference}
 Before attempting to describe the orientation of any random body in space, we must first discuss how and why this is possible. A frame of reference is an \textit{orthonormal} set within three-dimensional space. The orthonormal nature of the basis vectors that create every frame of reference allows for any other vector in three-dimensional space to be described as a linear combination of those three basis vectors (hence why we call it a basis for 3-space). This tool becomes incredibly useful within the study of Newtonian and Attitude Dynamics, as every \gls{state vector} can be broken down into three set “scalar” directions. Naturally, the question arises of how we determine which set directions to utilize, and so we will be discussing a few frames of reference critical to the creation of a 6-\gls{dof} and Aerospace engineering as a whole.
 \subsection{The Inertial Frame}
@@ -1523,8 +1538,6 @@ To work through this, we’re going to fall back on the tried-and-true method of
 
 \end{tikzpicture}
 
-
-
     \caption{3-2-1 Rotation Order}
     \label{fig:RotationOrder}
 \end{figure}
@@ -1799,7 +1812,7 @@ Any \gls{quaternion} addition naturally returns the same result no matter which 
 \subsubsection{Scalar Multiplication}
 The multiplication of a \gls{quaternion} by a scalar also operates identically to complex numbers. The scalar is distributed to and multiplied by every element of the \gls{quaternion}. Another simple example of scalar multiplication is shown below:
 \begin{equation}
-    sq=s(q_1+q_2i+q_3j+q_4k)=sq_1+sq_2i+sq_3j+sq_4k
+    bq=b(q_1+q_2i+q_3j+q_4k)=bq_1+bq_2i+bq_3j+bq_4k
 \end{equation}
 \subsubsection{Quaternion Multiplication}
 The multiplication of a \gls{quaternion} by another \gls{quaternion} is similar to that of complex numbers. It is denoted by the operator $\otimes$. Before giving a general example of \gls{quaternion} multiplication, we must first remind ourselves of fundamental formula for \gls{quaternion} multiplication: $i^2=j^2=k^2=ijk=-1$. We also need to discuss the products of each term. To do this, we can create a scale for this for quick reference: 
@@ -1821,13 +1834,32 @@ This lengthy solution can be condensed into a matrix that could be expanded to a
     \end{bmatrix}
 \end{equation}
 And so, we have a neat definition for quaternion multiplication.
-
-
+We can additionally show that \gls{quaternion} multiplication is both associative and distributive as follows:
+$$q\otimes(q'\otimes q'')=(q\otimes q')\otimes q''$$
+$$q\otimes(q'+q'')=q\otimes q'+q\otimes q''$$
+It is important to note that while \gls{quaternion} multiplication is both associative and distributive, it is NOT commutative. We can, however, use a new operator to describe such an operation.
 \subsubsection{Hamiltonian Product}
+While widely unused in attitude determination and dynamics for cases of rotations, the Hamiltonian product has a very simple relation to \gls{quaternion} multiplication - especially in the matrix form. Before defining the product of the Hamiltonian product, we can first describe the operator by the circled dot, or $q\odot q'$. Having this, the outcome of the Hamiltonian product is as follows:
+\begin{equation}\label{eq:QuatHamiltonProdMatrix}
+    \vec{q}\odot\vec{q}'=\begin{bmatrix}
+        q_1q_1'-(\vec{q}_{2:4}\cdot \vec{q}_{2:4}')\\
+        q_1\vec{q}_{2:4}'+q_1'\vec{q}_{2:4}-(\vec{q}_{2:4}\times\vec{q}_{2:4}')
+    \end{bmatrix}
+\end{equation}
 
+It is important to note that we can explicitly describe the relation between \gls{quaternion} multiplication and the Hamiltonian product with the following:
+$$q\otimes q'=q'\odot q$$
 
+A quick note about the Hamiltonian Product, it shares properties with \gls{quaternion} multiplication. That means it is both associative and distributive; however, it isn't commutative.
 
+\subsubsection{Identity Quaternion}
 
+The identity \gls{quaternion} can be described similar to an identity matrix. Namely it doesn't alter any vector (or in this case any quaternion) it is multiplied with. Logically, this results in the identity \gls{quaternion} having a real part ($q_1$) of one and imaginary part ($q_{2:4}$) of zero like so:
+\begin{equation}\label{eq:IdentityQuat}
+    I_q=1+0i+0j+0k=\begin{bmatrix}
+        1\\\vec{0}_{3:1}
+    \end{bmatrix}
+\end{equation}
 
 \subsubsection{Conjugate of Quaternions}
 
@@ -1886,7 +1918,7 @@ which dictates that any rotation of a rigid body in space can be described by a 
     \caption{A Depiction of Euler's Principle Rotation Theorem}
     \label{fig:PrincipleAxisTheorem}
 \end{figure}
-Using this \gls{Euler axis} rotation description of a rotation, we can define the \gls{quaternion} simply with respect to this rotation using the methods described for 2-dimensional complex numbers in section \ref{sec:2DImaginary}: 
+This is so important to the foundations of versors and rotations encoded by quaternions, that the versor itself is expressed using these values. Using this \gls{Euler axis} rotation description of a rotation, we can define the \gls{quaternion} simply with respect to this rotation using the methods described for 2-dimensional complex numbers in section \ref{sec:2DImaginary}: 
 $$\vec{q}=e^{\frac{\varphi}{2}(n_1i+n_2j+n_3k)}$$
 Expanding this, we can write this as a vector as follows:
 $$\vec{q}=\vec{q}_{\vec{n}}(\varphi)=\begin{bmatrix}
@@ -1894,6 +1926,7 @@ $$\vec{q}=\vec{q}_{\vec{n}}(\varphi)=\begin{bmatrix}
 \end{bmatrix}=\begin{bmatrix}
     cos(\frac{\varphi}{2})\\n_1sin(\frac{\varphi}{2})\\n_2sin(\frac{\varphi}{2})\\n_3sin(\frac{\varphi}{2})
 \end{bmatrix}$$
+
 This is great; however, it is useless if we can’t determine $\vec{n}$ itself. Before using \glspl{quaternion}, let’s solve this problem by generalizing it into a rotation with any vector $\vec{x}$. Recalling the DCM from the \gls{Euler angles} section, we can write a similar equation with a matrix $M$ and our principal axis $\vec{n}$:
 $$\vec{n}=M\vec{n}$$
 The reason for this being the definition of the \gls{Euler axis}, and the fact it always remains unaltered in this special case of rotations. We can write this as an eigenvalue problem for our vector $\vec{x}$, which actually becomes an eigenvector, with the characteristic polynomial of eigenvalues $\lambda$. This appears as follows:
@@ -2233,6 +2266,8 @@ In the case of our rocket, we encounter a variety of flight regimes from subsoni
 \end{chapquote}
 For more information and derivations on the following section, refer to \cite{trench_31_2020}. This source includes some more information than included here and some useful examples.
 
+In our exploration of numerical integration schemes, it will be useful to have a good understanding of ordinary differential equations. We highly recommend \cite{dawkins_differential_2023} for reviewing differential equations.
+
 \section{Euler Integration}
 We have previously discussed the simplest integration scheme, the explicit Euler method, which we used in Section \ref{sec: Numerical Integration in the 1DoF}. Understanding the Euler method is key to understanding and using more complex integration schemes, so we recommend writing a few of your own Euler integration scripts in MATLAB or a coding language of your choice to really solidify your knowledge before moving on to more complex integration schemes. 
 
@@ -2248,39 +2283,46 @@ The problem here is that $y(x_i)$ is an unknown quantity (if we knew it, we woul
 $$y_1=y_0+\Delta t\cdot f(x_0,y_0)$$
 Now that we have found an approximation for $y_1$, we can extend this to find approximations for $y_2$, $y_3$, etc. This formula is generally extensible as:
 $$y_{n+1}=y_i+\Delta t \cdot f(x_i,y_i)$$
-We represent this Euler integration scheme graphically with a simple example. Suppose our differential equation is $y'=2x$ with initial condition $y(0)=0$. In this example, we can see from inspection that the solution curve is $y=x^2$. Performing Euler integration with a $\Delta t$ of 0.5 yields the black approximation in Figure \ref{fig:Euler}.
+We represent this Euler integration scheme graphically with a simple example. Suppose our differential equation is $y'=2t$ with initial condition $y(0)=0$. In this example, we can see from inspection that the solution curve is $y=t^2$. Performing Euler integration with a $\Delta t$ of 0.5 yields the black approximation in Figure \ref{fig:Euler}.
 \begin{figure}[ht]
     \centering
     
-\includegraphics[width=\linewidth]{Euler.png}
-    \caption{Euler Method Numerical Approximation}
+\includegraphics[width=\linewidth]{6DoF Explanation Scripts/Explicit Euler Approximation Figure.png}
+    \caption{Explicit Euler Method Numerical Approximation}
     \label{fig:Euler}
 \end{figure}
 
 As can be seen from the \ref{fig:Euler}, large timesteps quickly lead to error in the solution. For a strictly convex curve, our Euler approximation will always give us an under-approximation of the solution. In some cases, however, our solution may diverge so greatly that it becomes unstable and values tend toward infinity.\footnote{This is especially true for periodic functions. When working with periodic functions, make sure to sample well below the Nyquist limit.}
-
+ 
 In Table 2 below, we describe the benefits and drawbacks of Euler integration.
 
-%% add stupid table here
+\begin{table}[ht]
+\begin{tabular}{ll}
+Benefits                                                                                                                                                    & Drawbacks                                                                                                                                                             \\
+\begin{tabular}[c]{@{}l@{}}Simple\\ Good for very quick implementations / testing\\ Robust and easy to implement\\ Good for simple explanation\end{tabular} & \begin{tabular}[c]{@{}l@{}}Less precise than other integrator schemes\\ More prone to solution singularities\\ Generally has fixed timestep calculations\end{tabular}
+\end{tabular}
+\end{table}
 
-\subsection{Errors in the Euler Method}
+\subsection{Errors in the Euler Method}\label{sec:errors in the euler method}
 We will use the example of the Euler Method to demonstrate error in numerical integrators. These same concepts will apply when we move on to higher order integrators. 
-
-Errors in the integration scheme come from two different sources:
 \newglossaryentry{trunc error}
 {
     name=truncation error,
     first = {\textit{truncation error}},
     description={Error in numerical integration that comes from the inaccuracies of the integration scheme in modeling the true behavior of the function. This error is related to the number of higher order terms ignored}
 }
-1. Euler integration schemes only account for linear terms because it only considers the slope of the tangent line at a point. Thus, any quadratic order terms or higher will not be accounted for. Thus, the error is proportional to the timestep squared, $\Delta t^2$.\footnote{This intuitive explanation is not entirely correct, see (3) for a full derivation using the Taylor Series. We also note that the technically correct way to denote this is $O(\Delta t^2)$, meaning the error is of order $\Delta t^2$} We call this error \gls{trunc error}.
+
 \newglossaryentry{roundoff error}
 {
     name=roundoff error,
     first = {\textit{roundoff error}},
     description={Error in numerical integration that comes from inaccuracies in the floating point precision of computers. This is worsened by a larger number of timesteps, as this error will compound}
 }
-2. Another problem is the fact that computers don’t have infinite precision. The loss of precision during computing is called \gls{roundoff error}
+Errors in the integration scheme come from two different sources:
+
+1. Euler integration schemes only account for linear terms because it only considers the slope of the tangent line at a point. Thus, any quadratic order terms or higher will not be accounted for. Thus, the error is proportional to the timestep squared, $\Delta t^2$.\footnote{This intuitive explanation is not entirely correct, see (3) for a full derivation using the Taylor Series. We also note that the technically correct way to denote this is $O(\Delta t^2)$, meaning the error is of order $\Delta t^2$} We call this error \gls{trunc error}.
+
+2. Another problem is the fact that computers don’t have infinite precision. The loss of precision during computing is called \gls{roundoff error}.
 
 It is worth noting that these errors are per timestep! So over the course of a full simulation, our errors will grow much larger than the error bounds that we’ve calculated above. In fact, for the Euler Method described above, the global error is proportional to the timestep, $\Delta t$.
 
@@ -2361,7 +2403,7 @@ Our RK2 algorithm is a direct translation of \eqref{eq:rk2} into code. We presen
 % xIn - initial value input vector
 % outputs:
 % out - final value output vector
-function out = rk4(fun, dt, tIn, xIn)
+function out = rk2(fun, dt, tIn, xIn)
     f1 = fun(tIn,xIn);
     f2 = fun(tIn + dt/2, xIn + dt .* f1);
     
@@ -2375,7 +2417,7 @@ RK4 integration is the last major integration scheme that we will explore. RK4 i
 
 To explain the RK4, we will go back to the RK2 and explain it in a slightly different way that will shed light on what we are doing with RK4. In RK2, we described taking the average slope of the function. We can also imagine taking the Taylor expansion of our function:
 $$y_{i+1}=y_i+y_i'\Delta t+y_i''\frac{\Delta t}{2}+O\left(\Delta t^3\right)$$
-From this Taylor expansion of the solution, we can that our approximation accounts for linear and quadratic terms. Thus, our error is proportional to terms to the 3\textsuperscript{rd} power, represented by $O(\Delta t^3)$. We know $y_i$ and $y_i'$, but the 2nd  order derivative of our function is unknown. We can approximate this 2nd order derivative as:
+From this Taylor expansion of the solution, we can that our approximation accounts for linear and quadratic terms. Thus, our error is proportional to terms to the 3\textsuperscript{rd} power, represented by $O(\Delta t^3)$. We know $y_i$ and $y_i'$, but the 2nd order derivative of our function is unknown. We can approximate this 2nd order derivative as:
 $$y_i=\frac{y'_{i+1}-y_i'}{\Delta t}$$
 Upon rearranging this equation, we can see that we arrive at the same expression as we did before. We can apply the same approach for the RK4 integration, except we consider terms up to the 4\textsuperscript{th} order expansion of the Taylor series:
 $$y_{i+1}=y_i+y_i'\Delta t+y_i''\frac{\Delta t}{2}+y_i'''\frac{\Delta t}{6}+y_i''''\frac{\Delta t}{24}O\left(\Delta t^5\right)$$
@@ -2411,10 +2453,80 @@ function out = rk4(fun, dt, tIn, xIn)
     
     out = xIn + (dt / 6)*(f1 + 2*f2 + 2*f3+f4);
 end
-\end{lstlisting}
+\end{lstlisting}\label{code:rk4}
 Often, we use a function in MATLAB called "ode45" to perform RK4 integration. This function has the benefit that it will change the step size to produce high accuracy when needed and decrease computation time otherwise.
 
 An understanding of the operation of "ode45" is best motivated by an example. We include an example of a Lorenz Attractor in the Appendix \ref{sec:Lorenz Attractor RK4 Example} as an example of ode45. We recommend reading through this code and running it, as well as changing parameters to see how it affects the outputs.
+\section{Other Numerical Integration Considerations}
+\subsection{More on Error}
+We briefly discuss the error of the integration schemes in each of the previous sections. However, it is useful to see examples of these to solidify understanding. 
+
+Using the same example differential equation from \ref{sec:errors in the euler method} as $y'=2t$, we can show the approximation for Explicit Euler, RK2, and RK4. This is shown in \ref{fig:Numerical Comparison}.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{6DoF Explanation Scripts/Numerical Integrator Comparison Figure.png}
+    \caption{Comparison of Numerical Integration Schemes for $y'=2t$}
+    \label{fig:Numerical Comparison}
+\end{figure}
+The code that runs this example is shown in \ref{code:Numerical Error $y'=2t$} in the Appendix. This code is a good example for understanding the syntax for using the integration code snippets in \ref{code:rk2} and \ref{code:rk4}.
+
+As we can see from this example, even with a fairly large timestep of $\Delta t=0.5s$, the RK4 perfectly matches the true curve. For this curve, there are no terms of higher order than quadratic, so the RK4 will perfectly match the solution curve.
+
+The difference in these numerical integration schemes will become more apparent when modeling the behavior of different differential equation systems. Systems containing higher order terms will be better modeled by the higher order integration schemes, unsurprisingly. The true use of these methods is when analytical solutions to the differential equations are hard or impossible to obtain. That being said, we still want to know characteristics of our system so we can appropriately select integration parameters.
+
+\subsection{Sampling and Stiffness}
+ To begin our discussion of sampling and stiffness, we can take the differential equation $y'=cos(4\pi t)$with the initial condition of $y(0)=0$. This function is periodic in nature, so it will be good for our demonstration here. In this first example, we will keep the same timestep of $\Delta t=0.5s$. As is seen in \ref{fig:Numerical Int Periodic}, this timestep is the same as the period of the sinusoidal solution of this differential equation. When this is the case, we can see that the solutions diverge from the original periodic function greatly for all of the integration schemes (aside from the RK2, although this is only the case when the period is exactly the same as the timestep). This occurs because we are not sampling the function at a high enough frequency to capture the nature of the periodic function.
+
+\begin{figure} [ht]
+    \centering
+    \includegraphics[width=\linewidth]{Numerical Integrator Nyquist 1.png}
+    \caption{Numerical Integration of periodic function}
+    \label{fig:Numerical Int Periodic}
+\end{figure}
+So, what timestep is required to accurately model a periodic function? For our example, we will use RK4 since we have shown it to be the most accurate of the integration schemes. We can vary the timestep for this same periodic function and see what the response looks like. This is shown in \ref{fig:Nyquist}.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{Numerical Integrator Nyquist 2.png}
+    
+    \caption{Numerical Integration of Periodic Function with varying}
+    \label{fig:Nyquist}
+\end{figure}
+
+\newglossaryentry{beat freq}
+{
+    name=beat frequency,
+    first = {\textit{beat frequency}},
+    description={A beat frequency is the result of constructive and destructive interference between two waves of a similar frequency. The similarity of the frequencies creates variations in the amplitude of the resultant wave.}
+}
+
+In this figure, we note several important things. When our timestep is slightly less than the period of the function, we infer a lower frequency. This is seen when we use a timestep of $\Delta t=0.4s$. We can intuitively explain this as a \gls{beat freq}. We know that the solution curve has a frequency of 2 Hz, and a wave with a period of $0.4 s$ would have a frequency of 2.5 Hz. Thus, a beat frequency of 0.5 Hz would be produced. This is exactly what is seen, as the resultant solution appears as a sine wave with a frequency of 0.5 Hz (2 second period). 
+
+\newglossaryentry{bandwidth}
+{
+    name=bandwidth,
+    first = {\textit{bandwidth}},
+    description={The bandwidth of a signal is the difference between its upper and lower frequencies. In our context of numerical integration, this bandwidth refers to twice the highest frequency of a function}
+}
+
+\newglossaryentry{nyquist rate}
+{
+    name=Nyquist rate,
+    first = {\textit{Nyquist rate}},
+    description={The rate at which a signal must be sampled to be free of distortions and aliasing. This rate is typically twice the highest frequency present in the signal}
+}
+
+The same is seen when $\Delta t$ is close to but not quite double the frequency of the wave (called \gls{bandwidth} of the signal). The perceived signal has a changing amplitude with a superimposed sinusoid. This again, does not match the true signal. It is only when we sample at the \gls{nyquist rate} that a true approximation of the function is found. In general, we must sample our function at twice the highest frequency present to ensure a good approximation.
+
+\newglossaryentry{stiff}
+{
+    name=stiff,
+    first = {\textit{stiff}},
+    description={A differential equation that is hard to numerically integrate as a result of instability when larger timesteps are used. Stiffness is a property of the differential equation itself, and not the solution. Stiff systems are not completely well defined, but generally follow from this definition}
+}
+
+In this example, this criterion does not greatly effect our numerical integration. However, when we have other dynamics in the system, the need to sample at double the highest frequency of the system may be detrimental to the performance of our simulation. We call such systems that are difficult to numerically integrate \gls{stiff}. 
+
+\Gls{stiff} systems make numerical integration challenging not only because of increased simulation time, but also because of aforementioned \gls{trunc error}. In a 6-\gls{dof} model such as ours, this is important if vibrational modeling is considered. It is best practice to try and decouple the simulation of high frequency vibrations from the flight dynamics of the system. Sometimes this may be unavoidable (such as systems with large amounts of wing flexure where aerodynamics and elasticity / vibrations are heavily couples), but should be attempted whenever possible. This problem is very complicated and is the subject of much ongoing research! More information about such dynamics can be found in \cite{shyy_recent_2010}.
 \section{Other Integration Schemes}
 
 \section{Code Optimization with Numerical Integration}
@@ -2521,8 +2633,11 @@ The other force that sometimes acts on our rocket is a parachute force. This act
 forceMag = 0.5 * totCd * vertArea * rho * norm(vel)^2;
 paraDragForce = forceMag .* (-vel ./ norm(vel)); 
 \end{lstlisting}
-This force is only active when the vertical velocity is negative, so this is controlled by an "if/else" structure as: "if vel(1) < 0"
+This force is only active when the vertical velocity is negative, so this is controlled by an "if/else" structure as: "if vel(1) < 0". 
+
+Currently, there are no other forces that act in our 6DoF model. Internal forces and vibrations are not currently modeled, as we assume a completely rigid vehicle.
 \subsection{Moments}
+
 
 \section{Validation of 6-DoF}
 \chapter{Appendix}
@@ -2607,6 +2722,9 @@ We also have a script to display the results of this in a nice animation:
 
 \lstinputlisting[style=Matlab-editor, caption = Dzhanibekov Rotation Visualizer]{RotationsVisualizer.m}\label{code:DzhanRotVis}\
 
+
+\subsection{Numerical Integration Error Examples}
+\lstinputlisting[style=Matlab-editor, caption = Numerical Integration Error Comparison]{NumericalIntegratorError.m}\label{code:Numerical Error $y'=2t$}
 
 \setglossarystyle{altlist}
 \printglossary[title=Special Terms, toctitle = Special Terms]
