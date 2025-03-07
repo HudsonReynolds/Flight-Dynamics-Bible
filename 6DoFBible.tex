@@ -194,23 +194,13 @@ To use this document to its fullest extent, we recommend that you write scripts 
 
 In this first edition, we cover primarily the translational and rotational dynamics needed to set up a 6-\gls{dof} model. We also touch on subjects relating to the implementation of these equations in MATLAB and best practices. These are, in our opinion, the fundamental things that need to be understood before working on other aspects of a flight dynamics model. As such, these subjects comprise a large majority of both the effort and the length of the first edition.
 
-Some other areas are also covered in this document but are not fully explained because Preston and I do not have the experience to give full authority on these subjects. However, as we learn more, this document is growing every day. In future editions, we hope to expand some of these other sections, especially those related to aerodynamics and control theory, to better serve those in the future who may hope to recreate the work we have done here.
+As a note, while our work on flight dynamics has mainly focused on modeling rockets, we hope that this document can be used more widely for a variety of 3-DoF and 6-DoF models. As such, we have attempted to include content that is useful for other systems, such as aircraft modeling and orbital dynamics, insofar as we have experience in these areas. That being said, to limit the scope of this document, we have decided to explore these concepts in the context of rocket modeling, and hope that our explanations provide enough clarity for the intrepid reader to explore modeling in other domains.
 
-% \section*{About the companion website}
-% The website\footnote{\url{https://github.com/amberj/latex-book-template}} for this file contains:
-% \begin{itemize}
-%   \item A link to (freely downlodable) latest version of this document.
-%   \item Link to download LaTeX source for this document.
-%   \item Miscellaneous material (e.g. suggested readings etc).
-% \end{itemize}
+Some other areas are also covered in this document but are curtailed because Preston and I do not have the experience to give full authority on these subjects. However, as we learn more, this document is growing every day. In future editions, we hope to expand and add some of these other sections, especially those related to aerodynamics and control theory, to better serve those in the future who may hope to recreate the work we have done here.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Give credit where credit is due. %
-% Say thanks!                      %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgments}
 \begin{itemize}
-\item We would like give special thanks to Prof. Cunningham and Prof. Frueh for their help in reviewing our 6-\gls{dof} Model. Professor Frueh's notes have been especially helpful in compiling the information present in this document.
+\item We would like give special thanks to Prof. Cunningham and Prof. Frueh for their help in reviewing our 6-\gls{dof} Model. Professor Frueh's notes have been especially helpful in compiling the information present in this document. We would also like to thank everyone who has taken their time to read through this document and help us make corrections and edits.
 
 \end{itemize}
 
@@ -238,21 +228,21 @@ We also choose to use notation that is used in the Purdue AAE classes. Some of t
 Some concepts will arise in this document that are derived from graduate-level coursework and complex mathematics. In these instances, we may not attempt to derive the background and full understanding, but rather only what is necessary for building a 6-\gls{dof} model. In these cases, we also try to link to source material if you are inclined to learn more about those topics.
 
 \section{Why 6-DoF?}
-Let’s start off with some terminology in this section. A \gls{dof} refers to the number of ways an object can move in space. A more technically precise and rigorous definition defines this as the number of independent parameters that define the state. It is common to see 1-\gls{dof}, 3-\gls{dof}, and 6-\gls{dof} models all used in aerospace applications. Each of these are useful constructs, and often a simulation with more degrees of freedom is not necessarily better, depending on the scenario.
+Let’s start off with some terminology in this section. A \gls{dof} refers to the number of ways an object can move in space. A more technically precise and rigorous definition defines this as the number of independent parameters that define the motion of a system. It is common to see 1-\gls{dof}, 3-\gls{dof}, and 6-\gls{dof} models all used in aerospace applications. Each of these are useful constructs, and often a simulation with more degrees of freedom is not necessarily better, depending on the scenario.
 \subsection{1-DoF}
-The first modeling that is often done for the sizing of rockets may use 1-\gls{dof} modeling. In this type of model, there is only one axis along which an object may translate or rotate about. In this case of rocket modeling, the only degree of freedom is the vertical height of the rocket. The goal of this type of model is mainly to provide a heuristic for determining rocket performance in the very preliminary stages of sizing by estimating the maximum altitude they can achieve.
+The first modeling that is often done for the sizing of rockets may use 1-\gls{dof} modeling. In this type of model, there is only one axis along which an object may translate or rotate about. In this case of rocket modeling, the only degree of freedom is the vertical altitude of the rocket. The goal of this type of model is mainly to provide a heuristic for determining rocket performance in the very preliminary stages of sizing by estimating the maximum altitude they can achieve.
 
-Another example of this type of model is a simple mass-spring system along one axis. Such models may be useful for estimating the vibrations of bodies or as a first order approximation of fuel slosh.
+Another example of this type of model is a simple mass-spring system along one axis. Such models may be useful for estimating the vibrations of bodies or as a first-order approximation of fuel slosh.
 
-We will use the example of a 1-\gls{dof} in section 2.1 to explain the creation of equations of motion in the simplest way. However, these models are often too constrained to give the most valuable information about a system, which is why 3-\gls{dof} and 6-\gls{dof} models are more often used.
+We will use the example of a 1-\gls{dof} in section \ref{sec: The 1DoF Case} to explain the creation of equations of motion in the simplest way. However, these models are often too constrained to give the most valuable information about a system, which is why 3-\gls{dof} and 6-\gls{dof} models are more often used.
 \subsection{3-DoF}
 After 1-\gls{dof}, the next step up is often a 3-\gls{dof} model. This type of model should be familiar to all flight dynamics members, as it is the subject of our onboarding project. In a 3-\gls{dof} model, there may be any combination of translational degrees of freedom and rotational degrees of freedom.
 
-Often, 3-\gls{dof} modelling is utilized when either the rotational dynamics or translational dynamics of an object are considered unimportant. One example of this may be the calculation of an interplanetary transfer. The primary concern of the simulation is not the orientation of the satellite, but rather the location and velocity of the satellite at various points in 3D space. 
+Often, 3-\gls{dof} modelling is utilized when either the rotational dynamics or translational dynamics of an object are considered unimportant. One example of this may be the calculation of an interplanetary transfer. The primary concern of the simulation is not the orientation of the satellite, but rather the location and velocity of the satellite and planets at various points in 3D space. 
 
-Another example of this type of model is planar motion. Often, problems in engineering are constrained in some way. Very often, we can consider one of the translational degrees of freedom to be non-important to the problem. This simplification allows us to greatly reduce the scope of the problem. One consequence of this action is that rotations are only permitted in a single axis. With two translational and one rotational degree of freedom, we can create useful models of many systems without great complexity.
+Another example of this type of model is planar motion. Often, problems in engineering are constrained in some way. Very often, we can consider one of the translational degrees of freedom and two of the rotational degrees of freedom to be non-important to the problem. This simplification allows us to greatly reduce the scope of the problem. One consequence of this action is that rotations are only permitted in a single axis. With two translational and one rotational degree of freedom, we can create useful models of many systems without great complexity.
 
-Although the rest of this document will discuss 6-\gls{dof} models, really consider if you need that full complexity for your model! Often, a 3-\gls{dof} model is perfectly adequate for a large variety of problems without the hassle incurred by a 6-\gls{dof} model. 
+Although the rest of this document will discuss 6-\gls{dof} models, really consider if you need that full complexity for your model! Often, a 3-\gls{dof} or 4-\gls{dof} model is perfectly adequate for a wide variety of problems without the hassle incurred by a 6-\gls{dof} model. 
 \subsection{6-DoF}
 6-\gls{dof} models are the most complex representation of a mechanical system. In 3D-space, there are only 6 possible degrees of freedom, and we simulate the dynamics in all of them.
 
@@ -268,7 +258,7 @@ An ideal 6-\gls{dof} not only models the motion of a vehicle through the atmosph
     see={quaternion}
 }
 
-Within the structure of a 6-\gls{dof}, there are three main, large “blocks” of code that are executed in sequence. The first is the initialization section. This is where all known, fixed parameters of the vehicle, atmosphere, and physics are initialized to be called later in the program. The second section is the integrator. This block utilizes a certain integration scheme to step through time, calculating the derivatives of the vehicle’s \gls{state vector}. Within the integrator, there are two major sub-blocks corresponding to two sets of dynamics: the forces and the moments. The forces section takes on the more familiar Newtonian Dynamics – regarding Position, Velocity, and Acceleration - that are seen in a high school physics class. The moments section takes on the Attitude Dynamics – orientation in space - of the vehicle. This can take the form of either Euler Angles or Parameters, which will be discussed further later. The final block is the visualizer block. This section writes pertinent information to matrices, animates the movement of the vehicle from launch to land, and outputs graphs of important metrics for the user to visualize.
+Within the structure of a 6-\gls{dof}, there are three main, large “blocks” of code that are executed in sequence. The first is the initialization section. This is where all known, fixed parameters of the vehicle, atmosphere, and physics are initialized to be called later in the program. The second section is the integrator. This block utilizes a certain integration scheme to step through time, calculating the derivatives of the vehicle’s \gls{state vector}. Within the integrator, there are three major sub-blocks corresponding to major aspects of the dynamics: the forces, the moments, and the attitude dynamics. The forces section takes on the more familiar particle dynamics – regarding position, velocity, and acceleration - that are seen in a high school physics class. The moments section takes on the torques and rotational forces acting on the system. Lastly, there is  attitude dynamics – the orientation in space - of the vehicle. This can take the form of either Euler Angles or Parameters, which will be discussed further later. The final block is the visualizer block. This block writes pertinent information to matrices, animates the movement of the vehicle from launch to land, and outputs graphs of important metrics for the user to visualize.
 
 Each of the previously mentioned sections will be discussed in more detail throughout this document.
 
@@ -2474,7 +2464,7 @@ As we can see from this example, even with a fairly large timestep of $\Delta t=
 
 The difference in these numerical integration schemes will become more apparent when modeling the behavior of different differential equation systems. Systems containing higher order terms will be better modeled by the higher order integration schemes, unsurprisingly. The true use of these methods is when analytical solutions to the differential equations are hard or impossible to obtain. That being said, we still want to know characteristics of our system so we can appropriately select integration parameters.
 
-\subsection{Sampling and Stiffness}
+\subsection{Sampling and Stiffness}\label{sampling and stiffness}
  To begin our discussion of sampling and stiffness, we can take the differential equation $y'=cos(4\pi t)$with the initial condition of $y(0)=0$. This function is periodic in nature, so it will be good for our demonstration here. In this first example, we will keep the same timestep of $\Delta t=0.5s$. As is seen in \ref{fig:Numerical Int Periodic}, this timestep is the same as the period of the sinusoidal solution of this differential equation. When this is the case, we can see that the solutions diverge from the original periodic function greatly for all of the integration schemes (aside from the RK2, although this is only the case when the period is exactly the same as the timestep). This occurs because we are not sampling the function at a high enough frequency to capture the nature of the periodic function.
 
 \begin{figure} [ht]
@@ -2483,10 +2473,10 @@ The difference in these numerical integration schemes will become more apparent 
     \caption{Numerical Integration of periodic function}
     \label{fig:Numerical Int Periodic}
 \end{figure}
-So, what timestep is required to accurately model a periodic function? For our example, we will use RK4 since we have shown it to be the most accurate of the integration schemes. We can vary the timestep for this same periodic function and see what the response looks like. This is shown in \ref{fig:Nyquist}.
+So, what timestep is required to accurately model a periodic function? For our example, we will use RK4 since we have shown it to be the most accurate of the integration schemes. We choose to do this to highlight effects aside from error in the numerical approximation. We can vary the timestep for this same periodic function and see what the response looks like. This is shown in \ref{fig:Nyquist}.
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\linewidth]{Numerical Integrator Nyquist 2.png}
+    \includegraphics[width=0.9\linewidth]{Numerical Integrator Nyquist 2.png}
     
     \caption{Numerical Integration of Periodic Function with varying}
     \label{fig:Nyquist}
@@ -2515,7 +2505,7 @@ In this figure, we note several important things. When our timestep is slightly 
     description={The rate at which a signal must be sampled to be free of distortions and aliasing. This rate is typically twice the highest frequency present in the signal}
 }
 
-The same is seen when $\Delta t$ is close to but not quite double the frequency of the wave (called \gls{bandwidth} of the signal). The perceived signal has a changing amplitude with a superimposed sinusoid. This again, does not match the true signal. It is only when we sample at the \gls{nyquist rate} that a true approximation of the function is found. In general, we must sample our function at twice the highest frequency present to ensure a good approximation.
+The same is seen when $\Delta t$ is close to but not quite double the frequency of the wave (called \gls{bandwidth} of the signal). The perceived signal has a changing amplitude with a superimposed sinusoid. This again, does not match the true signal. It is only when we sample at the \gls{nyquist rate} that a true approximation of the function is found. In general, we must sample our function at twice the highest frequency present to ensure a good approximation!
 
 \newglossaryentry{stiff}
 {
@@ -2528,6 +2518,7 @@ In this example, this criterion does not greatly effect our numerical integratio
 
 \Gls{stiff} systems make numerical integration challenging not only because of increased simulation time, but also because of aforementioned \gls{trunc error}. In a 6-\gls{dof} model such as ours, this is important if vibrational modeling is considered. It is best practice to try and decouple the simulation of high frequency vibrations from the flight dynamics of the system. Sometimes this may be unavoidable (such as systems with large amounts of wing flexure where aerodynamics and elasticity / vibrations are heavily couples), but should be attempted whenever possible. This problem is very complicated and is the subject of much ongoing research! More information about such dynamics can be found in \cite{shyy_recent_2010}.
 \section{Other Integration Schemes}
+We previosly discuss the concept of \gls{stiff} systems in \ref{sampling and stiffness}. For systems that have moderate stiffness, we can use "ode23" instead of the more typical "ode45" in MATLAB.
 
 \section{Code Optimization with Numerical Integration}
 \subsection{Monte Carlo Simulation}
@@ -2605,7 +2596,7 @@ $$\vec{X}_0=\begin{bmatrix}
 \end{bmatrix}$$
 \section{Forces and Moments in the 6-DoF}
 The forces and moments on our rocket are what separate this case from the more simple case of the Dzhanibekov effect in \ref{sec:Dzhan}. We have discussed most of these forces in \ref{fig:3 DoF Forces}, and in the \ref{sec: aerodynamics}, but the exact implementation into the 6-DoF model bears repeating, specifically relating to frame conversion.
-\subsection{Forces}
+\subsection{Forces}\label{6DoF Forces}
 We define 4 main forces that act on the vehicle, those being the 4 forces described in section \ref{sec: 3DoF Case}. We will start with the most simple, which is gravity.
 \subsubsection{Gravity}
 Because we define the $\hat{x}$ direction as the zenith direction in the inertial earth frame, we define gravity as:
@@ -2637,9 +2628,19 @@ This force is only active when the vertical velocity is negative, so this is con
 
 Currently, there are no other forces that act in our 6DoF model. Internal forces and vibrations are not currently modeled, as we assume a completely rigid vehicle.
 \subsection{Moments}
+The modeling of moments in the 6-\gls{dof} is fairly straightforward. In the previous section \ref{6DoF Forces}, we converted each of our forces into the body frame. Here, we will use these forces in the body frame to describe the moments acting on our vehicle. 
 
+The moment arm of the vehicle is equivalent to the distance from the center of mass to the center of pressure. Assuming that both lie along the longitudinal axis, we can express this moment as:
+\begin{equation}
+    M^c
+\end{equation}
 
 \section{Validation of 6-DoF}
+
+\section{Data Visualization}
+Here, we will briefly discuss data visualization and best practices, mostly relating to MATLAB. No matter how good your model is, you must be able to appropriately share data in a way that is not only easily conveyed to a non-expert audience, but also visually interesting and descriptive.
+
+
 \chapter{Appendix}
 \section{Notation}
 Mathematical notation for the subjects that we discuss is largely formalized and commonly used, but there are some areas where we may use notation slightly unfamiliar or different to what you have seen in the past. You may also see different notation when looking at papers and literature for future work on the 6-\gls{dof}. To remove any doubt, we describe the notation that we use here.
