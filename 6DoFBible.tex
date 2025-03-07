@@ -395,7 +395,7 @@ We also show this example in MATLAB Script \ref{Script 1} below. Note that $\fra
 
 \lstset{style=mystyle}
 
-\lstinputlisting[language=Matlab, caption=1 DoF]{OneDofEuler.m}\label{Script 1}
+\lstinputlisting[language=Matlab, caption=1 DoF]{6DoF Explanation Scripts/OneDofEuler.m}\label{Script 1}
 
 There are a few important things to note about the MATLAB implementation of the script. Firstly, the only force that is defined outside of the loop is gravity, because the magnitude and direction of this force is independent of the current state of the system. We contrast this with the drag force and the thrust, which must be calculated on every iteration through the algorithm to find an updated value for the force.
 
@@ -2711,21 +2711,23 @@ Which, lo and behold, is identical to our answer for the first form of the proje
 \section{Code}
 This section contains lengthier segments of example code from either the 6-\gls{dof} itself or a proof/example relating to it. Refer to the section numbers to find the appropriate implementation of each code segment.
 \subsection{Lorenz Attractor RK4 Example}\label{sec:Lorenz Attractor RK4 Example}
-\lstinputlisting[style=Matlab-editor, caption = Lorenz Attractor]{LorenzAttractor.m}\label{code:Lorenz}
+\lstinputlisting[style=Matlab-editor, caption = Lorenz Attractor]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAttractor.m}\label{code:Lorenz}
 
 We also have a script to display the results of this in a nice animation:
 
-\lstinputlisting[style=Matlab-editor, caption =Lorenz Animation]{LorenzAnimation.m}\label{code:LorenzAnim}
+\lstinputlisting[style=Matlab-editor, caption =Lorenz Animation]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAnimation.m}\label{code:LorenzAnim}
 \subsection{Dzhanibekov Effect Model}
-\lstinputlisting[style=Matlab-editor, caption = Dzhanibekov Main]{DzhanibekovMain.m}\label{code:DzhanMain}
+\lstinputlisting[style=Matlab-editor, caption = Dzhanibekov Main]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovMain.m}\label{code:DzhanMain}
 
-\lstinputlisting[style=Matlab-editor, caption = Dzhanibekov Integrator]{DzhanibekovIntegrator.m}\label{code:DzhanInt}
+\lstinputlisting[style=Matlab-editor, caption = Dzhanibekov Integrator]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovIntegrator.m}\label{code:DzhanInt}
 
-\lstinputlisting[style=Matlab-editor, caption = Dzhanibekov Rotation Visualizer]{RotationsVisualizer.m}\label{code:DzhanRotVis}\
+\lstinputlisting[style=Matlab-editor, caption = Dzhanibekov Rotation Visualizer]{6DoF Explanation Scripts/Dzhanibekov/RotationsVisualizer.m}\label{code:DzhanRotVis}\
 
 
 \subsection{Numerical Integration Error Examples}
-\lstinputlisting[style=Matlab-editor, caption = Numerical Integration Error Comparison]{NumericalIntegratorError.m}\label{code:Numerical Error $y'=2t$}
+\lstinputlisting[style=Matlab-editor, caption = Numerical Integration Error Comparison]{6DoF Explanation Scripts/NumericalIntegratorError.m}\label{code:Numerical Error $y'=2t$}
+
+\lstinputlisting[style=Matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
 
 \setglossarystyle{altlist}
 \printglossary[title=Special Terms, toctitle = Special Terms]
