@@ -142,9 +142,9 @@
 \title{\Huge \textbf{Flight Dynamics Bible}  \\ \huge Volume 1: \\Everything about 6 Degree of Freedom Modeling}
 
 % Author
-\author{\textsc{Hudson Reynolds}
+\author{\textsc{Hudson Reynolds} \\ \textit{Author}
 \and
-\textsc{Preston Wright}
+\textsc{Preston Wright} \\ \textit{Co-Author}
 }
 
 \begin{document}
@@ -196,7 +196,7 @@ To use this document to its fullest extent, we recommend that you write scripts 
 
 In this first volume, we cover primarily the translational dynamics and basics of rotational dynamics needed to set up a 6-\gls{dof} model. We mainly focus on the implementation of these equations in MATLAB and best practices. These are, in our opinion, the fundamental things that need to be understood before working on other aspects of a flight dynamics model. As such, these subjects comprise a large majority of both the effort and the length of the first volume.
 
-Because of the depth of the subjects described here, we have decided to cover most of attitude dynamics in a separate volume. In this volume, we mostly describe how attitude dynamics can be implemented in MATLAB. The second volume contains most of the theory about attitude dynamics. This second volume is especially useful for the mathematically inclined reader or those who want to implement quaternion math in another programming language
+Because of the depth of the subjects described here, we have decided to cover most of attitude dynamics in a separate volume. In this volume, we mostly describe how attitude dynamics can be implemented in MATLAB. The second volume contains most of the theory about attitude dynamics. This second volume is especially useful for the mathematically inclined reader or those who want to implement quaternion math in another programming language.
 
 As a note, while our work on flight dynamics has mainly focused on modeling rockets, we hope that this document can be used more widely for a variety of 3-DoF and 6-DoF models. As such, we have attempted to include content that is useful for other systems, such as aircraft modeling and orbital dynamics, insofar as we have experience in these areas. That being said, to limit the scope of this document, we have decided to explore these concepts in the context of rocket modeling, and hope that our explanations provide enough clarity for the intrepid reader to explore modeling in other domains.
 
@@ -648,15 +648,125 @@ One thing to note is that some quantities are more easily defined with respect t
 
 The last thing that we note in this section is that our forces are moments are coupled. This means that the aerodynamic forces are a function of the orientation of the vehicle, so the moments and forces must be solved as a system.
 \subsection{State Vector}
-As a last note for this section, we will briefly discuss the concept of a \gls{state vector}. The \gls{state vector} is a column vector that contains information on the current state of our system. In the example of our 4-\gls{dof}, we will include the position, velocity, rotation, and rotation rate of the system in the \gls{state vector}. This would look like:
+As a last note for this section, we will briefly discuss the concept of a \gls{state vector}. The \gls{state vector} is a column vector that contains information on the current state of our system. In the example of our 4-\gls{dof}, we will include the position, velocity, rotation, and rotation rate of the system in the \gls{state vector}. This would look like\footnote{The order of the state vector does not particularly matter, so long as we are consistent with the location of the elements. Typically, it is common to write all vectors first and then their derivatives, but there is no hard rule.}:
 $$\vec{X}=\begin{bmatrix}
-    x\\y\\z\\\dot{x}\\\dot{y}\\\dot{z}\\\theta\\\dot{\theta}
+    x\\y\\z\\\theta\\\dot{x}\\\dot{y}\\\dot{z}\\\dot{\theta}
 \end{bmatrix}$$
 It is also useful to define the derivative of our \gls{state vector}, which would just be the derivative of each of its elements. This is expressed as
 $$\dot{\textbf{X}}=\begin{bmatrix}
-    \dot{x}\\\dot{y}\\\dot{z}\\\ddot{x}\\\ddot{y}\\\ddot{z}\\\dot{\theta}\\\ddot{\theta}
+    \dot{x}\\\dot{y}\\\dot{z}\\\dot{\theta}\\\ddot{x}\\\ddot{y}\\\ddot{z}\\\ddot{\theta}
 \end{bmatrix}$$
 For the sake of compactness, these vectors are generally not written in their full form. In this text, we will often refer to a \gls{state vector} as just $\vec{X}$. Note that we also use the vector $\hat{X}$ to denote a unit vector in the body frame, so the difference in the hat becomes an important distinction here.
+\section{Euler Rotation Equations}\label{Euler Rotation Equations}
+\newglossaryentry{rigid body}
+{
+    name=rigid body,
+    first=\textit{rigid body},
+    description={A rigid body is a system of particles whose positions with respect to each other is fixed. Rigid body dynamics are the basis of our analysis of rotational dynamics}
+}
+
+\newglossaryentry{moment of inertia}
+{
+    name=moment of inertia,
+    first={\textit{moment of inertia}},
+    description={A measure of its resistance to rotational acceleration. It is in essence, the rotational analogue of mass. Often denoted with the letter $I$}
+}
+
+In Section \ref{sec:moments} we have explored the moments that are created when a force acts at a point that is not through the center of mass. Here, we will make the jump from particle dynamics into \gls{rigid body} dynamics.
+
+In analogy to Newton's 2nd Law of motion, there is an equally important relationship for rotational dynamics. This equation is known as Euler's 2nd Law:
+\begin{equation}\label{eq:Euler 2nd Law}
+    \vec{M}^o=^{i}\frac{d\vec{H}^o}{dt}
+\end{equation}
+This equation reads as 'The moment about point $O$ is the inertial time derivative of the angular momentum, H, about point $O$'. The superscript $i$ refers to the fact that this derivative must be taken in the inertial frame.
+
+We also have the relationship between angular momentum, $H$, and the \gls{moment of inertia}, $I$, for an rigid body that you have likely seen in physics classes:
+\begin{equation}\label{eq:Iw}
+    {}^i\vec{H}={}^iI\vec{\omega}
+\end{equation}
+You will notice that our moment of inertia here is defined with respect to the inertial frame. As a result, when our body changes orientation, the moment of inertia may also change!
+
+Often however, it is more helpful to define this moment of inertia in terms of our body frame. We will go through this derivation of the moment of inertia below.
+\subsection{Moment of Inertia and Inertia Tensor}\label{moment of inertia}
+The moment of inertia of a body is a measure of its resistance to rotational acceleration. It is in essence, the rotational analogue of mass (mass is a measure of resistance to linear acceleration, by the same line of reasoning).
+
+Since we need the moment of inertia to describe our relationship for angular momentum in \eqref{eq:Iw}, it is useful for us to see its derivation here.
+
+We can start by showing that the mass of a region can be found by integrating the density over it's volume. Mathematically, we show this as:
+$$\iiint\limits_V{\rho}{dV}$$
+Similarly, we know that the moment of inertia of a particle is $mr^2$, which is it's mass multiplied with the length of the moment arm, $r$, squared. This is often referred to as the 'second moment' of mass. By integrating this second moment, we have:
+$$\iiint\limits_V{\rho}{r^2}{dV}$$
+It is useful to define the moment of inertia along each direction, though. We can rewrite $r$ in terms of $x$, $y$, and $z$ for each of the component directions:
+\begin{gather}
+    I_{xx}=\iiint\limits_V{\rho}{\left(y^2+z^2\right)}{dV}\\
+    I_{yy}=\iiint\limits_V{\rho}{\left(x^2+z^2\right)}{dV}\\
+    I_{zz}=\iiint\limits_V{\rho}{\left(x^2+y^2\right)}{dV}
+\end{gather}
+For our rocket, we will find that these are the only quantities that we need to define. However, in general, we also have three more quantities, which are called the product of inertia. This is defined by the product of two of our elements, such as $xy$. This will have the same dimensions as the quantity $r^2$, so it can be applied in a similar way to the moment of inertia. The product of inertia is defined as follows:
+\begin{gather}
+    I_{xy}=I_{yx}\iiint\limits_V{-xy\rho}{dV}\\
+    I_{xz}=I_{zx}\iiint\limits_V{-xz\rho}{dV}\\
+    I_{yz}=I_{zy}\iiint\limits_V{-yz\rho}{dV}
+\end{gather}
+For our rocket, because of the symmetry about the $\hat{X}$ axis, these quantities go to zero. However, for future implementations that may include fuel slosh and asymmetries, the products of inertia may be non-zero!
+\newglossaryentry{inertia tensor}
+{
+    name={inertia tensor},
+    first=\textit{inertia tensor},
+    description={A matrix that describes the moment of inertia along each of the axes of a body. This matrix, often denoted $I$, transforms the angular velocity, $\omega$ into an angular momentum, $H$}
+}
+We express our \gls{inertia tensor}, denoted $I$, as the $3\times3$ matrix which contains the moments and products of inertia.
+$$I=\begin{bmatrix}
+    I_{xx}&I_{xy}&I_{xz}\\
+    I_{yx}&I_{yy}&I_{yz}\\
+    I_{zx}&I_{zy}&I_{zz}
+\end{bmatrix}$$
+For our rocket, we get the simplification that:
+$$I=\begin{bmatrix}
+    I_{xx}&0&0\\
+    0&I_{yy}&0\\
+    0&0&I_{zz}
+\end{bmatrix}$$
+\newglossaryentry{principle axes}
+{
+    name={principle axes},
+    first=\textit{principle axes},
+    description={The axes defined such that the products of inertia for a body are zero. These axes are the values that solve the eigenvalue problem $I\vec{\omega}=I^*\vec{\omega}$}
+}
+\newacronym{pmoi}{PMOI}{principle moment of inertia}
+In fact, we can always find axes such that the products of inertia are zero. These are called the \gls{principle axes} and are important in other applications, such as structures \cite{baker_statics_2020}. For our rocket, it just happens that these \gls{principle axes} are the ones we have chosen to define as our body frame. The moment of inertia along these principle axes are solutions to the eigenvalue problem $I\vec{\omega}=I^*\vec{\omega}$, where $I^*$ is a scalar. Essentially, we are finding a matrix $I$ such that the output is just a scalar multiple of the input, $\omega$. We can see that having this property will greatly simplify our results. This is another reason why we like to perform many calculations in the body frame.
+
+Using the inertia tensor, a matrix form of \eqref{eq:Iw}  is written as:
+\begin{equation}\label{eq:IwVec}
+    \vec{H}=I\vec{\omega}
+\end{equation}
+In the simplification using the principle axes, we often refer to the terms $I_{xx}$, $I_{yy}$, and $I_{zz}$ simply as $I_x$, $I_y$, and $I_z$. There are called the \glspl{pmoi}.
+\subsection{Rotations in the Body Frame}\label{sec:rotations in the body frame}
+Now that we have defined our inertia tensor in the body frame, it is useful to reexamine \eqref{eq:Euler 2nd Law} and \eqref{eq:Iw} to express them in terms of the body frame.
+\newacronym{bke}{BKE}{Basic Kinematic Equation}
+We can express equation \eqref{eq:Euler 2nd Law} in terms of the body frame using the \gls{bke}. We write this as:
+\begin{equation}\label{eq:bke}
+{}^i\frac{dH^o}{dt}={}^b\frac{dH^o}{dt}+{}^e\vec{\omega}^b\times H^o
+\end{equation}
+In the case of principle axes, \eqref{eq:IwVec} can be simplified to yield:
+$${}^iH^o=I_x\omega_x\hat{b}_1+I_y\omega_y\hat{b}_2+I_z\omega_z\hat{b}_3$$
+Plugging this result into \eqref{eq:bke}, we get the following:
+$${}^i\frac{dH^o}{dt}={}^b\frac{d}{dt}\left(I_x\omega_x\hat{b}_1+I_y\omega_y\hat{b}_2+I_z\omega_z\hat{b}_3\right)+{}^e\vec{\omega}^b\times \left(I_x\omega_x\hat{b}_1+I_y\omega_y\hat{b}_2+I_z\omega_z\hat{b}_3\right)$$
+Where ${}^e\vec{\omega}^b$ is $\omega_x\hat{b}_1+\omega_y\hat{b}_2+\omega_z\hat{b}_3$. The algebraic manipulation and vector math here is left as an exercise for the reader. Collecting the final terms, our final expression is:
+$${}^iH^o=\left[I_x\dot{\omega}_x+\left(I_z-I_y\right)\right]\hat{b}_1+\left[I_y\dot{\omega}_y+\left(I_x-I_z\right)\right]\hat{b}_2+\left[I_z\dot{\omega}_z+\left(I_y-I_x\right)\right]\hat{b}_3$$
+Equating this with the moments in the body frame that were found in \ref{sec:moments} as ${}^bM^o=M_x\hat{b}_1+M_y\hat{b}_2+M_z\hat{b}_3$, we arrive at the final form of our equations for Euler rotations\footnote{Very observant readers may notice that this form of the equation is technically \textit{slightly} incorrect, since our center of rotation, $O$, will change throughout the flight as the center of mass changes position. Thus, we will have some small effects that are not accounted for in this equation. For our purposes, these are ignored for simplicity. However, a more general approach that implements this may be used in the future if slosh modelling is implemented.}:
+\begin{gather}\label{eq: moment equations}
+    M_x=I_x\dot{\omega}_x+\left(I_z-I_y\right)\omega_y\omega_z\\
+    M_y=I_y\dot{\omega}_y+\left(I_x-I_z\right)\omega_z\omega_x\\
+    M_z=I_z\dot{\omega}_z+\left(I_y-I_x\right)\omega_y\omega_x
+\end{gather}
+We can rearrange this to a form that is more useful for us (although somewhat less sightly), putting the unknown $\dot\omega$ (we also refer to this quantity as the angular acceleration, $\vec{\alpha}$) quantities alone:
+\begin{gather}\label{eq: moment eq 2}
+    \dot{\omega}_x=\frac{M_x-\left(I_z-I_y\right)\omega_y\omega_z}{I_x}\\
+    \dot{\omega}_y=\frac{M_y-\left(I_x-I_z\right)\omega_z\omega_x}{I_y}\\
+    \dot{\omega}_z=\frac{M_z-\left(I_y-I_x\right)\omega_y\omega_x}{I_z}
+\end{gather}
+These sets of equations are especially powerful because they allows us to numerically integrate the angular velocity. Our moments can be found using Newtonian dynamics and the \glspl{pmoi} are quantities that are easily found using the integrals described above in section \ref{moment of inertia}. We will use these angular velocity derivatives extensively in sections \ref{sec:DescribeEulerRates} and \ref{sec: quaternion rates} to describe the time rate of change of the attitude of the rocket.
 
 \chapter{Attitude Dynamics}\label{sec:attitude dynamics}
 \begin{chapquote}{Lord Kelvin, 1892}
@@ -665,29 +775,9 @@ For the sake of compactness, these vectors are generally not written in their fu
 Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. However, we hope that, here more than anywhere, our centralization of all basic necessary information to understand the topic eases the pain a little.\footnote{For further understanding, see section 8 for more provided materials. } In fact, don’t be afraid to reach out to either Hudson Reynolds (@Hudson Reynolds) or I (@Preston Wright) on Slack with questions! A final note on the section: many of the derivations closely follow both the process and notation of resources which will become available to you throughout your time here at Purdue AAE. These are the AAE340 class script by Professors Frueh and Longuski, and the AAE590 Attitude Dynamics and Control script by Professor Frueh. In addition, a handbook delving into all the nitty-gritty details of attitude determination and dynamics, following the derivations here and then some, is also available to aid in your understanding! % It's happening
 
 
-
-
 % All editing for this section/relating to this section is now being done in a separate document
 
-
-
-
-
-
-
-
-
-
 % THE QUATERNION SECTION IS BEING OVERHAULED IN THE NEW DOC DON'T REFERENCE ANYTHING HERE YET
-
-
-
-
-
-
-
-
-
 
 \section{Frame of Reference}\label{sec:Frame of Reference}
 Before attempting to describe the orientation of any random body in space, we must first discuss how and why this is possible. A frame of reference is an \textit{orthonormal} set within three-dimensional space. The orthonormal nature of the basis vectors that create every frame of reference allows for any other vector in three-dimensional space to be described as a linear combination of those three basis vectors (hence why we call it a basis for 3-space). This tool becomes incredibly useful within the study of Newtonian and Attitude Dynamics, as every \gls{state vector} can be broken down into three set “scalar” directions. Naturally, the question arises of how we determine which set directions to utilize, and so we will be discussing a few frames of reference critical to the creation of a 6-\gls{dof} and Aerospace engineering as a whole.
@@ -784,109 +874,6 @@ For our current model, the body frame of our 6-\gls{dof} has its origin in the n
 \subsection{The Wind Frame}
 The last and by far least important frame of reference is the \textit{wind frame.} This frame of reference, like the body frame, is always anchored at some point in the vehicle. Also like the body frame, it moves and rotates with the vehicle and allows for a new way of describing the \gls{state vector}. Unlike the body frame, the most important definition is not along the longitudinal axis of the vehicle. As indicated by its name, the necessary orientation of a basis vector points in the direction of the free stream velocity. Relating this to the body frame, this translates to an offset from the body frame by the \gls{angle of attack} and sideslip. This frame is often useful for aircraft, but we do not use it explicitly in our 6-\gls{dof}. The wind frame itself is in fact skipped over during wind calculations, as the \gls{angle of attack} and imparted forces/moments are calculated directly onto the body frame. So as this isn’t as useful as the other two reference frames, we won’t elaborate on this frame any further, and it won’t be shown as much in our example 6-\gls{dof}.
 
-\section{Euler Rotation Equations}\label{Euler Rotation Equations}
-\newglossaryentry{moment of inertia}
-{
-    name=moment of inertia,
-    first={\textit{moment of inertia}},
-    description={A measure of its resistance to rotational acceleration. It is in essence, the rotational analogue of mass. Often denoted with the letter $I$}
-}
-
-In Section \ref{sec:moments} we have explored the moments that are created when a force acts at a point that is not through the center of mass.
-
-In analogy to Newton's 2nd Law of motion, there is an equally important relationship for rotational dynamics. This equation is known as Euler's 2nd Law:
-\begin{equation}\label{eq:Euler 2nd Law}
-    \vec{M}^o=^{i}\frac{d\vec{H}^o}{dt}
-\end{equation}
-This equation reads as 'The moment about point $O$ is the inertial time derivative of the angular momentum, H, about point $O$. The superscript $i$ refers to the fact that this derivative must be taken in the inertial frame.
-
-We also have the relationship between angular momentum, $H$, and the \gls{moment of inertia}, $I$, for an rigid body that you have likely seen in physics classes:
-\begin{equation}\label{eq:Iw}
-    {}^i\vec{H}={}^iI\vec{\omega}
-\end{equation}
-You will notice that our moment of inertia here is defined with respect to the inertial frame. As a result, when our body changes orientation, the moment of inertia may also change!
-
-Often however, it is more helpful to define this moment of inertia in terms of our body frame. We will go through this derivation of the moment of inertia below.
-\subsection{Moment of Inertia and Inertia Tensor}\label{moment of inertia}
-The moment of inertia of a body is a measure of its resistance to rotational acceleration. It is in essence, the rotational analogue of mass (mass is a measure of resistance to linear acceleration, by the same line of reasoning).
-
-Since we need the moment of inertia to describe our relationship for angular momentum in \eqref{eq:Iw}, it is useful for us to see its derivation here.
-
-We can start by showing that the mass of a region can be found by integrating the density over it's volume. Mathematically, we show this as:
-$$\iiint\limits_V{\rho}{dV}$$
-Similarly, we know that the moment of inertia of a particle is $mr^2$, which is it's mass multiplied with the length of the moment arm, $r$, squared. This is often referred to as the 'second moment' of mass. By integrating this second moment, we have:
-$$\iiint\limits_V{\rho}{r^2}{dV}$$
-It is useful to define the moment of inertia along each direction, though. We can rewrite $r$ in terms of $x$, $y$, and $z$ for each of the component directions:
-\begin{gather}
-    I_{xx}=\iiint\limits_V{\rho}{\left(y^2+z^2\right)}{dV}\\
-    I_{yy}=\iiint\limits_V{\rho}{\left(x^2+z^2\right)}{dV}\\
-    I_{zz}=\iiint\limits_V{\rho}{\left(x^2+y^2\right)}{dV}
-\end{gather}
-For our rocket, we will find that these are the only quantities that we need to define. However, in general, we also have three more quantities, which are called the product of inertia. This is defined by the product of two of our elements, such as $xy$. This will have the same dimensions as the quantity $r^2$, so it can be applied in a similar way to the moment of inertia. The product of inertia is defined as follows:
-\begin{gather}
-    I_{xy}=I_{yx}\iiint\limits_V{-xy\rho}{dV}\\
-    I_{xz}=I_{zx}\iiint\limits_V{-xz\rho}{dV}\\
-    I_{yz}=I_{zy}\iiint\limits_V{-yz\rho}{dV}
-\end{gather}
-For our rocket, because of the symmetry about the $\hat{X}$ axis, these quantities go to zero. However, for future implementations that may include fuel slosh and asymmetries, the products of inertia may be non-zero!
-\newglossaryentry{inertia tensor}
-{
-    name={inertia tensor},
-    first=\textit{inertia tensor},
-    description={A matrix that describes the moment of inertia along each of the axes of a body. This matrix, often denoted $I$, transforms the angular velocity, $\omega$ into an angular momentum, $H$}
-}
-We express our \gls{inertia tensor}, denoted $I$, as the $3\times3$ matrix which contains the moments and products of inertia.
-$$I=\begin{bmatrix}
-    I_{xx}&I_{xy}&I_{xz}\\
-    I_{yx}&I_{yy}&I_{yz}\\
-    I_{zx}&I_{zy}&I_{zz}
-\end{bmatrix}$$
-For our rocket, we get the simplification that:
-$$I=\begin{bmatrix}
-    I_{xx}&0&0\\
-    0&I_{yy}&0\\
-    0&0&I_{zz}
-\end{bmatrix}$$
-\newglossaryentry{principle axes}
-{
-    name={principle axes},
-    first=\textit{principle axes},
-    description={The axes defined such that the products of inertia for a body are zero. These axes are the values that solve the eigenvalue problem $I\vec{\omega}=I^*\vec{\omega}$}
-}
-\newacronym{pmoi}{PMOI}{principle moment of inertia}
-In fact, we can always find axes such that the products of inertia are zero. These are called the \gls{principle axes} and are important in other applications, such as structures \cite{baker_statics_2020}. For our rocket, it just happens that these \gls{principle axes} are the ones we have chosen to define as our body frame. The moment of inertia along these principle axes are solutions to the eigenvalue problem $I\vec{\omega}=I^*\vec{\omega}$, where $I^*$ is a scalar. Essentially, we are finding a matrix $I$ such that the output is just a scalar multiple of the input, $\omega$. We can see that having this property will greatly simplify our results. This is another reason why we like to perform many calculations in the body frame.
-
-Using the inertia tensor, a matrix form of \eqref{eq:Iw}  is written as:
-\begin{equation}\label{eq:IwVec}
-    \vec{H}=I\vec{\omega}
-\end{equation}
-In the simplification using the principle axes, we often refer to the terms $I_{xx}$, $I_{yy}$, and $I_{zz}$ simply as $I_x$, $I_y$, and $I_z$. There are called the \glspl{pmoi}.
-\subsection{Rotations in the Body Frame}\label{sec:rotations in the body frame}
-Now that we have defined our inertia tensor in the body frame, it is useful to reexamine \eqref{eq:Euler 2nd Law} and \eqref{eq:Iw} to express them in terms of the body frame.
-\newacronym{bke}{BKE}{Basic Kinematic Equation}
-We can express equation \eqref{eq:Euler 2nd Law} in terms of the body frame using the \gls{bke}. We write this as:
-\begin{equation}\label{eq:bke}
-{}^i\frac{dH^o}{dt}={}^b\frac{dH^o}{dt}+{}^e\vec{\omega}^b\times H^o
-\end{equation}
-In the case of principle axes, \eqref{eq:IwVec} can be simplified to yield:
-$${}^iH^o=I_x\omega_x\hat{b}_1+I_y\omega_y\hat{b}_2+I_z\omega_z\hat{b}_3$$
-Plugging this result into \eqref{eq:bke}, we get the following:
-$${}^i\frac{dH^o}{dt}={}^b\frac{d}{dt}\left(I_x\omega_x\hat{b}_1+I_y\omega_y\hat{b}_2+I_z\omega_z\hat{b}_3\right)+{}^e\vec{\omega}^b\times \left(I_x\omega_x\hat{b}_1+I_y\omega_y\hat{b}_2+I_z\omega_z\hat{b}_3\right)$$
-Where ${}^e\vec{\omega}^b$ is $\omega_x\hat{b}_1+\omega_y\hat{b}_2+\omega_z\hat{b}_3$. The algebraic manipulation and vector math here is left as an exercise for the reader. Collecting the final terms, our final expression is:
-$${}^iH^o=\left[I_x\dot{\omega}_x+\left(I_z-I_y\right)\right]\hat{b}_1+\left[I_y\dot{\omega}_y+\left(I_x-I_z\right)\right]\hat{b}_2+\left[I_z\dot{\omega}_z+\left(I_y-I_x\right)\right]\hat{b}_3$$
-Equating this with the moments in the body frame that were found in \ref{sec:moments} as ${}^bM^o=M_x\hat{b}_1+M_y\hat{b}_2+M_z\hat{b}_3$, we arrive at the final form of our equations for Euler rotations\footnote{Very observant readers may notice that this form of the equation is technically \textit{slightly} incorrect, since our center of rotation, $O$, will change throughout the flight as the center of mass changes position. Thus, we will have some small effects that are not accounted for in this equation. For our purposes, these are ignored for simplicity. However, a more general approach that implements this may be used in the future if slosh modelling is implemented.}:
-\begin{gather}\label{eq: moment equations}
-    M_x=I_x\dot{\omega}_x+\left(I_z-I_y\right)\omega_y\omega_z\\
-    M_y=I_y\dot{\omega}_y+\left(I_x-I_z\right)\omega_z\omega_x\\
-    M_z=I_z\dot{\omega}_z+\left(I_y-I_x\right)\omega_y\omega_x
-\end{gather}
-We can rearrange this to a form that is more useful for us (although somewhat less sightly), putting the unknown $\dot\omega$ (we also refer to this quantity as the angular acceleration, $\vec{\alpha}$) quantities alone:
-\begin{gather}\label{eq: moment eq 2}
-    \dot{\omega}_x=\frac{M_x-\left(I_z-I_y\right)\omega_y\omega_z}{I_x}\\
-    \dot{\omega}_y=\frac{M_y-\left(I_x-I_z\right)\omega_z\omega_x}{I_y}\\
-    \dot{\omega}_z=\frac{M_z-\left(I_y-I_x\right)\omega_y\omega_x}{I_z}
-\end{gather}
-These sets of equations are especially powerful because they allows us to numerically integrate the angular velocity. Our moments can be found using Newtonian dynamics and the \glspl{pmoi} are quantities that are easily found using the integrals described above in section \ref{moment of inertia}. We will use these angular velocity derivatives extensively in sections \ref{sec:DescribeEulerRates} and \ref{sec: quaternion rates} to describe the time rate of change of the attitude of the rocket.
 \section{2-D Rotations}\label{sec:2D Rotations}
 Before moving into rotations in 3-dimensional space, let’s start simple. Say you have an arrow drawn on a piece of paper, and you twist the paper about the origin of that arrow through an angle $\theta$. While you could measure the new vector’s components directly to describe your new arrow, we want a more generalized way to find a new vector for any rotation. 
 \subsection{Real Rotations}
@@ -1309,7 +1296,7 @@ Aerodynamics has a lot of terminology associated with it that is important to un
 
 While some of the theory here is not directly used in our 6-\gls{dof}, having an understanding of this will be greatly beneficial so we have chosen to include some background here. 
 \subsection{Lift and Drag}\label{Lift and Drag}
-We start this section by noting that lift and drag are just conventions that are commonly used to describe the aerodynamic force. It should be noted that both the lift and the drag arise from the same source - the air acting on the vehicle. It is simply convenient to define this resultant force with respect to the direction of the freestream velocity.
+We start this section by noting that lift and drag are just conventions that are commonly used to describe the aerodynamic force. It should be noted that both the lift and the drag arise from the same source - the air acting on the vehicle to create a force. It is simply convenient to define this resultant force with respect to the direction of the freestream velocity, which we call lift and drag.
 
 When modeling aerodynamic forces, we can imagine that two differential force elements act at each point along the body. At each point, there is a pressure which acts normal to the surface and a shear stress (you can think of it as a friction) that acts tangentially to the surface. These are shown in Figure \ref{fig:pressure and shear}.
 
@@ -1346,9 +1333,9 @@ We can expand \eqref{eq:LDMatrix} to give two scalar equations:
 \end{gather}
 So, if we know the distribution of pressure over our body, we have shown that we can find the resultant aerodynamic forces acting on our body. As briefly described in Section \ref{sec:moments}, another important parameter to find is our center of pressure.
 \subsection{Center of Pressure}
-Simply stated, the center of pressure is the location at which all the aerodynamic forces acting on a body produce no resultant moment. This location is particularly useful for our case because we can assume that the lift and drag forces act through the center of pressure rather than assuming that lift and drag act as force distributions. This will make our future calculations much more simple, so we would like to know the center of pressure and how to calculate it.
+Simply stated, the center of pressure is the location at which all the aerodynamic forces acting on a body produce no resultant moment. This location is particularly useful for our case because we can assume that the lift and drag forces act through the center of pressure rather than assuming that lift and drag act as force distributions. This will make our future calculations much simpler, so we would like to know the center of pressure and how to calculate it.
 
-To find the location where the center of pressure occurs, we can take the moment about any point first. Often, we choose to take the moment about the nose of the rocket (called the leading edge when referring to a wing), since we define the origin here. This integral has a similar form to the normal and axial force integrals, except that we multiply the force by the distance from the nose. For more information on why this is done, refer to \cite{gundersen_understanding_2020}. Writing out this integral, we get:
+To find the location where the center of pressure occurs, we can take the moment about any point first. Often, we choose to take the moment about the nose of the rocket (called the leading edge when referring to a wing), since we define the origin here. This integral has a similar form to the normal and axial force integrals except that we multiply the force by the distance from the nose. For more information on why this is done, refer to \cite{gundersen_understanding_2020}. Writing out this integral, we get:
 \begin{gather}
     M_{LE}'=\int_0^c{p_u-p_l}{dx}+\int_0^c{\left(\tau_u\frac{dy_u}{dx}+\tau_l\frac{dy_l}{dx}\right)}{xdx}\\+\int_0^c{\left(p_u\frac{dy_u}{dx}+\tau_u\right)}{y_udx}+\int_0^c{\left(-p_l\frac{dy_l}{dx}+\tau_l\right)}{y_ldx}
 \end{gather}
@@ -1674,7 +1661,6 @@ However, other operations, such as "atmosisa", should not comprise a large porti
 
 % figure here
 
-
 \chapter{The 6-DoF}
 In this section we will combine everything from the previous sections and explain how our 6-\gls{dof} model works. We will follow a similar set up to \ref{sec:Dzhan}  here, describing the elements of the model in detail and then attaching relevant code either in-line or in the appendix.
 
@@ -1781,8 +1767,23 @@ Where $\vec{R}$ is the resultant aerodynamic force (the combination of both lift
 \section{Validation of 6-DoF}
 
 \section{Data Visualization}
-Here, we will briefly discuss data visualization and best practices, mostly relating to MATLAB. No matter how good your model is, you must be able to appropriately share data in a way that is not only easily conveyed to a non-expert audience, but also visually interesting and descriptive.
+Here, we will briefly discuss data visualization and best practices for MATLAB. No matter how good your simulation is, you must be able to appropriately share data in a way that is not only easily conveyed to a non-expert audience, but also visually interesting and descriptive.
 
+At the most basic level, your MATLAB plots should have proper formatting. The default MATLAB plot formatting isn't up to snuff with the standards of scientific publications or presentation of your work. Luckily, MATLAB has many tools to improve the presentation of figures.
+
+MATLAB has the ability for plots to utilize LaTeX formatting for figures. We highly recommend to enable this option for all plots as it allows for much better formatting on figures. This can be done with the following commands:
+\begin{lstlisting}[style=Matlab-editor]
+set(groot, 'defaultAxesTickLabelInterpreter','latex');
+set(groot, 'defaultLegendInterpreter','latex');
+set(groot, 'defaultTextInterpreter', 'latex')
+\end{lstlisting}
+\subsection{Changing Default MATLAB Plotting}
+If you want to have these changes to figures universally applied in MATLAB, you can create a file in MATLAB called 'startup.m' that is run when MATLAB is opened. This file must exist in the user path for MATLAB. To find the user path for MATLAB, the command "userpath" can be typed into the command line. This will output something like:
+\\
+"C:\Users\YourName\OneDrive\Documents\MATLAB"
+
+The code in \ref{code:startup} is the default plotting used in this document, which should be a good baseline for professional plots.
+\lstinputlisting[style=Matlab-editor, caption = Startup File for Plotting]{startup.m}\label{code:startup}
 
 \chapter{Appendix}
 \section{Notation}
@@ -1798,59 +1799,7 @@ For short pieces of code written inline, we use a mono-spaced font with the appe
 
 
 
-\subsection{Vector Projection Simplification}\label{sec:VecProjectSimplify}
-Proof by: Preston Wright
 
-In section \ref{sec:PrincipleAxisRotationMatrix}, we describe a simplification to the projection of our vector $\vec{x}$ onto the \gls{Euler axis} $\vec{n}$ as:
-$$\vec{x}_\parallel=(\vec{x}\cdot\vec{n})\vec{n}=(\vec{n}\vec{n}^T)\vec{x}$$
-\begin{proof}
-While trivial, we wanted to show the proof here just to clarify that this equality holds. We will use the same notation for our vectors for obvious reasons; however, keep in mind this equality holds for any two arbitrary vectors of identical dimensions [e.g. ($\vec{x},\vec{n}\in\mathbb{R}^m$)]\footnote{While we typically denote spaces by $\mathbb{R}^n$, $n$ is already used as a variable for one of our vectors. Therefore, m will be used as a substitute to define the dimension in order to improve clarity.}. To start, we can visually expand the first form $(\vec{x}\cdot\vec{n})\vec{n}$ using the finite summation form of a dot product between two vectors of length $m$: $$\vec{x}_\parallel=\vec{n}\sum_{i=1}^{m}{x_in_i}$$ 
-Where each term of the vector $\vec{n}$ will be multiplied by that summation in a scalar multiplication operation. We can explicitly write this as:
-$$\vec{x}_\parallel=\begin{bmatrix}
-    n_1(x_1n_1+x_2n_2+\ldots+x_in_i)\\
-    \vdots\\
-    n_i(x_1n_1+x_2n_2+\ldots+x_in_i)
-\end{bmatrix}$$
-
-The second form $(\vec{n}\vec{n}^T)\vec{x}$ takes a different approach, simply favoring matrix multiplication over scalar multiplication. By computing the initial multiplication of $\vec{n}$ by its own transpose, this form becomes the matrix multiplication of an $[i\times i]$ matrix with the vector $\vec{x}$ of length $i$:
-$$\vec{x}_\parallel=\begin{bmatrix}
-    n_1^2&n_1n_2&\ldots&n_1n_i\\
-    n_2n_1&n_2^2&\ldots&n_2n_i\\
-    \vdots&\vdots&\ddots&\vdots\\
-    n_in_1&n_in_2&\ldots&n_i^2
-\end{bmatrix}\begin{bmatrix}
-    x_1\\x_2\\\vdots\\x_i
-\end{bmatrix}$$
-Computing the matrix multiplication gets us the following:
-$$\vec{x}_\parallel=\begin{bmatrix}
-    n_1^2x_1+n_1n_2x_2+\ldots+n_1n_ix_i\\
-    \vdots\\
-    n_in_1x_1+n_in_2x_2+\ldots+n_i^2x_i
-\end{bmatrix}$$
-Factoring out the common number $n_i$ in every row, we get:
-$$\vec{x}_\parallel=\begin{bmatrix}
-    n_1(x_1n_1+x_2n_2+\ldots+x_in_i)\\
-    \vdots\\
-    n_i(x_1n_1+x_2n_2+\ldots+x_in_i)
-\end{bmatrix}$$
-Which, lo and behold, is identical to our answer for the first form of the projection. Thus, we have successfully proven the equality of these two forms for the term $\vec{x}_\parallel$.
-\end{proof}
-
-
-
-
-\subsection{Quaternion Multiplication Matrix}\label{sec:QuatMultiplyMatrix}
-
-
-
-
-
-
-
-\subsection{Characteristic Polynomial Derivation for Degree 3}
-
-% Maybe don't do its hella long lmao
-%lmao
 
 \section{Code}
 This section contains lengthier segments of example code from either the 6-\gls{dof} itself or a proof/example relating to it. Refer to the section numbers to find the appropriate implementation of each code segment.
