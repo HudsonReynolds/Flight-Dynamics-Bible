@@ -18,6 +18,7 @@
 \usepackage{mathdots}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{xfrac}
 \usepackage{extarrows}
 \usepackage{setspace}
 \usepackage{matlab-prettifier}
@@ -138,7 +139,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Book's title and subtitle
-\title{\Huge \textbf{Flight Dynamics Bible}  \\ \huge Everything about 6 Degree of Freedom Modeling}
+\title{\Huge \textbf{Flight Dynamics Bible}  \\ \huge Volume 1: \\Everything about 6 Degree of Freedom Modeling}
 
 % Author
 \author{\textsc{Hudson Reynolds}
@@ -155,10 +156,13 @@
 
 %\frontmatter
 \maketitle
-
 %% Things to do:
-% clean up glossaries, explore glossaries extra
+% clean up glossaries section
+% possibly add notation used. Beginning maybe? Wertz does this and it works well
+% more figures would be nice
+% add more proofs for relevant sections
 % finish the 6-DoF Section, add code and attach code in google drive as well
+% clean up some of the figs, especially the body frame.png
 
 %
 \pagenumbering{roman}
@@ -167,9 +171,7 @@
     This document is dedicated to Purdue Space Program Liquids. PSP Liquids has given us a vast amount of experience and means to explore the realm of Flight Dynamics. We hope that we can contribute to the wealth of information provided by PSP with this document.
 \end{dedication}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Auto-generated table of contents, list of figures and list of tables %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%table of contents, list of figures and list of tables
 
 \begin{spacing}{.5}
     \tableofcontents
@@ -192,7 +194,9 @@ In this document, we will be using excerpts of MATLAB script in some examples (c
 
 To use this document to its fullest extent, we recommend that you write scripts as you learn and use this document for reference and as a guide as you build or improve your own models.
 
-In this first edition, we cover primarily the translational and rotational dynamics needed to set up a 6-\gls{dof} model. We also touch on subjects relating to the implementation of these equations in MATLAB and best practices. These are, in our opinion, the fundamental things that need to be understood before working on other aspects of a flight dynamics model. As such, these subjects comprise a large majority of both the effort and the length of the first edition.
+In this first volume, we cover primarily the translational dynamics and basics of rotational dynamics needed to set up a 6-\gls{dof} model. We mainly focus on the implementation of these equations in MATLAB and best practices. These are, in our opinion, the fundamental things that need to be understood before working on other aspects of a flight dynamics model. As such, these subjects comprise a large majority of both the effort and the length of the first volume.
+
+Because of the depth of the subjects described here, we have decided to cover most of attitude dynamics in a separate volume. In this volume, we mostly describe how attitude dynamics can be implemented in MATLAB. The second volume contains most of the theory about attitude dynamics. This second volume is especially useful for the mathematically inclined reader or those who want to implement quaternion math in another programming language
 
 As a note, while our work on flight dynamics has mainly focused on modeling rockets, we hope that this document can be used more widely for a variety of 3-DoF and 6-DoF models. As such, we have attempted to include content that is useful for other systems, such as aircraft modeling and orbital dynamics, insofar as we have experience in these areas. That being said, to limit the scope of this document, we have decided to explore these concepts in the context of rocket modeling, and hope that our explanations provide enough clarity for the intrepid reader to explore modeling in other domains.
 
@@ -349,7 +353,14 @@ Force & Functional Form \\
     first = \textit{reference area},
     description={An area that is used to define a characteristic area of an object in aerodynamics. This is used to normalize quantities such as lift and drag}
     }
-The notation here is important to understand. In future AAE classes at Purdue, this is likely the notation that you will see. Terms with the subscript $\infty$ denote \gls{freestream} quantities, those that are freely flowing far away from the body of interest. Also of note is the unit step function, which is a function which has value zero until reaching time $t_b$, where it thereafter equals one. The quantity  $\rho$ refers to the density of the fluid, and $S$ to the \gls{ref area}. The \textit{drag coefficient} is $C_D$, a term which encapsulates the very complex nature of the fluid flow around an object. Calculating the value of  will be explored more deeply in later sections of this document. For now, we may assume a constant value.
+
+    \newglossaryentry{drag coeff}
+{
+    name=drag coefficient,
+    first = \textit{drag coefficient},
+    description={A non dimensional parameter that describes the amount of drag acting on an object. This non-dimensionalized value is given by $\frac{F_D}{q_{\infty}S}$, where $q_{\infty}$ is the dynamic pressure, $\frac{1}{2}\rho_{\infty}V_{\infty}^2$}
+    }
+The notation here is important to understand. In future AAE classes at Purdue, this is likely the notation that you will see. Terms with the subscript $\infty$ denote \gls{freestream} quantities, those that are freely flowing far away from the body of interest. Also of note is the unit step function, which is a function which has value zero until reaching time $t_b$, where it thereafter equals one. The quantity  $\rho$ refers to the density of the fluid, and $S$ to the \gls{ref area}. The \gls{drag coeff} is $C_D$, a term which encapsulates the very complex nature of the fluid flow around an object. Calculating the value of  will be explored more deeply in later sections of this document. For now, we may assume a constant value.
 
 It is helpful to think about these quantities as vectors, because we can add them together to achieve a resultant.\footnote{More formally, we define this as a linear space, where multiplicative and additive properties are preserved. This formal definition allows us to apply this to any arbitrarily number of dimensions. } In the 1-dimensional case this is quite trivial since all vectors along the $\hat{y}$ unit vector, but this will become increasingly important as we move to higher dimensions.
 \subsection{Numerical Integration in the 1-DoF}\label{sec: Numerical Integration in the 1DoF}
@@ -663,6 +674,21 @@ Attitude Dynamics is the math describing the orientation of a vehicle in space a
 
 
 
+
+
+
+
+% THE QUATERNION SECTION IS BEING OVERHAULED IN THE NEW DOC DON'T REFERENCE ANYTHING HERE YET
+
+
+
+
+
+
+
+
+
+
 \section{Frame of Reference}\label{sec:Frame of Reference}
 Before attempting to describe the orientation of any random body in space, we must first discuss how and why this is possible. A frame of reference is an \textit{orthonormal} set within three-dimensional space. The orthonormal nature of the basis vectors that create every frame of reference allows for any other vector in three-dimensional space to be described as a linear combination of those three basis vectors (hence why we call it a basis for 3-space). This tool becomes incredibly useful within the study of Newtonian and Attitude Dynamics, as every \gls{state vector} can be broken down into three set “scalar” directions. Naturally, the question arises of how we determine which set directions to utilize, and so we will be discussing a few frames of reference critical to the creation of a 6-\gls{dof} and Aerospace engineering as a whole.
 \subsection{The Inertial Frame}
@@ -807,7 +833,7 @@ For our rocket, because of the symmetry about the $\hat{X}$ axis, these quantiti
 {
     name={inertia tensor},
     first=\textit{inertia tensor},
-    description={A matrix that describes the moment of inertia along each of the axes of a body. This matrix, often denoted $I$, transforms the angular velocity, $\omega$ into an angular momentum, $H$.}
+    description={A matrix that describes the moment of inertia along each of the axes of a body. This matrix, often denoted $I$, transforms the angular velocity, $\omega$ into an angular momentum, $H$}
 }
 We express our \gls{inertia tensor}, denoted $I$, as the $3\times3$ matrix which contains the moments and products of inertia.
 $$I=\begin{bmatrix}
@@ -1019,554 +1045,14 @@ One thing to note here is that we can express a rotation very cleanly and natura
     description={A group of three scalar values used to describe the orientation of a body in space}
 }
 
-Now that we have reinforced our knowledge of reference frames and completed the simple 2-dimensional case of rotation, we are ready to move on to the significantly more complicated 3-dimensional case. There are two possible ways to describe a 3-dimensional rotation, with the first and more basic of the two being the method of \gls{Euler angles}.
 
-Let’s say you’ve left the airport flying to Tahiti for vacation. While describing the translational motion of your aircraft is fairly simple, the orientation is much more difficult to determine. \gls{Euler angles} give a systematic method of describing that orientation with respect to an inertial frame. While systematic, there are many ways to describe the same rotation. Taking the example of your aircraft banking and climbing away from the airport, the pilot is actively controlling the aircraft using the aircraft’s control surfaces. These combine to alter the yaw, pitch, and roll of the aircraft. When mathematically describing the orientation of the aircraft as a combination of these angles, the order both does and does not matter. While keeping the same order throughout calculations is incredibly important - which we will show in subsequent sections - the initial order you choose doesn’t matter nearly as much. So long as you don’t double up on rotations (e.g. two roll movements in a row) you can choose any order of rotation you want. This means there are a total of 12 possible rotation sequences (stemming from 3 frames to choose from x 2 frames not chosen immediately prior x 2 frames not chosen immediately prior = 12 sequences). For further complexity, the generalized notation of rotation sequences and \gls{Euler angles} can be broken into two categories. The first of these are called proper Euler angles, and consist of the six rotation sequences that include a doubled rotation axis (e.g. 1-2-1, 1-3-1, 2-1-2, 2-3-2, 3-1-3, 3-2-3). The second of these groups are called Tait-Bryan angles, or Cardan angles, and consist of the six rotation sequences that include only distinct rotation axes (e.g. 1-2-3, 3-2-1, 2-1-3, 3-1-2, 1-3-2, 2-3-1). The most notable difference between the two is what becomes of the distinct rotation axes. Having distinct rotation axes allows us to pair each axis to one of pitch, yaw, or roll as seen in \ref{fig:BodyFrameTypical}, while proper Euler angles lack such a transparent connection to that more physical interpretation.
-
-In industry and in academia, the 3-1-3 and 3-2-1 rotation orders are by far the most popular. Our example specifically uses the 3-2-1 rotation sequence due to its distinct rotation axes and subsequent transparent connection with the traditional pitch, yaw, and roll maneuvers that is characteristic of the Tait-Bryan angles. We will use this option in our mathematical approaches throughout the rest of this section.
 
 \subsection{3-D Rotations}\label{sec:3DRotations}
 
-Like the 2-dimensional case before, we want to find a rotation matrix $R$ such that $\vec{v_2}=R\vec{v_1}$. Starting with our visualization, let’s say you now have a book laid flat on the table in front of you. We will now move through the two previously mentioned rotation sequences with that book: 3-2-1 and 3-1-3. Each of these individual rotations will be 90 degrees in the positive direction.
-We will run through each sequence parallel to each other so any differences and similarities between the two can be easily visualized. You might want to grab a similar sized shape and follow along to aid in your understanding!
 
-\begin{figure}[H]
-\centering
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
-
-\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
-%uncomment if require: \path (0,787); %set diagram left start at 0, and has height of 787
-
-%Shape: Cube [id:dp30473314642975957] 
-\draw   (63.04,117.46) -- (81.86,98.64) -- (111.98,98.64) -- (111.98,176.41) -- (93.16,195.23) -- (63.04,195.23) -- cycle ; \draw   (111.98,98.64) -- (93.16,117.46) -- (63.04,117.46) ; \draw   (93.16,117.46) -- (93.16,195.23) ;
-%Shape: Axis 2D [id:dp8167558306254183] 
-\draw  (79.23,147.36) -- (130.8,147.36)(84.39,78.12) -- (84.39,155.05) (123.8,142.36) -- (130.8,147.36) -- (123.8,152.36) (79.39,85.12) -- (84.39,78.12) -- (89.39,85.12)  ;
-%Straight Lines [id:da314709669225804] 
-\draw    (88.45,143.09) -- (52.04,189.38) ;
-\draw [shift={(50.81,190.96)}, rotate = 308.18] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Shape: Cube [id:dp04065664034078331] 
-\draw   (500.65,117.46) -- (519.47,98.64) -- (549.58,98.64) -- (549.58,176.41) -- (530.76,195.23) -- (500.65,195.23) -- cycle ; \draw   (549.58,98.64) -- (530.76,117.46) -- (500.65,117.46) ; \draw   (530.76,117.46) -- (530.76,195.23) ;
-%Shape: Axis 2D [id:dp3732351982959756] 
-\draw  (516.83,147.36) -- (568.4,147.36)(521.99,78.12) -- (521.99,155.05) (561.4,142.36) -- (568.4,147.36) -- (561.4,152.36) (516.99,85.12) -- (521.99,78.12) -- (526.99,85.12)  ;
-%Straight Lines [id:da7067184304168816] 
-\draw    (526.06,143.09) -- (489.65,189.38) ;
-\draw [shift={(488.41,190.96)}, rotate = 308.18] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Shape: Axis 2D [id:dp7824359400520153] 
-\draw  (87.65,327.45) -- (87.17,254.11)(18.07,320.48) -- (95.33,320.08) (82.22,261.14) -- (87.17,254.11) -- (92.22,261.09) (25.11,325.45) -- (18.07,320.48) -- (25.04,315.45)  ;
-%Straight Lines [id:da6575365467308292] 
-\draw    (91.27,315.07) -- (51.16,362.1) ;
-\draw [shift={(49.87,363.62)}, rotate = 310.46] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Shape: Axis 2D [id:dp26903333318867806] 
-\draw  (91.46,651.68) -- (154.33,651.68)(97.75,582.44) -- (97.75,659.37) (147.33,646.68) -- (154.33,651.68) -- (147.33,656.68) (92.75,589.44) -- (97.75,582.44) -- (102.75,589.44)  ;
-%Straight Lines [id:da6349794234163055] 
-\draw    (90.33,658.52) -- (150.18,590.44) ;
-\draw [shift={(151.5,588.94)}, rotate = 131.32] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Shape: Cube [id:dp3079853795797345] 
-\draw   (29.16,311.99) -- (47.11,294.04) -- (146.04,294.04) -- (146.04,320.03) -- (128.09,337.98) -- (29.16,337.98) -- cycle ; \draw   (146.04,294.04) -- (128.09,311.99) -- (29.16,311.99) ; \draw   (128.09,311.99) -- (128.09,337.98) ;
-%Shape: Axis 2D [id:dp9811912589376763] 
-\draw  (524.35,323.29) -- (524.18,249.96)(448.11,316.11) -- (532.8,315.94) (519.2,256.97) -- (524.18,249.96) -- (529.2,256.95) (455.12,321.09) -- (448.11,316.11) -- (455.1,311.09)  ;
-%Straight Lines [id:da8527731941171708] 
-\draw    (528.88,310.8) -- (489.68,358.65) ;
-\draw [shift={(488.41,360.2)}, rotate = 309.32] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Shape: Cube [id:dp41311458155167946] 
-\draw   (466.77,307.72) -- (484.72,289.77) -- (583.65,289.77) -- (583.65,315.75) -- (565.7,333.7) -- (466.77,333.7) -- cycle ; \draw   (583.65,289.77) -- (565.7,307.72) -- (466.77,307.72) ; \draw   (565.7,307.72) -- (565.7,333.7) ;
-%Shape: Axis 2D [id:dp09007049367762732] 
-\draw  (518.71,484.14) -- (591.93,484.14)(526.04,414.91) -- (526.04,491.84) (584.93,479.14) -- (591.93,484.14) -- (584.93,489.14) (521.04,421.91) -- (526.04,414.91) -- (531.04,421.91)  ;
-%Straight Lines [id:da7551423149111343] 
-\draw    (530.76,478.33) -- (485.01,531.69) ;
-\draw [shift={(483.71,533.21)}, rotate = 310.61] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Shape: Axis 2D [id:dp7930036978994484] 
-\draw  (93.76,489.64) -- (92.74,419.72)(17.43,483.55) -- (102.12,482.55) (87.84,426.78) -- (92.74,419.72) -- (97.84,426.66) (24.5,488.47) -- (17.43,483.55) -- (24.36,478.47)  ;
-%Straight Lines [id:da0514151325879022] 
-\draw    (86.57,489.27) -- (142.57,432.74) ;
-\draw [shift={(143.97,431.32)}, rotate = 134.73] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Shape: Cube [id:dp36832123870677336] 
-\draw   (465.07,497.31) -- (512.09,450.29) -- (583.46,450.29) -- (583.46,473.72) -- (536.45,520.73) -- (465.07,520.73) -- cycle ; \draw   (583.46,450.29) -- (536.45,497.31) -- (465.07,497.31) ; \draw   (536.45,497.31) -- (536.45,520.73) ;
-%Shape: Cube [id:dp9643780074556838] 
-\draw   (34.81,455.43) -- (45.24,445) -- (151.5,445) -- (151.5,494.4) -- (141.07,504.83) -- (34.81,504.83) -- cycle ; \draw   (151.5,445) -- (141.07,455.43) -- (34.81,455.43) ; \draw   (141.07,455.43) -- (141.07,504.83) ;
-%Shape: Cube [id:dp238953851849667] 
-\draw   (61.16,613.41) -- (73.49,601.08) -- (136.45,601.08) -- (136.45,689.61) -- (124.12,701.94) -- (61.16,701.94) -- cycle ; \draw   (136.45,601.08) -- (124.12,613.41) -- (61.16,613.41) ; \draw   (124.12,613.41) -- (124.12,701.94) ;
-%Shape: Axis 2D [id:dp7592681759502293] 
-\draw  (520.6,633.44) -- (583.46,633.44)(526.88,704.68) -- (526.88,625.52) (576.46,638.44) -- (583.46,633.44) -- (576.46,628.44) (521.88,697.68) -- (526.88,704.68) -- (531.88,697.68)  ;
-%Straight Lines [id:da36047739383645205] 
-\draw    (532.64,627.06) -- (472.79,695.82) ;
-\draw [shift={(471.47,697.33)}, rotate = 311.04] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Shape: Cube [id:dp22943768586952062] 
-\draw   (489.35,596.31) -- (501.68,583.98) -- (564.64,583.98) -- (564.64,672.52) -- (552.31,684.85) -- (489.35,684.85) -- cycle ; \draw   (564.64,583.98) -- (552.31,596.31) -- (489.35,596.31) ; \draw   (552.31,596.31) -- (552.31,684.85) ;
-
-% Text Node
-\draw (133.46,136.2) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (78.87,54.99) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (37.47,186.63) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
-% Text Node
-\draw (150.78,82.09) node [anchor=north west][inner sep=0.75pt]  [xslant=0.01] [align=left] {The initial orientation of our book. The large flat \\side denotes the x-axis, small top denotes y, \\and long flat spine denotes z. At each rotation,\\notice how the axis corresponding to the number\\in the sequence remains pointing in the same\\direction.};
-% Text Node
-\draw (571.06,136.2) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (516.48,54.99) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (475.07,186.63) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
-% Text Node
-\draw (26.59,21.33) node [anchor=north west][inner sep=0.75pt]   [align=left] {3-2-1 sequence};
-% Text Node
-\draw (173.59,274.9) node [anchor=north west][inner sep=0.75pt]   [align=left] {The first rotation of the book. As the \\first rotation of each sequence is the \\same, this orientation is identical for \\both orders.};
-% Text Node
-\draw (79.82,231.93) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (3.59,308.86) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (37.47,361.86) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
-% Text Node
-\draw (150.4,570.42) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (91.11,556.75) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (158.87,641.37) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
-% Text Node
-\draw (518.36,230.22) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (434.6,304.59) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (476.01,358.44) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
-% Text Node
-\draw (183.32,437.99) node [anchor=north west][inner sep=0.75pt]   [align=left] {The second rotation of the book. At\\this point, differences appear in the\\orientation of each book depending\\on what sequence it follows.};
-% Text Node
-\draw (519.3,393.49) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (471.31,532.81) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (597.41,473.83) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
-% Text Node
-\draw (148.51,414.85) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (4.53,472.13) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (87.34,400.32) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
-% Text Node
-\draw (176.44,545.1) node [anchor=north west][inner sep=0.75pt]   [align=left] {The third and final rotation. If the axis \\weren't present in this image, your first\\thought might be that the orientations\\are identical; however, that isn't the case\\and you can see the axis. This shows\\that while every rotation sequece can\\end in a similar orientation, it takes \\different angles of rotation to achieve an\\identical ending orientation. This will have\\an impact on the derivation of our rotation\\matrix. };
-% Text Node
-\draw (456.25,689.24) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (522.13,707.19) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (588.94,622.57) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
-% Text Node
-\draw (473,20) node [anchor=north west][inner sep=0.75pt]   [align=left] {3-1-3 sequence};
-
-
-\end{tikzpicture}
-
-    \caption{Visualization of 3-Dimensional Rotation Sequences}
-    \label{fig:3DParallelVisualization}
-\end{figure}
-
-Reinforcing the idea that different rotations are needed to achieve identical ending orientations for different rotation sequences, say you change the final 3-1-3 rotation to be -90 degrees. That ending orientation would now be perfectly identical to the 3-2-1 sequence! So despite what sequence you use, every possible ending orientation has the ability to be described by every rotation sequence, albeit with different individual angles of rotation. Now that we’ve seen the differences between the rotation sequences in the physical world, let’s try to describe them in the realm of mathematics. We will be following the 3-2-1 rotation sequence shown on the left of the image above. Like how we were able to visualize them above, we’re going to break each rotation down into smaller sets. In total we will go from the initial frame ($\hat{x}$,$\hat{y}$,$\hat{z}$), to the first intermediate frame (denoted by prime: $x'$), to the second intermediate frame (denoted by double prime: $x''$), to our final body frame ($\hat{X}$,$\hat{Y}$,$\hat{Z}$).
-$$(\hat{x},\hat{y},\hat{z})\rightarrow(\hat{x}',\hat{y}',\hat{z}')\rightarrow(\hat{x}'',\hat{y}'',\hat{z}'')\rightarrow(\hat{X},\hat{Y},\hat{Z})$$
-
-Having broken the big picture down into smaller, simpler ones, we can see that this daunting manipulation of the vehicle’s orientation in 3-dimensional space is merely a set of three simple 2-dimensional rotations in a set sequence (a fact heavily implied by the spatial manipulation of the textbook earlier!). The gls{Euler angles} correspond to a 2-dimensional rotation about a paired axis. Our angle $\psi$ pairs with the z-axis and typically corresponds to the yaw of an aircraft, $\theta$ pairs with the y-axis and the pitch, while $\phi$ pairs with the x-axis and the roll. Images \ref{fig:BodyFrameTypical} and \ref{fig:BodyFrameRocket} reflect this, visualizing the standard and specific conventions for such a notation.
-
-Utilizing this information and recalling our rotation matrix from 2-dimensional space \eqref{eq:2DMatrix} we can expand to 3-dimensional space. Our angle $\psi$, with it’s connection to the z-axis needs that axis to remain “stationary”. Therefore, the third component of the vector we are rotating about will always be multiplied by 1. Before throwing this in a matrix, let’s double check the rotation matrix for a vector also applies for the rotation of a frame.
-
-Visualizing the rotation of the prime frame with respect to the initial frame by an angle $\psi$ about the z-axis, we get:
-
-\begin{figure}[H]
-\centering
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
-
-\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
-%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
-
-%Shape: Axis 2D [id:dp8814120358250415] 
-\draw  (294.8,194.88) -- (467,194.88)(312.02,48) -- (312.02,211.2) (460,189.88) -- (467,194.88) -- (460,199.88) (307.02,55) -- (312.02,48) -- (317.02,55)  ;
-%Shape: Axis 2D [id:dp1264953723655049] 
-\draw  (297.24,203.72) -- (445.04,115.36)(236.66,68.81) -- (320.39,208.89) (436.47,114.66) -- (445.04,115.36) -- (441.6,123.24) (235.96,77.38) -- (236.66,68.81) -- (244.54,72.25)  ;
-%Curve Lines [id:da4379409407097825] 
-\draw    (391.8,194.2) .. controls (389.87,170.07) and (387.01,171.09) .. (376.03,159.51) ;
-\draw [shift={(374.8,158.2)}, rotate = 47.29] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da47080870387004614] 
-\draw    (311.8,126.2) .. controls (291.74,122.38) and (289.02,131.33) .. (282.72,142.59) ;
-\draw [shift={(281.8,144.2)}, rotate = 300.26] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da40076953586454556] 
-\draw    (309.8,220.8) .. controls (350.39,210.9) and (319.43,157.88) .. (282.91,192.72) ;
-\draw [shift={(281.8,193.8)}, rotate = 315] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-
-% Text Node
-\draw (470,182.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (307,24.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (449,96.4) node [anchor=north west][inner sep=0.75pt]    {$\widehat{x'}$};
-% Text Node
-\draw (225,42.4) node [anchor=north west][inner sep=0.75pt]    {$\widehat{y'}$};
-% Text Node
-\draw (281,104.4) node [anchor=north west][inner sep=0.75pt]    {$\psi $};
-% Text Node
-\draw (395,162.4) node [anchor=north west][inner sep=0.75pt]    {$\psi $};
-% Text Node
-\draw (254,191.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{z} ,\widehat{z'}$};
-
-\end{tikzpicture}
-   
-    \caption{First Frame Rotation in 3-2-1 Sequence}
-    \label{fig:3DZRotation}
-\end{figure}
-
-Computing the trigonometry to translate from the initial to prime frame, we get the following set of equations:
-$$\hat{x}'=cos(\psi)\hat{x}+sin(\psi)\hat{y}$$
-$$\hat{y}'=-sin(\psi)\hat{x}+cos(\psi)\hat{y}$$
-$$\hat{z}'=\hat{z}$$
-Concatenating these into a single matrix, we get the following rotation matrix about the z-axis in 3-dimensional space for a 3-2-1 rotation:
-\begin{equation}\label{eq:3DZMatrix}
-R(\psi)=\begin{bmatrix}
-    cos(\psi)&sin(\psi)&0\\-sin(\psi)&cos(\psi)&0\\0&0&1
-\end{bmatrix}
-\end{equation}
-We can see this matrix is in fact different from our 2-dimensional rotation matrix \eqref{eq:2DMatrix}! The reason for this stems from the fact that while in 2-dimensions, we were rotating a vector, we are now rotating an entire frame at once in 3-dimensions. This difference has a subtle impact on the trigonometry of the problem, leading to the negative sine term switching across the diagonal. Performing the same process for our y-axis ($\theta$) we get the image and equations shown below:
-
-\begin{figure}[H]
-    
-\centering
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
-
-\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
-%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
-
-%Shape: Axis 2D [id:dp10624606154766014] 
-\draw  (289.8,225.88) -- (462,225.88)(307.02,79) -- (307.02,242.2) (455,220.88) -- (462,225.88) -- (455,230.88) (302.02,86) -- (307.02,79) -- (312.02,86)  ;
-%Shape: Axis 2D [id:dp07151631286404303] 
-\draw  (292.24,234.72) -- (440.04,146.36)(231.66,99.81) -- (315.39,239.89) (431.47,145.66) -- (440.04,146.36) -- (436.6,154.24) (230.96,108.38) -- (231.66,99.81) -- (239.54,103.25)  ;
-%Curve Lines [id:da006532196783956223] 
-\draw    (386.8,225.2) .. controls (384.87,201.07) and (382.01,202.09) .. (371.03,190.51) ;
-\draw [shift={(369.8,189.2)}, rotate = 47.29] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da19094795610816706] 
-\draw    (306.8,157.2) .. controls (286.74,153.38) and (284.02,162.33) .. (277.72,173.59) ;
-\draw [shift={(276.8,175.2)}, rotate = 300.26] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da8842649250634054] 
-\draw    (304.8,251.8) .. controls (345.39,241.9) and (314.43,188.88) .. (277.91,223.72) ;
-\draw [shift={(276.8,224.8)}, rotate = 315] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-
-% Text Node
-\draw (465,213.4) node [anchor=north west][inner sep=0.75pt]    {$\widehat{z'}$};
-% Text Node
-\draw (302,55.4) node [anchor=north west][inner sep=0.75pt]    {$\widehat{x'}$};
-% Text Node
-\draw (444,127.4) node [anchor=north west][inner sep=0.75pt]    {$\widehat{z''}$};
-% Text Node
-\draw (220,73.4) node [anchor=north west][inner sep=0.75pt]    {$\widehat{x''}$};
-% Text Node
-\draw (276,135.4) node [anchor=north west][inner sep=0.75pt]    {$\theta $};
-% Text Node
-\draw (390,193.4) node [anchor=north west][inner sep=0.75pt]    {$\theta $};
-% Text Node
-\draw (242,230.4) node [anchor=north west][inner sep=0.75pt]    {$\widehat{y'} ,\widehat{y''}$};
-
-
-\end{tikzpicture}
-
-    \caption{Second Frame Rotation in 3-2-1 Sequence}
-    \label{fig:3DYRotation}
-
-\end{figure}
-$$\hat{x}''=cos(\theta)\hat{x}'-sin(\theta)\hat{z}'$$
-$$\hat{y}''=\hat{y}'$$
-$$\hat{z}''=sin(\theta)\hat{x}'+cos(\theta)\hat{z}'$$
-And finally the matrix:
-$$R(\theta)=\begin{bmatrix}
-    cos(\theta)&0&-sin(\theta)\\0&1&0\\sin(\theta)&0&cos(\theta)
-\end{bmatrix}$$
-Finally for our x-axis ($\phi$), we get the image and equation below:
-
-\begin{figure}[H]
-    \centering
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
-
-\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
-%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
-
-%Shape: Axis 2D [id:dp37741929808299357] 
-\draw  (265.8,214.88) -- (438,214.88)(283.02,68) -- (283.02,231.2) (431,209.88) -- (438,214.88) -- (431,219.88) (278.02,75) -- (283.02,68) -- (288.02,75)  ;
-%Shape: Axis 2D [id:dp4057280236537508] 
-\draw  (268.24,223.72) -- (416.04,135.36)(207.66,88.81) -- (291.39,228.89) (407.47,134.66) -- (416.04,135.36) -- (412.6,143.24) (206.96,97.38) -- (207.66,88.81) -- (215.54,92.25)  ;
-%Curve Lines [id:da7885616787760448] 
-\draw    (362.8,214.2) .. controls (360.87,190.07) and (358.01,191.09) .. (347.03,179.51) ;
-\draw [shift={(345.8,178.2)}, rotate = 47.29] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da4316718282657035] 
-\draw    (282.8,146.2) .. controls (262.74,142.38) and (260.02,151.33) .. (253.72,162.59) ;
-\draw [shift={(252.8,164.2)}, rotate = 300.26] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da8810661168844911] 
-\draw    (280.8,240.8) .. controls (321.39,230.9) and (290.43,177.88) .. (253.91,212.72) ;
-\draw [shift={(252.8,213.8)}, rotate = 315] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-
-% Text Node
-\draw (441,202.4) node [anchor=north west][inner sep=0.75pt]    {$\widehat{y''}$};
-% Text Node
-\draw (278,44.4) node [anchor=north west][inner sep=0.75pt]    {$\widehat{z''}$};
-% Text Node
-\draw (420,116.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{Y}$};
-% Text Node
-\draw (196,62.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{Z}$};
-% Text Node
-\draw (252,124.4) node [anchor=north west][inner sep=0.75pt]    {$\phi $};
-% Text Node
-\draw (366,182.4) node [anchor=north west][inner sep=0.75pt]    {$\phi $};
-% Text Node
-\draw (218,219.4) node [anchor=north west][inner sep=0.75pt]    {$\widehat{x''} ,\hat{X}$};
-
-
-\end{tikzpicture}
-    \caption{Final Frame Rotation in 3-2-1 Sequence}
-    \label{fig:3DXRotation}
-\end{figure}
-$$\hat{X}=\hat{x}''$$
-$$\hat{Y}=cos(\phi)\hat{y}''+sin(\phi)\hat{z}''$$
-$$\hat{Z}=-sin(\phi)\hat{y}''+cos(\phi)\hat{z}''$$
-And finally our last matrix:
-$$R(\phi)=\begin{bmatrix}
-    1&0&0\\0&cos(\phi)&sin(\phi)\\0&-sin(\phi)&cos(\phi)
-\end{bmatrix}$$
-Note it is VERY important to derive the individual rotation matrices with simple trigonometry for each axis if you choose a different rotation sequence, as the terms of each element in the matrix elements may change depending on what you do!
 
 \subsection{The Direction Cosine Matrix}\label{sec:TheDCM}
-Having matrices for each individual rotation is a great start; however, we want to get to the form:
-\begin{equation}\label{eq:EulerRotation}
-\vec{R}=A_{3,2,1}\vec{r}
-\end{equation}
-The 3x3 matrix $A_{3,2,1}$ is the \textit{Direction Cosine Matrix} or \textit{DCM}. This is the final, 3-dimensional rotation matrix you multiply with your inertial vector to express any vector in your body frame. Intuitively, we can presume the DCM will be some matrix multiplication of the three individual rotations. But in what order do we multiply our individual axis rotation matrices together? Remember, order matters in matrix multiplication as it is NOT commutative. So, determining the proper order is essential to the accuracy of the equation.
 
-To work through this, we’re going to fall back on the tried-and-true method of visualization. Looking back at the image of our book, we’re going to replace the book with only the axis. The following set of images moves through these rotations; however, on a 2-dimensional piece of paper it’s a bit difficult to depict a 3-dimensional rotation.
-
-\begin{figure}[H]
-\centering
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
-
-\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
-%uncomment if require: \path (0,723); %set diagram left start at 0, and has height of 723
-
-%Shape: Axis 2D [id:dp169089929067181] 
-\draw  (113.61,91.42) -- (207.61,91.42)(123.01,21.27) -- (123.01,99.22) (200.61,86.42) -- (207.61,91.42) -- (200.61,96.42) (118.01,28.27) -- (123.01,21.27) -- (128.01,28.27)  ;
-%Straight Lines [id:da807678379259174] 
-\draw    (130.34,86.28) -- (75.52,128.71) ;
-\draw [shift={(73.94,129.93)}, rotate = 322.26] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Shape: Axis 2D [id:dp7622456541943443] 
-\draw  (117.37,252) -- (211.37,252)(126.77,181.85) -- (126.77,259.8) (204.37,247) -- (211.37,252) -- (204.37,257) (121.77,188.85) -- (126.77,181.85) -- (131.77,188.85)  ;
-%Straight Lines [id:da7627359224242283] 
-\draw    (134.1,246.86) -- (79.28,289.28) ;
-\draw [shift={(77.7,290.51)}, rotate = 322.26] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da9944755330031119] 
-\draw    (126.77,252) -- (208.24,252.15) ;
-\draw [shift={(210.24,252.16)}, rotate = 180.11] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da8159551049186013] 
-\draw    (133.35,259.8) -- (82.71,196.81) ;
-\draw [shift={(81.46,195.25)}, rotate = 51.2] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da2841054255340081] 
-\draw    (129.4,245.14) -- (97.35,312.71) ;
-\draw [shift={(96.5,314.52)}, rotate = 295.37] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da4204693895037821] 
-\draw    (124.89,211.47) .. controls (113.99,207.17) and (109.2,209.77) .. (103.11,219.4) ;
-\draw [shift={(102.14,220.98)}, rotate = 301.09] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da10253203244713682] 
-\draw    (97.44,275.54) .. controls (94.72,285.32) and (94.62,289.29) .. (109.82,284.65) ;
-\draw [shift={(111.54,284.12)}, rotate = 162.13] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da8112981285659084] 
-\draw    (350.5,252) -- (431.98,252.15) ;
-\draw [shift={(433.98,252.16)}, rotate = 180.11] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da22117378034771829] 
-\draw    (363.66,258.24) -- (313.02,195.25) ;
-\draw [shift={(311.77,193.69)}, rotate = 51.2] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da6076277803798291] 
-\draw    (360.65,245.92) -- (328.61,313.49) ;
-\draw [shift={(327.75,315.3)}, rotate = 295.37] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da22428135782433367] 
-\draw    (126.77,433.63) -- (208.24,433.78) ;
-\draw [shift={(210.24,433.78)}, rotate = 180.11] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da6183300172376611] 
-\draw    (139.93,439.86) -- (89.29,376.88) ;
-\draw [shift={(88.04,375.32)}, rotate = 51.2] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da7023296453623051] 
-\draw    (136.92,427.54) -- (104.87,495.11) ;
-\draw [shift={(104.02,496.92)}, rotate = 295.37] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da8491036796335945] 
-\draw    (144.63,438.15) -- (62.6,401.24) ;
-\draw [shift={(60.77,400.42)}, rotate = 24.22] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da9327416644156861] 
-\draw    (124.89,439.71) -- (191.6,400.65) ;
-\draw [shift={(193.32,399.64)}, rotate = 149.65] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da18651531365927365] 
-\draw    (176.59,434.25) .. controls (195.07,419.96) and (184.33,415.69) .. (173.57,412.63) ;
-\draw [shift={(171.7,412.11)}, rotate = 15.45] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da031042459135772082] 
-\draw    (108.91,399.95) .. controls (95.47,402.59) and (93.84,403.44) .. (91.35,412.59) ;
-\draw [shift={(90.86,414.45)}, rotate = 284.49] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da8477850498962038] 
-\draw    (368.17,430.66) -- (336.13,498.23) ;
-\draw [shift={(335.27,500.04)}, rotate = 295.37] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da8683274216475789] 
-\draw    (373.06,438.93) -- (291.03,402.02) ;
-\draw [shift={(289.21,401.2)}, rotate = 24.22] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da6438781119062607] 
-\draw    (358.96,440.48) -- (425.67,401.43) ;
-\draw [shift={(427.4,400.42)}, rotate = 149.65] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da784757290818016] 
-\draw    (129.4,602.93) -- (97.35,670.5) ;
-\draw [shift={(96.5,672.31)}, rotate = 295.37] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da5207150108611938] 
-\draw    (134.29,611.2) -- (52.26,574.29) ;
-\draw [shift={(50.43,573.47)}, rotate = 24.22] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da3827560154389007] 
-\draw    (120.19,612.76) -- (186.9,573.7) ;
-\draw [shift={(188.62,572.69)}, rotate = 149.65] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da7174569054516935] 
-\draw    (120.19,617.59) -- (168.58,556.48) ;
-\draw [shift={(169.82,554.92)}, rotate = 128.38] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da9275189259533729] 
-\draw    (124.7,602.15) -- (137.31,670.03) ;
-\draw [shift={(137.67,672)}, rotate = 259.48] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da9856031421968732] 
-\draw    (355.2,611.98) -- (273.17,575.07) ;
-\draw [shift={(271.35,574.25)}, rotate = 24.22] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da7331613532371395] 
-\draw    (348.43,602.93) -- (361.04,670.81) ;
-\draw [shift={(361.41,672.78)}, rotate = 259.48] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da8402538325418802] 
-\draw    (342.98,618.37) -- (391.37,557.26) ;
-\draw [shift={(392.62,555.7)}, rotate = 128.38] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da10285996627493943] 
-\draw    (161.55,587.97) .. controls (166.54,578.41) and (161.45,578.9) .. (154.79,577.26) ;
-\draw [shift={(152.9,576.74)}, rotate = 17.27] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da7838509707746697] 
-\draw    (108.91,645.65) .. controls (116.93,652.15) and (113.63,656.02) .. (132.3,648.42) ;
-\draw [shift={(134.1,647.68)}, rotate = 157.48] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-
-% Text Node
-\draw (117.95,0.97) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (58.72,123.36) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (211.95,80.48) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
-% Text Node
-\draw (280.54,41.24) node [anchor=north west][inner sep=0.75pt]   [align=left] {Our original inertial frame\\of the vehicle.};
-% Text Node
-\draw (121.71,161.55) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (62.48,283.93) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (215.2,241.06) node [anchor=north west][inner sep=0.75pt]    {$\hat{z} ,\hat{z} '$};
-% Text Node
-\draw (101.94,192.17) node [anchor=north west][inner sep=0.75pt]    {$\psi $};
-% Text Node
-\draw (88.77,284.16) node [anchor=north west][inner sep=0.75pt]    {$\psi $};
-% Text Node
-\draw (71.79,177.14) node [anchor=north west][inner sep=0.75pt]    {$\hat{x} '$};
-% Text Node
-\draw (87.77,314.34) node [anchor=north west][inner sep=0.75pt]    {$\hat{y} '$};
-% Text Node
-\draw (298.35,174.8) node [anchor=north west][inner sep=0.75pt]    {$\hat{x} '$};
-% Text Node
-\draw (314.33,313.56) node [anchor=north west][inner sep=0.75pt]    {$\hat{y} '$};
-% Text Node
-\draw (437.51,241.06) node [anchor=north west][inner sep=0.75pt]    {$\hat{z} '$};
-% Text Node
-\draw (465.2,206.54) node [anchor=north west][inner sep=0.75pt]   [align=left] {Our first rotation\\about the z/z' axis \\by an angle of \\ \ \ \ degrees.};
-% Text Node
-\draw (469.5,261.55) node [anchor=north west][inner sep=0.75pt]    {$\psi $};
-% Text Node
-\draw (74.61,356.43) node [anchor=north west][inner sep=0.75pt]    {$\hat{x} '$};
-% Text Node
-\draw (82.32,496.74) node [anchor=north west][inner sep=0.75pt]    {$\hat{y} ',\hat{y} ''$};
-% Text Node
-\draw (213.77,422.69) node [anchor=north west][inner sep=0.75pt]    {$\hat{z} '$};
-% Text Node
-\draw (38.74,390.57) node [anchor=north west][inner sep=0.75pt]    {$\hat{x} ''$};
-% Text Node
-\draw (195.76,384.33) node [anchor=north west][inner sep=0.75pt]    {$\hat{z} ''$};
-% Text Node
-\draw (82.22,388.45) node [anchor=north west][inner sep=0.75pt]    {$\theta $};
-% Text Node
-\draw (188.45,410.28) node [anchor=north west][inner sep=0.75pt]    {$\theta $};
-% Text Node
-\draw (427.96,385.89) node [anchor=north west][inner sep=0.75pt]    {$\hat{z} ''$};
-% Text Node
-\draw (273.76,385.89) node [anchor=north west][inner sep=0.75pt]    {$\hat{x} ''$};
-% Text Node
-\draw (322.64,499.86) node [anchor=north west][inner sep=0.75pt]    {$\hat{y} ''$};
-% Text Node
-\draw (473.71,403.58) node [anchor=north west][inner sep=0.75pt]   [align=left] {Our next rotation\\about the y'/y'' axis by \\an angle of \ \ \ \ degrees.};
-% Text Node
-\draw (552.26,440.68) node [anchor=north west][inner sep=0.75pt]    {$\theta $};
-% Text Node
-\draw (189.18,558.16) node [anchor=north west][inner sep=0.75pt]    {$\hat{z} ''$};
-% Text Node
-\draw (28.77,551.49) node [anchor=north west][inner sep=0.75pt]    {$\hat{x} '',\hat{X}$};
-% Text Node
-\draw (83.86,672.13) node [anchor=north west][inner sep=0.75pt]    {$\hat{y} ''$};
-% Text Node
-\draw (132.96,671.69) node [anchor=north west][inner sep=0.75pt]    {$\hat{Y}$};
-% Text Node
-\draw (167.74,532.16) node [anchor=north west][inner sep=0.75pt]    {$\hat{Z}$};
-% Text Node
-\draw (389.59,532.16) node [anchor=north west][inner sep=0.75pt]    {$\hat{Z}$};
-% Text Node
-\draw (356.69,672.47) node [anchor=north west][inner sep=0.75pt]    {$\hat{Y}$};
-% Text Node
-\draw (255.14,557.88) node [anchor=north west][inner sep=0.75pt]    {$\hat{X}$};
-% Text Node
-\draw (163.98,564) node [anchor=north west][inner sep=0.75pt]    {$\phi $};
-% Text Node
-\draw (112.28,655.2) node [anchor=north west][inner sep=0.75pt]    {$\phi $};
-% Text Node
-\draw (437.5,565.09) node [anchor=north west][inner sep=0.75pt]   [align=left] {The final rotation\\about the x''/X axis\\by an angle of \ \ \ \ degrees};
-% Text Node
-\draw (536.24,601.41) node [anchor=north west][inner sep=0.75pt]    {$\phi $};
-
-
-\end{tikzpicture}
-
-    \caption{3-2-1 Rotation Order}
-    \label{fig:RotationOrder}
-\end{figure}
-
-Moving in order of our rotations, from 3 to 2 to 1, one might assume this is the proper order of matrix multiplication as well. However, looking at this case, this would be applying the rotations in the opposite order to how we should. We want the first rotation to be adjacent to our inertial vector, then the second rotation, and finally the last all the way to the left. This will allow each rotation to only impact and compound on the rotations after it. This reasoning will be reinforced later in \ref{sec:DescribeEulerRates}
-For now, we can expand our original equation to the following form: 
-$$\vec{R}=A_1(\phi)A_2(\theta)A_3(\psi)$$
-This gives us the following equation for computing our DCM:
-$$A_{3,2,1}=A_1A_2A_3=\begin{bmatrix}
-    1&0&0\\0&cos(\phi)&sin(\phi)\\0&-sin(\phi)&cos(\phi)
-\end{bmatrix}
-\begin{bmatrix}
-    cos(\theta)&0&-sin(\theta)\\0&1&0\\sin(\theta)&0&cos(\theta)
-\end{bmatrix}
-\begin{bmatrix}
-    cos(\psi)&sin(\psi)&0\\-sin(\psi)&cos(\psi)&0\\0&0&1
-\end{bmatrix}$$
-Computing the matrix multiplication\footnote{Due to the size of the DCM, we've introduced a shorthand to make the matrix more readable. Namely, cosine is denoted as c() and sine as s().}, we get:
-$$A_{3,2,1}=\begin{bmatrix}
-    c(\theta)c(\psi)&c(\theta)s(\psi)&-s(\theta)\\
-    s(\phi)s(\theta)c(\psi)-c(\phi)s(\psi)&s(\phi)s(\theta)s(\psi)+c(\phi)c(\psi)&s(\phi)c(\theta)\\
-    c(\phi)s(\theta)c(\psi)+s(\phi)s(\psi)&c(\phi)s(\theta)s(\psi)-s(\phi)c(\psi)&c(\phi)c(\theta)
-\end{bmatrix}$$
-
-This sizable matrix is the final form of our DCM for the 3-2-1 rotation sequence, which translates everything from the inertial frame into the body frame. Due to its nature as a rotation matrix, it is a square orthogonal matrix, and therefore the inverse is equal to the transpose. This makes converting in the opposite direction from body to inertial just as easy, as we rewrite equation \eqref{eq:EulerRotation} to get:
-$$\vec{r}=A_{3,2,1}^T\vec{R}$$
-
-A quick note on the limitations of the DCM expressed with \gls{Euler angles}: for any rotation order you choose, there will exist an angle such that you effectively ''loose'' a direction of rotation. Taking our $A_{3,2,1}$ matrix, for example, it is apparent there is a lack of robustness when it comes to the $\theta$ direction. Let's plug in arbitrary values for $\psi$ and $\phi$, and $\theta=\pi/2$. This results in the following:
-$$A_{3,2,1}(\psi,[\theta=\frac{\pi}{2}],\phi)=\begin{bmatrix}
-    0&0&-1\\s(\phi)c(\psi)-c(\phi)s(\psi)&s(\phi)s(\psi)+c(\phi)c(\psi)&0\\
-    c(\phi)c(\psi)+s(\phi)s(\psi)&c(\phi)s(\psi)-s(\phi)c(\psi)&0
-\end{bmatrix}$$
-
-This can be further simplified using trig identities as follows:
-$$A_{3,2,1}(\psi,[\theta=\frac{\pi}{2}],\phi)=\begin{bmatrix}
-    0&0&-1\\sin(\phi-\psi)&cos(\phi-\psi)&0\\
-    cos(\phi-\psi)&sin(\phi-\psi)&0
-\end{bmatrix}$$
-In the form above, it becomes apparent that only the sum $\phi-\psi$ becomes available with $\theta$ nowhere to be found.\footnote{Note that in this case, this is generally true for the set \{$\theta=k\pi+(\pi/2)$, $k\in\mathbb{Z}$\}. However, the sign of each element of the final matrix will potentially be different.} This lack of a $\theta$ is what induces the ''loss'' of a degree of freedom in the simulation, as you can no longer express that specific direction within your DCM. Obviously, the loss of a degree of freedom is catastrophic to a simulation model such as a 6\gls{dof}. Luckily, there is a tool available that lets us avoid such a catastrophe! This method is the use of \glspl{quaternion} and will be discussed later \ref{sec:quaternions}. While being a more robust solution, \glspl{quaternion} are based on significantly more advanced mathematics. But we’ll get there eventually, for now we’ll talk about the derivatives of \gls{Euler angles} and their uses.
 
 \subsection{Describing Angular Velocity with Euler Angles and Rates}
 
@@ -1577,176 +1063,11 @@ In the form above, it becomes apparent that only the sum $\phi-\psi$ becomes ava
     description={A way to describe rotational rates with orientation for 3-dimensional rotations, they are denoted by the dot of the corresponding Euler angle: ($\dot{\psi},\dot{\theta},\dot{\phi}$)}
 }
 
-In most simple 2-dimensional cases, the derivative of an angle as a function of time is angular velocity. However, in 3-dimensional space, these two are NOT equivalent. This stems from the fact that our \gls{Euler angles} describe the orientation of our vehicle in space, while angular velocity does not necessarily describe the orientation. This describes the necessity for Euler angle rates, or simply \gls{Euler rates}, as they give a way to describe the speed of rotation and orientation at once. To start describing the correlation between angular velocity and \gls{Euler rates}, just like our work deriving the DCM, we’ll start with smaller pieces and build up to the big picture.
 
-In the individual rotations depicted in figure \ref{fig:RotationOrder}, we can derive the following equations for the angular velocity in each given each case is that of a simplified 2-dimensional one:
-$$\dot{\boldsymbol{\psi}}=\prescript{x}{}{}\omega^{x'}$$
-$$\dot{\boldsymbol{\theta}}=\prescript{x'}{}{}\omega^{x''}$$
-$$\dot{\boldsymbol{\phi}}=\prescript{x''}{}{}\omega^X$$
-With the knowledge that adding angular velocities between connecting frames is possible, we can write:
-\begin{equation}\label{eq:AngularVelocityWithEulerRate}
-\prescript{e}{}{}\omega^b=\prescript{x}{}{}\omega^X=\dot{\boldsymbol{\psi}}+\dot{\boldsymbol{\theta}}+\dot{\boldsymbol{\phi}}
-\end{equation}
-Where $\prescript{e}{}{}\omega^b$ is simply read as the angular velocity of the body frame in the earth frame. We can further equate this using the basis vectors of the body frame like so:
-\begin{equation}\label{eq:AngularVelocityComponents}
-    \prescript{e}{}{}\omega^b=\omega_X\hat{b}_1+\omega_Y\hat{b}_2+\omega_Z\hat{b}_3
-\end{equation}
-Our goal is to solve the right hand side of \eqref{eq:AngularVelocityWithEulerRate} - and therefore \eqref{eq:AngularVelocityComponents} - to give us an expression for the angular velocity of our rocket in terms of \gls{Euler angles} and \gls{Euler rates}. Intuitively, this means we want to find a way to take our simple 2-dimensional \gls{Euler rates} and convert them into the body frame to be able to do so. Luckily, we've already completed such a process in section \ref{sec:TheDCM}. Similar to our DCM, we will take each of the 2-dimensional \gls{Euler rates} and us matrix multiplication with our individual axis rotations to achieve our goal. Starting with the first rotation in our chosen sequence - the $\psi$ angle - we must first express $\dot{\boldsymbol{\psi}}$ as a full vector of appropriate size for matrix multiplication. This is as follows:
-$$\dot{\boldsymbol{\psi}}=\dot{\psi}\hat{z}=\dot{\psi}\hat{z}'=\begin{bmatrix}
-    0\\0\\\dot{\psi}
-\end{bmatrix}$$
-Having expressed our rate as a vector, we can now move onto the matrix multiplication. Setting up the process, we get the following:
-$$\dot{\boldsymbol{\psi}}=\begin{bmatrix}
-    1&0&0\\0&c(\phi)&s(\phi)\\0&-s(\phi)&c(\phi)
-\end{bmatrix}\begin{bmatrix}
-    c(\theta)&0&-s(\theta)\\0&1&0\\s(\theta)&0&c(\theta)
-\end{bmatrix}\begin{bmatrix}
-    c(\psi)&s(\psi)&0\\-s(\psi)&c(\psi)&0\\0&0&1
-\end{bmatrix}\begin{bmatrix}
-    0\\0\\\dot{\psi}
-\end{bmatrix}$$
-Before working through the matrix multiplication, we can make a simplification to make our life easier. That being removing the rightmost matrix from the equation. The physical reasoning behind this comes from the fact that this matrix is the individual rotation matrix about the same axis our $\dot{\psi}$. As we know from the definition that this axis will remain unrotated, we can drop this term. This reinforces the idea that this multiplication order for the DCM is correct, as the angle of the pitch has no effect on its own rate, while the other rotations do. We then get:
-$$\dot{\boldsymbol{\psi}}=\begin{bmatrix}
-    1&0&0\\0&c(\phi)&s(\phi)\\0&-s(\phi)&c(\phi)
-\end{bmatrix}\begin{bmatrix}
-    c(\theta)&0&-s(\theta)\\0&1&0\\s(\theta)&0&c(\theta)
-\end{bmatrix}\begin{bmatrix}
-    0\\0\\\dot{\psi}
-\end{bmatrix}$$
-Which becomes:
-\begin{equation}\label{eq:PsiAngularVelocity}
-    \dot{\boldsymbol{\psi}}=\begin{bmatrix}
-        -\dot{\psi}sin(\theta)\\\dot{\psi}sin(\phi)cos(\theta)\\\dot{\psi}cos(\phi)cos(\theta)
-    \end{bmatrix}
-\end{equation}
-And this is the expression of our $\dot{\boldsymbol{\psi}}$ vector in the body frame! We can now repeat a similar process for the remaining \gls{Euler rates}, moving on to our $\dot{\boldsymbol{\theta}}$ rate. Starting with an expansion into a vector we get:
-$$\dot{\boldsymbol{\theta}}=\dot{\psi}\hat{y}'=\dot{\psi}\hat{y}''=\begin{bmatrix}
-    0\\\dot{\theta}\\0
-\end{bmatrix}$$
-We can now compute the matrix multiplication for this case:
-$$\dot{\boldsymbol{\theta}}=\begin{bmatrix}
-    1&0&0\\0&c(\phi)&s(\phi)\\0&-s(\phi)&c(\phi)
-\end{bmatrix}\begin{bmatrix}
-    c(\theta)&0&-s(\theta)\\0&1&0\\s(\theta)&0&c(\theta)
-\end{bmatrix}\begin{bmatrix}
-    0\\\dot{\theta}\\0
-\end{bmatrix}$$
-Simplifying as before this equation becomes:
-$$\dot{\boldsymbol{\theta}}=\begin{bmatrix}
-    1&0&0\\0&c(\phi)&s(\phi)\\0&-s(\phi)&c(\phi)
-\end{bmatrix}\begin{bmatrix}
-    0\\\dot{\theta}\\0
-\end{bmatrix}$$
-Which we can now solve to get:
-\begin{equation}\label{eq:ThetaAngularVelocity}
-    \dot{\boldsymbol{\theta}}=\begin{bmatrix}
-        0\\\dot{\theta}cos(\phi)\\-\dot{\theta}sin(\phi)
-    \end{bmatrix}
-\end{equation}
-Having successfully found our expression for $\dot{\boldsymbol{\theta}}$, we now only have $\dot{\boldsymbol{\phi}}$ left, and this is the easiest case! Expanding into a vector we get as follows:
-$$\dot{\boldsymbol{\phi}}=\dot{\phi}\hat{x}''=\dot{\phi}\hat{X}=\begin{bmatrix}
-    \dot{\phi}\\0\\0
-\end{bmatrix}$$
-Seeing as this is already expressed in the body frame, we don't have to do anything! We simply write our body frame expression to be:
-\begin{equation}\label{eq:PhiAngularVelocity}
-    \dot{\boldsymbol{\phi}}=\begin{bmatrix}
-    \dot{\phi}\\0\\0
-\end{bmatrix}
-\end{equation}
-We have completed the difficult task of expressing each of our \gls{Euler rates} in the body frame. Now, we must simply use \eqref{eq:AngularVelocityWithEulerRate} to connect our \gls{Euler rates} with our angular velocity. Doing so using the expressions \eqref{eq:PsiAngularVelocity}, \eqref{eq:ThetaAngularVelocity}, and \eqref{eq:PhiAngularVelocity}, we get the following equation:
-$$\prescript{e}{}{}\omega^b=\prescript{x}{}{}\omega^X=\dot{\boldsymbol{\psi}}+\dot{\boldsymbol{\theta}}+\dot{\boldsymbol{\phi}}=\begin{bmatrix}
-        -\dot{\psi}sin(\theta)\\\dot{\psi}sin(\phi)cos(\theta)\\\dot{\psi}cos(\phi)cos(\theta)
-    \end{bmatrix}+\begin{bmatrix}
-        0\\\dot{\theta}cos(\phi)\\-\dot{\theta}sin(\phi)
-    \end{bmatrix}+\begin{bmatrix}
-    \dot{\phi}\\0\\0
-\end{bmatrix}$$
-Actually solving the equation gets the following:
-\begin{equation}\label{eq:AngularVelocityWithEulers}
-    \prescript{e}{}{}\omega^b=\begin{bmatrix}
-        -\dot{\psi}sin(\theta)+\dot{\phi}\\
-        \dot{\psi}sin(\phi)cos(\theta)+\dot{\theta}cos(\phi)\\
-        \dot{\psi}cos(\phi)cos(\theta)-\dot{\theta}sin(\phi)
-    \end{bmatrix}
-\end{equation}
-And thus we have an expression connecting our angular velocity to our \gls{Euler rates} using the \gls{Euler angles}, just as we wanted.
 
 \subsection{Describing Euler rates with Angular Velocities and Euler Angles}\label{sec:DescribeEulerRates}
 
-Having just completed the derivation to describe the angular velocity of our vehicle with \gls{Euler rates} and Angles, a question naturally arises regarding the possibility of doing the inverse operation. Are we able to describe the \gls{Euler rates} in terms of the Angular Velocity and \gls{Euler angles}? Having a section dedicated to this topic, I'd say the answer seems obvious. 
 
-In order to do so; however, we want to rewrite \eqref{eq:AngularVelocityWithEulers} in terms of each component as in \eqref{eq:AngularVelocityComponents}. Doing so is fairly simple, as each row corresponds to the component, and we derive the following:
-\begin{equation}\label{eq:OmegaXComponent}
-    \omega_X=-\dot{\psi}sin(\theta)+\dot{\phi}
-\end{equation}
-\begin{equation}\label{eq:OmegaYComponent}
-    \omega_Y=\dot{\psi}sin(\phi)cos(\theta)+\dot{\theta}cos(\phi)
-\end{equation}
-\begin{equation}\label{eq:OmegaZComponent}
-    \omega_Z=\dot{\psi}cos(\phi)cos(\theta)-\dot{\theta}sin(\phi)
-\end{equation}
-Having these three equations with three \gls{Euler rates} we want to solve for, a clever mix of elimination and substitution will allow us to derive what we want.
-
-To start, we will solve for $\dot{\theta}$. Multiplying \eqref{eq:OmegaYComponent} by $cos(\phi)$ and \eqref{eq:OmegaZComponent} by $-sin(\phi)$, we get the following system:
-$$\omega_Ycos(\phi)=\dot{\psi}sin(\phi)cos(\phi)cos(\theta)+\dot{\theta}cos^2(\phi)$$
-$$-\omega_Zsin(\phi)=-\dot{\psi}sin(\phi)cos(\phi)cos(\theta)+\dot{\theta}sin^2(\phi)$$
-Adding the two together, the first term on the right hand side drops, and the second simplifies to one, and we get:
-\begin{equation}\label{eq:ThetaDot}
-\dot{\theta}=\omega_Ycos(\phi)-\omega_Zsin(\phi)
-\end{equation}
-We can now move on to find $\dot{\psi}$. Multiplying \eqref{eq:OmegaYComponent} by $sin(\phi)$ and \eqref{eq:OmegaZComponent} by $cos(\phi)$, we get the following system:
-$$\omega_Ysin(\phi)=\dot{\psi}sin^2(\phi)cos(\theta)+\dot{\theta}cos(\phi)sin(\phi)$$
-$$\omega_Zcos(\phi)=\dot{\psi}cos^2(\phi)cos(\theta)-\dot{\theta}sin(\phi)cos(\phi)$$
-Adding as before, this time the first right hand side term simplifies while the second term cancels, leaving:
-$$\dot{\psi}cos(\theta)=\omega_Ysin(\phi)+\omega_Zcos(\phi)$$
-\begin{equation}\label{eq:PsiDot}
-    \dot{\psi}=\frac{1}{cos(\theta)}(\omega_Ysin(\phi)+\omega_Zcos(\phi)
-\end{equation}
-We now only have $\dot{\phi}$ remaining. Having just found an expression for $\dot{\psi}$, we can substitute into \eqref{eq:OmegaXComponent} to get the following:
-$$\omega_X=-\frac{sin(\theta)}{cos(\theta)}(\omega_Ysin(\phi)+\omega_Zcos(\phi))+\dot{\phi}$$
-$$\dot{\phi}=\omega_X+\frac{sin(\theta)}{cos(\theta)}(\omega_Ysin(\phi)+\omega_Zcos(\phi))$$
-A final simplification gives:
-\begin{equation}\label{eq:PhiDot}
-    \dot{\phi}=\omega_X+tan(\theta)(\omega_Ysin(\phi)+\omega_Zcos(\phi))
-\end{equation}
-Having found an expression for the \gls{Euler rates} in terms of angular velocities and \gls{Euler angles} is wonderful; however, we can do even better. By now, it should be apparent that everything we do revolves around matrices. So, let's transform the individual expressions for \gls{Euler rates} into a case of matrix multiplication!
-Starting with defining the form we want, we can write the system as:
-$$\begin{bmatrix}
-    \dot{\phi}\\\dot{\theta}\\\dot{\psi}
-\end{bmatrix}=B\begin{bmatrix}
-    \omega_X\\\omega_Y\\\omega_Z
-\end{bmatrix}$$
-All we need to do is write the appropriate coefficients of equations \eqref{eq:ThetaDot}, \eqref{eq:PsiDot}, and \eqref{eq:PhiDot} to the appropriate place in our $B$ matrix (a 3x3 matrix). Doing so we get the following $B$ matrix:
-$$B=\begin{bmatrix}
-    1&tan(\theta)sin(\phi)&tan(\theta)cos(\phi)\\
-    0&cos(\phi)&-sin(\phi)\\
-    0&\frac{sin(\phi)}{cos(\theta)}&\frac{cos(\phi)}{cos(\theta)}
-\end{bmatrix}$$
-This leads to the equation:
-\begin{equation}\label{eq:EulerRatestoAngularVelocities}
-    \begin{bmatrix}
-    \dot{\phi}\\\dot{\theta}\\\dot{\psi}
-\end{bmatrix}=\begin{bmatrix}
-    1&tan(\theta)sin(\phi)&tan(\theta)cos(\phi)\\
-    0&cos(\phi)&-sin(\phi)\\
-    0&\frac{sin(\phi)}{cos(\theta)}&\frac{cos(\phi)}{cos(\theta)}
-\end{bmatrix}\begin{bmatrix}
-    \omega_X\\\omega_Y\\\omega_Z
-\end{bmatrix}
-\end{equation}
-And there we have our final equation relating \gls{Euler rates} to Angular velocities using \gls{Euler angles}. A quick note on the B matrix: you are able to use it to relate Angular velocities to \gls{Euler rates}; however, you MUST use the inverse! The B matrix isn't an orthogonal matrix, so the transform isn't equivalent to the inverse in this case. Because of this, our altered form of \eqref{eq:EulerRatestoAngularVelocities} is as follows:
-\begin{equation}\label{eq:AngularVelocitiestoEulerRates}
-    \begin{bmatrix}
-        \omega_X\\\omega_Y\\\omega_Z
-    \end{bmatrix}=B^{-1}\begin{bmatrix}
-        \dot{\phi}\\\dot{\theta}\\\dot{\psi}
-    \end{bmatrix}
-\end{equation}
-The actual calculation of $B^{-1}$ will be left as an exercise to the reader; however, a reminder of the calculation of the inverse is included below:
-$B^{-1}=\frac{adj(B)}{det(B)}$
-where $adj(B)$ is the adjugate of $B$ and $det(B)$ is the determinant of $B$.
-
-This concludes our initial discussion off \gls{Euler angles} and \gls{Euler rates}. While this is a great accomplishment, there still remains the unanswered problem of Gimbal locking the simulation for certain orientations of the body. This issue will motivate the study, derivation, and ultimate use of quaternions, which is a journey that we are now ready to embark on.
 
 \section{Quaternions}\label{sec:quaternions}
 \newglossaryentry{quaternion}
@@ -1758,30 +1079,7 @@ This concludes our initial discussion off \gls{Euler angles} and \gls{Euler rate
 It was a gorgeous October day in Dublin, and William Hamilton was on a stroll with his wife on his way to the Royal Irish Academy. Having worked on hyper-imaginary numbers for some time, answers had been slowly forming in his head. As he crossed a cobblestone bridge above the Royal Canal, the answer of a necessary, fourth dimension for calculating triples struck him like a freight train. He hastily carved the fundamental formula for quaternion multiplication, $i^2+j^2+k^2=ijk=-1$, into the stones he was walking on. And so, \glspl{quaternion} were born.
 
 \subsection{Quaternion Notation}
-\Glspl{quaternion}, in the simplest sense, are a set of hyper-imaginary numbers that obey the law Hamilton discovered above. They exist in a special 4-dimensional space ($\mathbb{H}$), called a hyper-sphere ($S^3$). Depicting a 3-dimensional rotation in 2-dimensional space was hard enough, but we’ll now one-up that effort by attempting to depict a 4-dimensional space on a 2-dimensional paper. This “visualization” is depicted below:
 
-
-% INCLUDE VISUAL OF HYPERSPHERE HERE
-
-
-The difficulty in picturing \glspl{quaternion} reflects the abstractness of the concept as a whole. This abstractness is what really makes \glspl{quaternion} so difficult to understand, and is why we will have to rely almost solely on mathematical expressions and relations for the remainder of this section.
-
-One of the most important aspects of working with \glspl{quaternion} is understanding their notation. The basic structure of a \gls{quaternion} vector is as follows: 
-$$\vec{q}=\begin{bmatrix}
-    q_1\\q_2\\q_3\\q_4
-\end{bmatrix}$$
-This form above translates to the two most common possible ways of which term is declared to be the scalar quantity:
-$$\vec{q}=q_1+q_2i+q_3j+q_4k$$
-$$\vec{q}=q_1i+q_2j+q_3k+q_4$$
-To reduce confusion, some notations may write the scalar quantity as simply k, with the numbered subscripts simply referring to the imaginary values. In addition, they may shorthand the imaginary components of the \gls{quaternion} in vector notation. An example of such is given corresponding to the first given form above:
-$$\vec{q}=\begin{bmatrix}
-    q_1\\\vec{q}_{2:4}
-\end{bmatrix}$$
-More notation forms are likely to exist (as there is no set standard) so ensure you first and foremost clarify what term is scalar, as identifying that term is crucial for the accuracy of your calculations. For our purposes, we will declare the first term to be our scalar, as not only is it more intuitive, but it also agrees with the MATLAB notation of a \gls{quaternion} vector. Therefore, our \gls{quaternion} vector appears as follows:
-\begin{equation}\label{eq:QuatNotation}
-    \vec{q}=q_1+q_2i+q_3j+q_4k
-\end{equation}
-The second most important aspect, albeit more niche to our own use, is the normalization of the \gls{quaternion} vector. As we want to utilize the \gls{quaternion} vector with rotations for defining orientation, it is critical and necessary to normalize them, as this is the only form with which we can encode rotations. We’ll get into why this is in the following sections, but for now, this normalized \gls{quaternion} is called a \gls{versor}. Make sure to not only confirm you know which value is scalar, but also to normalize your quats!
 
 \newglossaryentry{versor}
 {
@@ -1791,71 +1089,18 @@ The second most important aspect, albeit more niche to our own use, is the norma
 }
 
 \subsection{Quaternion Mathematics}
-In addition to understanding the notation of \glspl{quaternion}, it is also important to understand how basic mathematical operations work with respect to \glspl{quaternion}. Within this subsection, each individual subpart will discuss a separate mathematical operation, and will commonly refer to classic imaginary numbers as you are likely to have seen before.
 
 \subsubsection{Addition}
-The addition of two \glspl{quaternion} operates identically to the addition of two complex numbers. Every real part and every coefficient for each imaginary part is added together to create the summed \gls{quaternion}. A simple example of the sum of two \glspl{quaternion} $q+q'$ is shown below:
-\begin{equation}\label{eq:QuatAddition}
-    q+q'=(q_1+q_2i+q_3j+q_4k)+(q_1'+q_2'i+q_3'j+q_4'k)=(q_1+q_1')+(q_2+q_2')i+(q_3+q_3')j+(q_4+q_4')k
-\end{equation}
-Any \gls{quaternion} addition naturally returns the same result no matter which way you add them, they are commutative in addition ($q+q'=q'+q$). The reason for this should be fairly obvious.
+
 \subsubsection{Scalar Multiplication}
-The multiplication of a \gls{quaternion} by a scalar also operates identically to complex numbers. The scalar is distributed to and multiplied by every element of the \gls{quaternion}. Another simple example of scalar multiplication is shown below:
-\begin{equation}
-    bq=b(q_1+q_2i+q_3j+q_4k)=bq_1+bq_2i+bq_3j+bq_4k
-\end{equation}
+
 \subsubsection{Quaternion Multiplication}
-The multiplication of a \gls{quaternion} by another \gls{quaternion} is similar to that of complex numbers. It is denoted by the operator $\otimes$. Before giving a general example of \gls{quaternion} multiplication, we must first remind ourselves of fundamental formula for \gls{quaternion} multiplication: $i^2=j^2=k^2=ijk=-1$. We also need to discuss the products of each term. To do this, we can create a scale for this for quick reference: 
-$$\underset{\leftharpoondown}{\stackrel{\rightharpoonup}{ijkij}}$$
-Reading this is fairly simple: if you move right, you end positive, and if you move left, you end negative (e.g. $i\cdot j=k$, $j\cdot i=-k$
-With both of the above in mind, we can compute a general case of \gls{quaternion} multiplication $q\otimes q'$
-\begin{equation}\label{eq:QuatMultiplication}
-    q\otimes q'=(q_1+q_2i+q_3j+q_4k)\otimes(q_1'+q_2'i+q_3'j+q_4'k)
-\end{equation}
-$$=(q_1q_1'-q_2q_2'-q_3q_3'-q_4q_4')$$
-$$+(q_1q_2'+q_2q_1'+q_3q_4'-q_4q_3')i$$
-$$+(q_1q_3'-q_2q_4'+q_3q_1'+q_4q_2')j$$
-$$+(q_1q_4'+q_2q_3'-q_3q_2'+q_4q_1')k$$
-This lengthy solution can be condensed into a matrix that could be expanded to an identical solution for quaternion multiplication (See section \ref{sec:QuatMultiplyMatrix} in the appendix for the simple derivation):
-\begin{equation}\label{eq:QuatMultiplyMatrix}
-    \vec{q}\otimes\vec{q}'=\begin{bmatrix}
-        q_1q_1'-(\vec{q}_{2:4}\cdot \vec{q}_{2:4}')\\
-        q_1\vec{q}_{2:4}'+q_1'\vec{q}_{2:4}+(\vec{q}_{2:4}\times\vec{q}_{2:4}')
-    \end{bmatrix}
-\end{equation}
-And so, we have a neat definition for quaternion multiplication.
-We can additionally show that \gls{quaternion} multiplication is both associative and distributive as follows:
-$$q\otimes(q'\otimes q'')=(q\otimes q')\otimes q''$$
-$$q\otimes(q'+q'')=q\otimes q'+q\otimes q''$$
-It is important to note that while \gls{quaternion} multiplication is both associative and distributive, it is NOT commutative. We can, however, use a new operator to describe such an operation.
+
 \subsubsection{Hamiltonian Product}
-While widely unused in attitude determination and dynamics for cases of rotations, the Hamiltonian product has a very simple relation to \gls{quaternion} multiplication - especially in the matrix form. Before defining the product of the Hamiltonian product, we can first describe the operator by the circled dot, or $q\odot q'$. Having this, the outcome of the Hamiltonian product is as follows:
-\begin{equation}\label{eq:QuatHamiltonProdMatrix}
-    \vec{q}\odot\vec{q}'=\begin{bmatrix}
-        q_1q_1'-(\vec{q}_{2:4}\cdot \vec{q}_{2:4}')\\
-        q_1\vec{q}_{2:4}'+q_1'\vec{q}_{2:4}-(\vec{q}_{2:4}\times\vec{q}_{2:4}')
-    \end{bmatrix}
-\end{equation}
-
-It is important to note that we can explicitly describe the relation between \gls{quaternion} multiplication and the Hamiltonian product with the following:
-$$q\otimes q'=q'\odot q$$
-
-A quick note about the Hamiltonian Product, it shares properties with \gls{quaternion} multiplication. That means it is both associative and distributive; however, it isn't commutative.
 
 \subsubsection{Identity Quaternion}
 
-The identity \gls{quaternion} can be described similar to an identity matrix. Namely it doesn't alter any vector (or in this case any quaternion) it is multiplied with. Logically, this results in the identity \gls{quaternion} having a real part ($q_1$) of one and imaginary part ($q_{2:4}$) of zero like so:
-\begin{equation}\label{eq:IdentityQuat}
-    I_q=1+0i+0j+0k=\begin{bmatrix}
-        1\\\vec{0}_{3:1}
-    \end{bmatrix}
-\end{equation}
-
 \subsubsection{Conjugate of Quaternions}
-
-
-
-
 
 \subsubsection{Inverse of Quaternions}
 
@@ -1871,66 +1116,7 @@ The identity \gls{quaternion} can be described similar to an identity matrix. Na
     description={The axis about which a rotation of a body in space can be described by only a single rotation, denoted by $\vec{e}$}
 }
 
-One of the most important theorems in the derivation of \glspl{quaternion} is \textit{Euler’s Principal Rotation Theorem},
-which dictates that any rotation of a rigid body in space can be described by a rotation of $\varphi$ about a single axis $\vec{n}$ called the \gls{Euler axis}. This \gls{Euler axis} is a unit vector with magnitude 1, which will be useful later. For now, an image of this is depicted below:
-\begin{figure}[H]
-\centering
 
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
-
-\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
-%uncomment if require: \path (0,479); %set diagram left start at 0, and has height of 479
-
-%Shape: Axis 2D [id:dp2405194452321] 
-\draw  (214,286.6) -- (469.8,286.6)(239.58,85) -- (239.58,309) (462.8,281.6) -- (469.8,286.6) -- (462.8,291.6) (234.58,92) -- (239.58,85) -- (244.58,92)  ;
-%Straight Lines [id:da6294916293680479] 
-\draw    (256.8,267) -- (154.33,381.51) ;
-\draw [shift={(153,383)}, rotate = 311.82] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Straight Lines [id:da24671838856505635] 
-\draw    (239.58,286.6) -- (327.78,138.72) ;
-\draw [shift={(328.8,137)}, rotate = 120.81] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Curve Lines [id:da34048428895159] 
-\draw    (295.8,160.2) .. controls (267.23,179.9) and (320.17,210.27) .. (329.41,175.82) ;
-\draw [shift={(329.8,174.2)}, rotate = 102.2] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-
-% Text Node
-\draw (233,58.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{e}_{1}$};
-% Text Node
-\draw (139,378.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{e}_{2}$};
-% Text Node
-\draw (478,274.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{e}_{3}$};
-% Text Node
-\draw (329,115.4) node [anchor=north west][inner sep=0.75pt]    {$\stackrel {\rightharpoonup}{n}$};
-% Text Node
-\draw (329,183.4) node [anchor=north west][inner sep=0.75pt]    {$\varphi $};
-
-\end{tikzpicture}
-    \caption{A Depiction of Euler's Principle Rotation Theorem}
-    \label{fig:PrincipleAxisTheorem}
-\end{figure}
-This is so important to the foundations of versors and rotations encoded by quaternions, that the versor itself is expressed using these values. Using this \gls{Euler axis} rotation description of a rotation, we can define the \gls{quaternion} simply with respect to this rotation using the methods described for 2-dimensional complex numbers in section \ref{sec:2DImaginary}: 
-$$\vec{q}=e^{\frac{\varphi}{2}(n_1i+n_2j+n_3k)}$$
-Expanding this, we can write this as a vector as follows:
-$$\vec{q}=\vec{q}_{\vec{n}}(\varphi)=\begin{bmatrix}
-    cos(\frac{\varphi}{2})\\\vec{n}sin(\frac{\varphi}{2})
-\end{bmatrix}=\begin{bmatrix}
-    cos(\frac{\varphi}{2})\\n_1sin(\frac{\varphi}{2})\\n_2sin(\frac{\varphi}{2})\\n_3sin(\frac{\varphi}{2})
-\end{bmatrix}$$
-
-This is great; however, it is useless if we can’t determine $\vec{n}$ itself. Before using \glspl{quaternion}, let’s solve this problem by generalizing it into a rotation with any vector $\vec{x}$. Recalling the DCM from the \gls{Euler angles} section, we can write a similar equation with a matrix $M$ and our principal axis $\vec{n}$:
-$$\vec{n}=M\vec{n}$$
-The reason for this being the definition of the \gls{Euler axis}, and the fact it always remains unaltered in this special case of rotations. We can write this as an eigenvalue problem for our vector $\vec{x}$, which actually becomes an eigenvector, with the characteristic polynomial of eigenvalues $\lambda$. This appears as follows:
-$$\lambda\vec{x}=M\vec{x}$$
-$$det(I_3\lambda-M)=0$$
-
-By Euler’s rotation principle: there must exist an eigenvalue $\lambda=1$ (of multiplicity 1-3) to satisfy an axisymmetric rotation. In this instance, the \gls{Euler axis} $\hat{n}$ is an eigenvector of this linear system corresponding to the eigenvalue $\lambda=1$. 
-With our 3x3 matrix, the characteristic polynomial  of our system above can be written as:
-$$\lambda^3-tr(M)\lambda^2+tr(adj(M))\lambda-det(M)=0$$
-
-As M is a rotation matrix - and therefore an orthogonal matrix - we know that the determinant of $M$ is 1 and the adjugate of $M$ is simply $M$. Using this, we can simplify the equation above like so:
-$$\lambda^3-tr(M)\lambda^2+tr(M)\lambda-1=0$$
-$$(\lambda-1)(\lambda^2+\lambda-tr(M)\lambda+1)=0$$
-The root $(\lambda-1)=0$ in the equation above proves the existence of an eigenvalue $\lambda=1$ associated with the eigenvector $\hat{n}$.
 
 
 
@@ -1947,72 +1133,9 @@ The root $(\lambda-1)=0$ in the equation above proves the existence of an eigenv
     description={A matrix which obeys the property that every $a_{ij}=-a_{ji}$. This can be interpreted to mean every term across the diagonal is equal in magnitude, but opposite in sign. Sometimes called an anti-symmetric matrix or anti-metric matrix}
 }
 
-To make the solution to our characteristic polynomial useful, let’s translate it into a DCM for Euler axis rotations. Using our knowledge of rotations, we can say that the parallel component of a vector rotated about the principal axis will remain equivalent. This will be denoted by $\vec{x}_\parallel$. The only impacted components will be the perpendicular components denoted by $
-\vec{x}_\perp$. This gives rise to the following:
-\begin{equation}\label{eq:xDecomposed}
-    \vec{x}=\vec{x}_\parallel+\vec{x}_\perp
-\end{equation}
-
-To make this format useable, we’re going to write each of these vector components in terms of the vector itself. While this sounds strange, we can use vector projections to achieve this.
-Starting with the projection of $\vec{x}_\parallel$ onto $\vec{n}$, we get the equation:
-$$\vec{x}_\parallel=\frac{\vec{x}\cdot\vec{n}}{||\vec{n}||^2}\vec{n}$$
-
-With the knowledge that the norm of $\vec{n}$ is equal to 1, or $||\vec{n}||=1$, we can write the above equation as follows (see section \ref{sec:VecProjectSimplify} for explanation and proof):
-$$\vec{x}_\parallel=(\vec{x}\cdot\vec{n})\vec{n}$$
-\begin{equation}\label{eq:xParallel}
-    \vec{x}_\parallel=(\vec{n}\vec{n}^T)\vec{x}
-\end{equation}
-
-Now that we have a relation between the original vector and the parallel component as a function of the principal axis, we can substitute \eqref{eq:xParallel} into the simple definition from equation \eqref{eq:xDecomposed} to express $\vec{x}_\perp$ in terms of $\vec{x}$ and $\vec{n}$. This equates to:
-$$\vec{x}_\perp=\vec{x}-\vec{x}_\parallel$$
-$$\vec{x}_\perp=\vec{x}-(\vec{n}\vec{n}^T)\vec{x}$$
-\begin{equation}\label{eq:xPerpendicular}
-    \vec{x}_\perp=(I_3-\vec{n}\vec{n}^T)\vec{x}
-\end{equation}
-Now we have equations for both components in terms of $\vec{x}$ and $\vec{n}$! We can translate this into a rotation matrix about our principal axis. Using our knowledge of general rotation matrices, we know a mix of sines and cosines will likely be paired with the perpendicular term, while the parallel term remains untouched. This translates to:
-$$A_{\vec{n}}(\varphi)\vec{x}=\vec{x}_\parallel+\vec{x}_{\perp}cos(\varphi)-(\vec{n}\times\vec{x})sin(\varphi)$$
-A quick note: the derivation of this expression will be proven in section \ref{sec:MathematicalProofRotations} which you can - and likely should - reference now for clarity. For now, we are going to plug in our previously found expressions for the parallel and perpendicular components of $\vec{x}$, equations \eqref{eq:xParallel} and \eqref{eq:xPerpendicular}, respectively to get:
-$$A_{\vec{n}}(\varphi)\vec{x}=(\vec{n}\vec{n}^T)\vec{x}+(I_3-\vec{n}\vec{n}^T)\vec{x}cos(\varphi)-(\vec{n}\times\vec{x})sin(\varphi)$$
-To actually derive the rotation matrix in terms of the \gls{Euler axis}, we divide both sides above by $\vec{x}$ to get our rotation matrix:
-$$A_{\vec{n}}(\varphi)=(\vec{n}\vec{n}^T)+(I_3-\vec{n}\vec{n}^T)cos(\varphi)-\frac{\vec{n}\times\vec{x}}{\vec{x}}sin(\varphi)$$
-While it is indeed nice to have an expression for our rotation matrix, the one we have now is a bit messy. Specifically, the coefficient to the sine term is messy. Ideally, we want to somehow recover the vector $\vec{x}$ from the numerator in order to simplify the fraction. Luckily, there is a mathematical operator available to us that we will be using to do just that. To derive this mysterious operator, let us first compute the cross product of two arbitrary vectors by hand:
-$$\vec{x}\times\vec{y}=\begin{bmatrix}
-    x_1\\x_2\\x_3
-\end{bmatrix}\times\begin{bmatrix}
-    y_1\\y_2\\y_3
-\end{bmatrix}=\begin{bmatrix}
-    x_2y_3-x_3y_2\\x_3y_1-x_1y_3\\x_1y_2-x_2y_1
-\end{bmatrix}$$
-The easiest way to simplify this is to turn it into a case of matrix multiplication. To obtain a $[3\times1]$ column vector from matrix multiplication, we know we need to do an operation with matrix sizes $[3\times{a}][a\times1]$ to return an answer of appropriate size. To determine $a$, we make the simplification that the second vector $[a\times1]$ could simply represent one of the two original vectors we had. This means $a$ takes on the value of 3, and the matrix $[a\times1]$ is the second vector $\vec{y}$. As for the first matrix, with a value of $a=3$ it becomes a square $[3\times3]$ matrix. We will denote this matrix as $[\vec{x}\times]$, turning the operation $[3\times{a}][a\times1]$ into $[\vec{x}\times]\vec{y}$.
-
-The easiest way to determine the elements of $[\vec{x}\times]$ is by visual inspection, a thorough understanding of matrix multiplication, and a system of equations. Looking at the first row of our solution, we can observe it is a difference of products of terms from our two original vectors. We can also recall the first row and first column of our solution vector will depend on the first row of $[\vec{x}\times]$ and entirety of the column vector $\vec{y}$. Writing this in general terms:
-$$x_2y_3-x_3y_2=[x\times]_{11}y_1+[x\times]_{12}y_2+[x\times]_{13}y_3$$
-Solving for each $y$ term, we can find that the first row of $[\vec{x}\times]$ is as follows:
-$$[\vec{x}\times]_{(1,:)}=\begin{bmatrix}
-    0&-x_3&x_2
-\end{bmatrix}$$
-Doing the same for the second and third row of our solution will be left as an exercise to the reader; however, once completed we can concatenate them to form our completed $[\vec{x}\times]$ matrix:
-\begin{equation}\label{eq:xCrossMatrix}
-    [\vec{x}\times]=\begin{bmatrix}
-        0&-x_3&x_2\\x_3&0&-x_1\\-x_2&x_1&0
-    \end{bmatrix}
-\end{equation}
-
-Some quick observations about this matrix: it is made exclusively of terms of our first vector $\vec{x}$. In addition, it can be defined as a \gls{skew-symmetric matrix} with zeroes along the diagonal, and therefore a trace of zero\footnote{It is important to note that the fact $[\vec{x}\times]$ has zeroes on the diagonal and a trace of zero is merely coincidental, as the trace is computed as the sum of the diagonal elements}. 
-
-Now that we've completed the derivation to the simplification of the cross product, we can apply this to our \gls{Euler axis} rotation matrix as intended. Writing $\vec{n}\times\vec{x}$ as $[\vec{n}\times]\vec{x}$, we can cancel the $\vec{x}$ that now appears in both the numerator and denominator to get the following:
-$$A_{\vec{n}}(\varphi)=(\vec{n}\vec{n}^T)+(I_3-\vec{n}\vec{n}^T)cos(\varphi)-[\vec{n}\times]sin(\varphi)$$
-
 
 
 \subsection{Quaternion Rotation Matrix}
-
-
-
-
-
-
-
 
 
 
@@ -2192,7 +1315,7 @@ When modeling aerodynamic forces, we can imagine that two differential force ele
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\linewidth]{Images/ShearStress.png}
+    \includegraphics[width=\linewidth]{6DoF Explanation Scripts/Images/ShearStress.png}
     \caption{Pressure and Shear Stress on an Aerodynamic Surface}
     \label{fig:pressure and shear}
 \end{figure}
@@ -2469,16 +1592,16 @@ The difference in these numerical integration schemes will become more apparent 
 
 \begin{figure} [ht]
     \centering
-    \includegraphics[width=\linewidth]{Numerical Integrator Nyquist 1.png}
+    \includegraphics[width=\linewidth]{6DoF Explanation Scripts/Numerical Integrator Nyquist 1.png}
     \caption{Numerical Integration of periodic function}
     \label{fig:Numerical Int Periodic}
 \end{figure}
 So, what timestep is required to accurately model a periodic function? For our example, we will use RK4 since we have shown it to be the most accurate of the integration schemes. We choose to do this to highlight effects aside from error in the numerical approximation. We can vary the timestep for this same periodic function and see what the response looks like. This is shown in \ref{fig:Nyquist}.
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{Numerical Integrator Nyquist 2.png}
+    \includegraphics[width=0.9\linewidth]{6DoF Explanation Scripts/Numerical Integrator Nyquist 2.png}
     
-    \caption{Numerical Integration of Periodic Function with varying}
+    \caption{Numerical Integration of Periodic Function with varying timestep}
     \label{fig:Nyquist}
 \end{figure}
 
@@ -2514,11 +1637,17 @@ The same is seen when $\Delta t$ is close to but not quite double the frequency 
     description={A differential equation that is hard to numerically integrate as a result of instability when larger timesteps are used. Stiffness is a property of the differential equation itself, and not the solution. Stiff systems are not completely well defined, but generally follow from this definition}
 }
 
-In this example, this criterion does not greatly effect our numerical integration. However, when we have other dynamics in the system, the need to sample at double the highest frequency of the system may be detrimental to the performance of our simulation. We call such systems that are difficult to numerically integrate \gls{stiff}. 
+In this example, this criterion does not greatly affect our numerical integration. However, when we have other dynamics in the system, the need to sample at double the highest frequency of the system may be detrimental to the performance of our simulation. We call such systems that are difficult to numerically integrate \gls{stiff}. 
 
-\Gls{stiff} systems make numerical integration challenging not only because of increased simulation time, but also because of aforementioned \gls{trunc error}. In a 6-\gls{dof} model such as ours, this is important if vibrational modeling is considered. It is best practice to try and decouple the simulation of high frequency vibrations from the flight dynamics of the system. Sometimes this may be unavoidable (such as systems with large amounts of wing flexure where aerodynamics and elasticity / vibrations are heavily couples), but should be attempted whenever possible. This problem is very complicated and is the subject of much ongoing research! More information about such dynamics can be found in \cite{shyy_recent_2010}.
+\Gls{stiff} systems make numerical integration challenging not only because of increased simulation time, but also because of aforementioned \gls{trunc error}. In a 6-\gls{dof} model such as ours, this is important if vibrational modeling is considered. As an example, slosh modeling and parachute modeling (which are not deeply discussed here, but may be important aspects of a rocket 6-\gls{dof}) are often based on mass-spring-damper systems.
+
+It is best practice to try and decouple the simulation of high-frequency vibrations from the flight dynamics of the system. Sometimes this may be unavoidable, such as aircraft with large amounts of wing flexure where aerodynamics and elastic deformation are heavily coupled. However, this should be attempted whenever possible. This problem is very complicated and is the subject of much ongoing research! More information about such dynamics can be found in \cite{shyy_recent_2010}.
 \section{Other Integration Schemes}
-We previosly discuss the concept of \gls{stiff} systems in \ref{sampling and stiffness}. For systems that have moderate stiffness, we can use "ode23" instead of the more typical "ode45" in MATLAB.
+While "ode45" works very well for most use cases with numerical integration, there are cases where other integration schemes should be considered. We will mainly discuss the implementations that exist in MATLAB. More information about such systems can be found at \cite{mathworks_choose_2024} and \cite{mathworks_summary_2024}.
+
+We previously discuss the concept of \gls{stiff} systems in \ref{sampling and stiffness}. 
+
+For systems that have moderate stiffness, we can use "ode23" instead of the more typical "ode45" in MATLAB.
 
 \section{Code Optimization with Numerical Integration}
 \subsection{Monte Carlo Simulation}
@@ -2584,7 +1713,7 @@ $$\vec{q}_0=\begin{bmatrix}
 {
     name=rail whip,
     first={\textit{rail whip}},
-    description={A phenomenon where the flexibility of the launch rail causes a large moment to be exerted on the rocket during launch.}
+    description={A phenomenon where the flexibility of the launch rail causes a large moment to be exerted on the rocket during launch}
 }
 Lastly, we need to describe the initial angular velocity. We assume for most simulations that there is no angular velocity. For some cases, such as the simulation of \gls{rail whip}, we may choose to put an angular velocity on the rocket.
 $$\vec{\omega}_0=\begin{bmatrix}
@@ -2614,7 +1743,7 @@ Thrust is also fairly simple to model. If we consider the thrust to be coinciden
 Where $\dot{m}$ is the mass flow rate of the engine, $V_e$ is the exit velocity of the engine, $P_e$ is the exit pressure of the engine, $P_{atm}$ is the atmospheric pressure, and $A_e$ is the area of the nozzle exit. For a propulsion, these parameters are usually specified or can be easily derived, although we will not do so here. See \cite{noauthor_chemical_nodate} or the propulsion team for more details.
 
 Here, we introduce the use of the rotation matrix to convert between different frames. MATLAB allows for the creation of a rotation matrix with the input of a \gls{quaternion} using the "quat2dcm" function. Using this, we can perform frame conversion to and from the body and earth frame. We show this below in \ref{code:RotationMatrix}:
-\lstinputlisting[style=Matlab-editor, caption = Rotation Matrix]{RotationMatrix.m}\label{code:RotationMatrix}
+\lstinputlisting[style=Matlab-editor, caption = Rotation Matrix]{6DoF Explanation Scripts/RotationMatrix.m}\label{code:RotationMatrix}
 Using this code, we can convert the thrust from the body frame into the earth frame through the function call "RotationMatrix(thrustForceBody, quat, 1)". The input of 1 in this function means that the vector is transformed from the body frame into the earth frame. In our case, this means that we multiply by the transpose of the rotation matrix in the MATLAB notation convention.
 \subsubsection{Lift and Drag}
 Our other two forces follow in a similar manner. The quantities of lift and drag are heavily discussed in \ref{sec: aerodynamics}, so we will keep them succinct here. The directions of lift and drag in the earth frame are described by \eqref{eq:Lift} and \eqref{eq:drag}. To convert these forces into the body frame, we use the function call "RotationMatrix(force, quat, 0)". The specification of "0" in the function converts a force in the earth frame into one in the body frame. We need the body frame force for computing the moments in the body frame, as discussed in \ref{sec:rotations in the body frame}.
@@ -2630,10 +1759,24 @@ Currently, there are no other forces that act in our 6DoF model. Internal forces
 \subsection{Moments}
 The modeling of moments in the 6-\gls{dof} is fairly straightforward. In the previous section \ref{6DoF Forces}, we converted each of our forces into the body frame. Here, we will use these forces in the body frame to describe the moments acting on our vehicle. 
 
-The moment arm of the vehicle is equivalent to the distance from the center of mass to the center of pressure. Assuming that both lie along the longitudinal axis, we can express this moment as:
+The moment arm of the aerodynamic forces is equivalent to the distance from the center of mass to the center of pressure. 
 \begin{equation}
-    M^c
+    M^c=r^{cm}-r^{cp}
 \end{equation}
+Assuming that both lie along the longitudinal axis, we can express this moment as:
+\begin{equation}
+    M^c=\hat{X}(x_{cm}-x_{cp})
+\end{equation}
+
+Since gravity acts through the center of mass, the moment arm has length of 0 and no resultant moment exists. For thrust, since it is applied through the longitudinal axis, the $\vec{r}\times \vec{F_T}$ term is zero because $\vec{r}$ and $\vec{F_T}$ are parallel.
+
+Thus, the only moments that are present are from the aerodynamic forces. The moment generated by the aerodynamic forces is:
+\begin{equation}
+    M^c=\hat{X}(x_{cm}-x_{cp})\times \vec{R}
+\end{equation}
+Where $\vec{R}$ is the resultant aerodynamic force (the combination of both lift and drag).
+
+
 
 \section{Validation of 6-DoF}
 
@@ -2645,7 +1788,7 @@ Here, we will briefly discuss data visualization and best practices, mostly rela
 \section{Notation}
 Mathematical notation for the subjects that we discuss is largely formalized and commonly used, but there are some areas where we may use notation slightly unfamiliar or different to what you have seen in the past. You may also see different notation when looking at papers and literature for future work on the 6-\gls{dof}. To remove any doubt, we describe the notation that we use here.
 
-For derivatives with respect to time, we will use the compact Newtonian notation. For example, $\dot{x}=\frac{dx}{dt}$, $\ddot{x}=\frac{d^2x}{dt^2}$, and so on. 
+For derivatives with respect to time, we will use the compact Newtonian notation. For example, $\dot{x}=\frac{dx}{dt}$, $\ddot{x}=\frac{d^2x}{dt^2}$, and so on. Generally, we avoid the prime notation such as $x'$ as this notation does not make clear what we are taking the derivative with respect to.
 
 For vectors, any vector with a hat like $\hat{x}$ refers to a vector with a magnitude of 1 (normalized vector). These are often seen as basis vectors or unit vectors describing the direction of a force. Vectors with a ‘arrow’ hat like $\hat{x}$ refers to a general vector with a non-normalized magnitude. Vectors with a non-normalized magnitude may also be represented by a bold-faced symbol such as in the case of Euler angle rates. When taking the time derivative of a vector, we prefer to write using this boldface notation, such as $\dot{\textbf{x}}$ instead of $\dot{\vec{x}}$.
 
