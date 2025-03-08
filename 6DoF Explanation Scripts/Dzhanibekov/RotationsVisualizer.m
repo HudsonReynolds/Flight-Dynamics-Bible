@@ -1,5 +1,4 @@
 function RotationsVisualizer(posArray, quatArray, timeArray, endTime, dt, playbackSpeed, output)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PSP FLIGHT DYNAMICS:
 %
 % Title: RotationsVisualizer
@@ -20,7 +19,6 @@ function RotationsVisualizer(posArray, quatArray, timeArray, endTime, dt, playba
 %
 % Outputs:
 % figure output
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % playback speed rate
 playbackSpeed = 2;

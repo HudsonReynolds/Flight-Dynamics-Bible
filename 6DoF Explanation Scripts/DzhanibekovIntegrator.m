@@ -1,5 +1,4 @@
 function [out, mach, AoA, accel] = DzhanibekovIntegrator(time, input)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PSP FLIGHT DYNAMICS:
 %
 % Title: RK4Integrator
@@ -16,7 +15,6 @@ function [out, mach, AoA, accel] = DzhanibekovIntegrator(time, input)
 %
 % Outputs:
 % out = derivative of state vector [m/s|m/s^2|rad/s^2|unitless^2]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 pos = [input(1);input(2);input(3)];
 

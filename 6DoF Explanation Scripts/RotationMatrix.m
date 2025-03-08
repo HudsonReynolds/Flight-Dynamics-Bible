@@ -1,5 +1,4 @@
 function [vecOut] = RotationMatrix(vecIn, quatIn, bodyOrEarth)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PSP FLIGHT DYNAMICS:
 %
 % Title: DCM
@@ -19,7 +18,6 @@ function [vecOut] = RotationMatrix(vecIn, quatIn, bodyOrEarth)
 %
 % Outputs:
 % vecOut = 3x1 vector in the converted frame
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % make the input real for edge cases in Monte Carlo:
     rotIn = real(quatIn.');
