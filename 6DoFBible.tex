@@ -18,7 +18,11 @@
 \usepackage{mathdots}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
 \usepackage{xfrac}
+\usepackage{enumitem}
 \usepackage{extarrows}
 \usepackage{setspace}
 \usepackage{matlab-prettifier}
@@ -185,14 +189,14 @@
 %%%%%%%%%%%
 % Preface %
 %%%%%%%%%%%
-\chapter*{Preface}
+\chapter*{Preface}\label{sec:preface}
 Preston and I began working on the Flight Dynamics sub-team in the fall of 2023. From May 2024 to January 2025, we focused our efforts on creating a 6-\gls{dof} model from scratch. During this time, we learned a lot about the mathematics and physics involved in creating such a model. We were often faced with frustration with different conventions and poor explanations of certain topics, all of which were exacerbated by the difficulty of what we were learning. This made much of the material intractable. In this document, we hope to provide detailed explanations of all the necessary concepts in one place to make this journey easier for those who may need it in the future. 
 
 Furthermore, we hope that this document can be used by those outside the realm of flight dynamics to better understand the methodologies and inner workings of a 6-\gls{dof} model. Often, we have seen that a 6-\gls{dof} model is treated as a ‘black box’, where inputs go in and outputs come out. We hope that this document can provide a level of understanding adequate to allow greater collaboration between those working within and outside of flight dynamics.
 
 In this document, we will be using excerpts of MATLAB script in some examples (code less than a page is included inline, and longer code is in the appendix) but our hope is that our explanations are thorough enough to facilitate the creation of a 6-\gls{dof} in any coding language. MATLAB facilitates the use of quite short code because of the number of built-in functions, but we include derivations for most of these equations or sources describing these derivations.
 
-To use this document to its fullest extent, we recommend that you write scripts as you learn and use this document for reference and as a guide as you build or improve your own models.
+To use this document to its fullest extent, we recommend that you write scripts as you learn and use this document for reference and as a guide as you build or improve your own models. Doing the practice problems in each chapter will also greatly aid in your understanding.
 
 In this first volume, we cover primarily the translational dynamics and basics of rotational dynamics needed to set up a 6-\gls{dof} model. We mainly focus on the implementation of these equations in MATLAB and best practices. These are, in our opinion, the fundamental things that need to be understood before working on other aspects of a flight dynamics model. As such, these subjects comprise a large majority of both the effort and the length of the first volume.
 
@@ -217,6 +221,17 @@ Some other areas are also covered in this document but are curtailed because Pre
 \end{chapquote}
 
 In much the same way, we must construct all of the mathematical background required to make a 6-\gls{dof} from the ground up. This chapter details the general requirements and an outline of the process we will be following.
+
+\section{Document Outline}
+A general overview of the scope of this document is given in the preface.  Here, we will go into more detail about the layout of each section. Our goal is to present this document in a similar manner to a textbook while still remaining approachable.
+
+Our pedagogical approach is strongly reliant on examples and trying problems. We find that this is the best method for readers to learn the content.
+
+In each chapter (aside from this overview chapter), there will be some additional content at the end that may be especially useful for quick reference. For quick reference, we include a 'Key Ideas' section that may be used to quickly reference the big takeaways from each chapter.
+
+Additionally, a  'Further Reading and Notes' is included which the curious reader may benefit from. Many topics are covered in this document; each of which deserve their own book-length discussion. Because we have neither the desire nor capability to write such a long document, we have linked these beneficial books whenever possible. It is not necessary to read any / all of these sources to comprehend the content here, but they may prove useful for deeper research into topic areas that interest the reader.
+
+The end of each section also provides several practice problems to ensure the key ideas of each topic are understood by the reader. These problems are expected to be difficult. For readers new to this content, it is expected that each problem may take several hours and some consultation with other sources to complete. However, we have attempted to make these problems challenging while not being out of reach. These problems are designed to make the reader struggle and push their knowledge. Generally, each subsequent problem is more difficult than the last.
 
 \section{Necessary Background}
 The goal of this document is to provide a comprehensive overview of the process and means of creating, maintaining, and building on a 6 Degree of Freedom model. Although we strive to make the document as easy as possible to understand, there are some instances where technical jargon is necessary and a strong understanding of mathematical concepts is required. 
@@ -272,7 +287,7 @@ Each of the previously mentioned sections will be discussed in more detail throu
 \end{chapquote}
 The first step when approaching any physics problem of this type is to consider the Newtonian dynamics of the system. In our case, we define Newtonian dynamics as the translational dynamics of the system as well as the moments acting on the system. This differs from particle dynamics because we are considering a rigid body which can exhibit rotation. The exploration of this rotation will be explored in much more detail in Section \ref{sec:attitude dynamics}. 
 \section{The 1-DoF Case}\label{sec: The 1DoF Case}
-To begin our exploration of Newtonian dynamics, we will return to the example of the 1-\gls{dof} which we used earlier. Our goal with this is to use a simple example you are familiar with from high school physics and bring it up to speed with the terminology and techniques we will use for more complex analysis.
+To begin our exploration of Newtonian dynamics, we will return to the example of the 1-\gls{dof} which we used earlier. Our goal with this is to use a simple example that you are familiar with from high school physics and bring it up to speed with the terminology and techniques we will use for more complex analysis.
 
 In Figure 1 below, we show an example of a very simple 1-\gls{dof} system free body diagram. We will use this example to explain the process of calculating the Newtonian dynamics in 1-dimension, which we then expand to the full 3D case. 
 
@@ -360,33 +375,44 @@ Force & Functional Form \\
     first = \textit{drag coefficient},
     description={A non dimensional parameter that describes the amount of drag acting on an object. This non-dimensionalized value is given by $\frac{F_D}{q_{\infty}S}$, where $q_{\infty}$ is the dynamic pressure, $\frac{1}{2}\rho_{\infty}V_{\infty}^2$}
     }
-The notation here is important to understand. In future AAE classes at Purdue, this is likely the notation that you will see. Terms with the subscript $\infty$ denote \gls{freestream} quantities, those that are freely flowing far away from the body of interest. Also of note is the unit step function, which is a function which has value zero until reaching time $t_b$, where it thereafter equals one. The quantity  $\rho$ refers to the density of the fluid, and $S$ to the \gls{ref area}. The \gls{drag coeff} is $C_D$, a term which encapsulates the very complex nature of the fluid flow around an object. Calculating the value of  will be explored more deeply in later sections of this document. For now, we may assume a constant value.
+The notation here is important to understand. In future AAE classes at Purdue, this is likely the notation that you will see. Terms with the subscript $\infty$ denote \gls{freestream} quantities, those that are freely flowing far away from the body of interest. Also of note is the unit step function, which is a function which has value zero until reaching time $t_b$, where it thereafter equals one. The quantity  $\rho$ refers to the density of the fluid, and $S$ to the \gls{ref area}. The \gls{drag coeff} is $C_D$, a term which encapsulates the very complex nature of the fluid flow around an object. Calculating the value of $C_D$ will be explored more deeply in later sections of this document. For now, we may assume a constant value.
 
 It is helpful to think about these quantities as vectors, because we can add them together to achieve a resultant.\footnote{More formally, we define this as a linear space, where multiplicative and additive properties are preserved. This formal definition allows us to apply this to any arbitrarily number of dimensions. } In the 1-dimensional case this is quite trivial since all vectors along the $\hat{y}$ unit vector, but this will become increasingly important as we move to higher dimensions.
+
+Expressed in vector notation, we write Newton's 2nd Law as $\vec{F}=m{}^i\ddot{\vec{r}}^{op}$. Because ${}^i\ddot{\vec{r}}^{op}$ lies strictly in the $\hat{y}$ direction, it can be easily deduced that ${}^i\ddot{\vec{r}}^{op}=\ddot{y}$. 
+
 \subsection{Numerical Integration in the 1-DoF}\label{sec: Numerical Integration in the 1DoF}
-Now we will move into something that you may have not seen before. Given all the forces, we normally apply Newton’s 2\textsuperscript{nd} Law, $\sum{\vec{F}}=m\vec{a}$ , to arrive at an expression for the acceleration as shown in \eqref{eq2}. Doing so might look something like this:
+\newacronym{eom}{EOM}{Equation of Motion}
+Now we will move into something that you may have not seen before. Given all the forces, we normally apply Newton’s 2\textsuperscript{nd} Law, $\sum{\vec{F}}=m\vec{a}$ , to arrive at an expression for the acceleration, known as an \gls{eom}, as shown in \eqref{eq2}. Doing so might look something like this:
 \begin{gather}
 F_T \cdot [1-u(t-t_b)]-\frac{1}{2}\rho_{\infty}V_{\infty}^2SC_D-mg=m\vec{a}\label{eq1} \\
 \vec{a}=\frac{F_T \cdot [1-u(t-t_b)]-\frac{1}{2}\rho_{\infty}V_{\infty}^2SC_D}{m}-g\label{eq2}
 \end{gather}
  From here, we use integration to find the velocity and then position of the object with time. Formally, we might define this formally as:
  $$\vec{V}=\int{\vec{a}}{dt}$$
-However, you may notice something strange with our equation. In our expression for acceleration, we need to know the velocity. However, we do not know the velocity without integrating the equation first. This puts us in a chicken v. egg situation, so we must take a different approach to the problem. \footnote{Sometimes systems like this can be solved with traditional ODE methods. However, most complex systems like our 6-\gls{dof} have no known analytical solutions. We will focus on numerical integration because it will be more useful in general. }
+However, you may notice something strange with our equation. In our expression for acceleration, we need to know the velocity. However, we do not know the velocity without integrating the equation first. Since this dependence is non-linear, this becomes even more complicated to solve. This puts us in a chicken v. egg situation, so we must take a different approach to the problem. \footnote{Sometimes systems like this can be solved with traditional ODE methods. However, most complex systems like our 6-\gls{dof} have no known analytical solutions. We will focus on numerical integration because it will be more useful in general. }
 
-The way we resolve this is to make an approximation of the solution in a process called \textit{Numerical Integration. }Here, we will outline the simplest type of numerical integration, known as Euler’s Method. This section aims to show how to implement Euler’s method in code, and the mathematical reasoning will be given a more formal treatment in section 5. We will describe more complex numerical integration schemes and why you might want to use them, but it’s good to see the code for a simple case first.
+\newglossaryentry{numerical int}
+{
+    name=numerical integration,
+    first = {\textit{numerical integration}},
+    description={The process of making a numerical approximation of a differential equation through discretization of the independent variable (usually time for most physical phenomenon)}
+}
 
-Euler’s Method involves discretizing our time interval. You may remember the concept of a Riemann Sum from calculus, where you approximate an integral in discrete time steps. We will take a similar approach with Euler’s Method. Euler’s method is applicable to solving first order ordinary differential equations (ODE’s). However, in our problem, we have a second order differential equation, because $\vec{a}=\ddot{y}$.
+The way we resolve this is to make an approximation of the solution in a process called \gls{numerical int}. Here, we will outline the simplest type of numerical integration, known as Euler’s Method. This section aims to show how to implement Euler’s method in code, and the mathematical reasoning will be given a more formal treatment in section \ref{sec:euler integration}. We will describe more complex numerical integration schemes and why you might want to use them, but it’s good to see the code for a simple case first.
 
-To resolve this issue, we will make this one differential equation into a system of first order differential equations. In general, we can convert an nth-order ODE into a system of n first-order ODEs.
+Euler’s Method involves discretizing our time interval. You may remember the concept of a Riemann sum from calculus, where you approximate an integral in discrete time steps. We will take a similar approach with Euler’s Method. Euler’s method is applicable to solving first order ordinary differential equations (ODE’s). However, in our problem, we have a second order differential equation, because $\vec{a}=\ddot{y}$.
 
-In this case, we define a variable, . Now, we can express equation \eqref{eq2} as a system of two differential equations:
+To resolve this issue, we will make this one differential equation into a system of first-order differential equations. In general, we can convert an nth-order ODE into a system of n first-order ODEs.
+
+In this case, we define a variable, $v=\dot{y}$. Now, we can express equation \eqref{eq2} as a system of two differential equations:
 
 \begin{gather}\label{system}
         \dot{v}=\frac{F_T \cdot [1-u(t-t_b)]-\frac{1}{2}\rho_{\infty}V_{\infty}^2SC_D}{m}-g\\
     \dot{y}=v
 \end{gather}
 
-Now, we will apply Euler’s method to solve the problem. We will use the following steps to do so, using equation \eqref{system}as our example:
+Now, we will apply Euler’s method to solve the problem. We will use the following steps to do so, using equation \eqref{system} as our example:
 
 1. Rewrite the system in Leibniz notation, where $\dot{x}=\frac{dx}{dt}$.
 
@@ -400,7 +426,7 @@ Now, we will apply Euler’s method to solve the problem. We will use the follow
 
 6. Iterate through values of $\Delta t$ until the desired time of simulation is achieved.
 
-We follow the same process for the integration of acceleration to find the velocity. Of note, we will use the previous value of $v$ in the computation of the new acceleration. Note that a more formal definition of Euler’s method is given in section 5.1.
+We follow the same process for the integration of acceleration to find the velocity. Of note, we will use the previous value of $v$ in the computation of the new acceleration. Note that a more formal definition of Euler’s method is given in section \ref{sec:euler integration}.
 
 We also show this example in MATLAB Script \ref{Script 1} below. Note that $\frac{1}{2}\rho_{\infty}SC_D$ is called $k$ in the script for simplicity. This simplification assumes that $\rho_{\infty}$ and the $C_D$ are constant, which we will later see is a quite poor assumption but is okay for a first approximation.
 
@@ -433,7 +459,7 @@ For particle dynamics, the most complex case is full 3D translational motion. Lu
         \ddot{x}_3\\
     \end{bmatrix}
 \end{gather}
-This is done not only for the sake of compactness, but also to facilitate the use of matrix operations for translation between reference frames. This concept is further explored in section 3. For this reason, expressing these elements in vectors will become crucial as we move forward. In MATLAB, we express a tri-dimensional column vector as:
+This is done not only for the sake of compactness, but also to facilitate the use of matrix operations for translation between reference frames. This concept is further explored in section \ref{sec:attitude dynamics}. For this reason, expressing these elements in vector form will become crucial as we move forward. In MATLAB, we express a tri-dimensional column vector as:
 \begin{lstlisting}[language=Matlab]
 pos=[0;0;0];
 \end{lstlisting}
@@ -443,7 +469,7 @@ pos=[0,0,0];
 \end{lstlisting}
 Often, it is useful to convert between a row and column vector in MATLAB because some functions will expect the input to be in a different format. We can do so with a transposition. In MATLAB, this looks like: 
 \begin{lstlisting}
-pos=[0,0,0];
+pos=[0,0,0]';
 \end{lstlisting}
 \subsection{Vector directions in the 3-DoF}\label{sec: vector directions in the 3DoF}
 We present below a modified version of the 1-\gls{dof} below in full 3D in Figure \ref{fig:3 DoF Forces}.
@@ -520,7 +546,7 @@ We present below a modified version of the 1-\gls{dof} below in full 3D in Figur
     first={\textit{angle of attack}},
     description={The angle of offset of the freestream velocity with the $\hat{X}$/$\hat{b}_1$, or longitudinal axis, of the vehicle. This is often denoted with the Greek letter $\alpha$}
 }
-As compared to 1-\gls{dof} case, we have three new quantities that are present. The first of these is $\vec{V}_{\infty}$, the freestream airflow vector, being shown on the diagram.\footnote{\gls{freestream} velocity  is drawn in the direction of incoming air by convention. However, for calculations, we will use the convention that  is the direction of the velocity of the vehicle (opposite sign to drawing).} This is represented diagrammatically because it no longer must be along the $\hat{y}$ direction. When we have an angle between the nose (the direction through which the thrust force points in Figure 2) and the \gls{freestream} velocity, we refer to this as an \gls{angle of attack}. This \gls{angle of attack} is often denoted with the letter $\alpha$. We will discuss \gls{angle of attack} and its effects more in section 4. For now, we simply need to understand how to calculate  given the vector through the nose and the \gls{freestream} velocity vector.
+As compared to 1-\gls{dof} case, we have three new quantities that are present. The first of these is $\vec{V}_{\infty}$, the freestream airflow vector, being shown on the diagram.\footnote{\gls{freestream} velocity  is drawn in the direction of incoming air by convention. However, for calculations, we will use the convention that  is the direction of the velocity of the vehicle (opposite sign to drawing).} This is represented diagrammatically because it no longer must be along the $\hat{y}$ direction. When we have an angle between the nose (the direction through which the thrust force points in Figure 2) and the \gls{freestream} velocity, we refer to this as an \gls{angle of attack}. This \gls{angle of attack} is often denoted with the letter $\alpha$. We will discuss \gls{angle of attack} and its effects more in section \ref{sec: aerodynamics}. For now, we simply need to understand how to calculate $\alpha$ given the vector through the nose and the \gls{freestream} velocity vector.
 
 To do this, we use the fact that the dot product is related to the cosine of the angle between the vectors. Denoting the vector through the nose of the rocket , we can find the \gls{angle of attack} as:
 \begin{equation}\label{eq:alpha}
@@ -533,7 +559,7 @@ The next new quantity is $F_L$, the force of lift. The force of lift is always p
 \end{equation}
 Here, the cross product is used because it generates a vector orthogonal to the two input vectors. This is exactly the property that we need when defining lift.
 
-For the sake of completeness, we should also note that the force of drag lies opposite the direction of . This is much simpler to calculate, and looks like:
+For the sake of completeness, we should also note that the force of drag lies opposite the direction of $V_{\infty}$. This is much simpler to calculate, and looks like:
 \begin{equation}\label{eq:drag}
 \hat{D}=\frac{-\hat{V}_{\infty}}{||\hat{V}_{\infty}||}
 \end{equation}
@@ -743,7 +769,7 @@ Using the inertia tensor, a matrix form of \eqref{eq:Iw}  is written as:
 In the simplification using the principle axes, we often refer to the terms $I_{xx}$, $I_{yy}$, and $I_{zz}$ simply as $I_x$, $I_y$, and $I_z$. There are called the \glspl{pmoi}.
 \subsection{Rotations in the Body Frame}\label{sec:rotations in the body frame}
 Now that we have defined our inertia tensor in the body frame, it is useful to reexamine \eqref{eq:Euler 2nd Law} and \eqref{eq:Iw} to express them in terms of the body frame.
-\newacronym{bke}{BKE}{Basic Kinematic Equation}
+
 We can express equation \eqref{eq:Euler 2nd Law} in terms of the body frame using the \gls{bke}. We write this as:
 \begin{equation}\label{eq:bke}
 {}^i\frac{dH^o}{dt}={}^b\frac{dH^o}{dt}+{}^e\vec{\omega}^b\times H^o
@@ -768,11 +794,539 @@ We can rearrange this to a form that is more useful for us (although somewhat le
 \end{gather}
 These sets of equations are especially powerful because they allows us to numerically integrate the angular velocity. Our moments can be found using Newtonian dynamics and the \glspl{pmoi} are quantities that are easily found using the integrals described above in section \ref{moment of inertia}. We will use these angular velocity derivatives extensively in sections \ref{sec:DescribeEulerRates} and \ref{sec: quaternion rates} to describe the time rate of change of the attitude of the rocket.
 
+\section{Key Ideas}
+\begin{enumerate}
+    \item Newton's 2nd Law can be used to create 2nd order differential equations that describe particle motion
+    \item An order $n$ differential equations can be reduced into $n$ first order differential equations
+    \item First order differential equations can be easily numerically integrated by a computer, allowing us to get approximate solutions to a huge number of problems
+    \item We can describe the properties of a bodies rotation in an analogous way to Newton's 2nd Law.
+    \item We can create equations for the angular acceleration and angular velocity using Euler rotation equations.
+    \item We can use different frames of reference to more easily express quantities. The body frame and inertial frame are the most important in our context.
+    
+\end{enumerate}
+
+\section{Further Reading}
+\newacronym{bke}{BKE}{Basic Kinematic Equation}
+
+We assume that most readers are broadly familiar with the topics discussed in AAE 203. Understanding the application of the \gls{bke} (otherwise known as derivative transport theorem) is fundamental to the understanding of dynamics. More information about basic dynamics in general can be found in \cite{kasdin_engineering_2011}. For Newtonian dynamics, refer to Chapter 1 and 2. Euler rotation equations are discussed in Chapter 4. This book uses different notation but can help solidify this knowledge.
+
+\section{Practice Problems}
+\begin{enumerate}
+    \item On a nice Wednesday evening during one of your strolls through campus, you are kidnapped by a business major, who will only let you free if you can fix the vibration of the squeaky door at their frat house.
+
+You can consider the door hinge as a mass-spring system constrained to motion along the $\hat{x}$-direction. The spring has an equilibrium length of $L_0$ and a spring constant of $k=5$ N/m with a mass of 1 kg. At time $t_0$, an instantaneous impulse of 10 $\mathrm{N}\cdot \mathrm{s}$ is applied to the hinge in the $-\hat{x}$-direction by a misguided ping-pong ball hitting the door. This is shown diagrammatically in \ref{fig:mass spring}. Assume that the system is at rest in the equilibrium position at $t_0$.
+\begin{figure}[ht]
+    \centering
+    
+
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Rounded Rect [id:dp7768881234617668] 
+\draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ] (300,134) .. controls (300,120.75) and (310.75,110) .. (324,110) -- (396,110) .. controls (409.25,110) and (420,120.75) .. (420,134) -- (420,206) .. controls (420,219.25) and (409.25,230) .. (396,230) -- (324,230) .. controls (310.75,230) and (300,219.25) .. (300,206) -- cycle ;
+%Straight Lines [id:da38466903419728604] 
+\draw    (100,230) -- (100,192) ;
+\draw [shift={(100,190)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da6153763296005214] 
+\draw    (100,230) -- (138,230) ;
+\draw [shift={(140,230)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Shape: Spring [id:dp12565049584625476] 
+\draw   (190,170) .. controls (191.25,160) and (195.25,150) .. (203.25,150) .. controls (219.25,150) and (219.25,190) .. (213.25,190) .. controls (207.25,190) and (207.25,150) .. (223.25,150) .. controls (239.25,150) and (239.25,190) .. (233.25,190) .. controls (227.25,190) and (227.25,150) .. (243.25,150) .. controls (259.25,150) and (259.25,190) .. (253.25,190) .. controls (247.25,190) and (247.25,150) .. (263.25,150) .. controls (279.25,150) and (279.25,190) .. (273.25,190) .. controls (267.25,190) and (267.25,150) .. (283.25,150) .. controls (299.25,150) and (299.25,190) .. (293.25,190) .. controls (287.69,190) and (287.28,155.62) .. (300,150.61) ;
+%Straight Lines [id:da13717716944566494] 
+\draw [line width=1.5]    (190,230) -- (490,230) ;
+%Straight Lines [id:da08497529256460246] 
+\draw [line width=1.5]    (190,110) -- (190,230) ;
+%Straight Lines [id:da6451180344156043] 
+\draw    (500,170) -- (432,170) ;
+\draw [shift={(430,170)}, rotate = 360] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da4484222824632662] 
+\draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (190,90) -- (358,90) ;
+\draw [shift={(360,90)}, rotate = 180] [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da31603055366988764] 
+\draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (190,80) -- (190,100) ;
+%Straight Lines [id:da3672906158385085] 
+\draw    (190,240) -- (200,230) ;
+%Straight Lines [id:da5740630070589421] 
+\draw    (210,240) -- (220,230) ;
+%Straight Lines [id:da7670589944898886] 
+\draw    (230,240) -- (240,230) ;
+%Straight Lines [id:da9623123722477054] 
+\draw    (250,240) -- (260,230) ;
+%Straight Lines [id:da09481544899973315] 
+\draw    (270,240) -- (280,230) ;
+%Straight Lines [id:da7618060743054186] 
+\draw    (290,240) -- (300,230) ;
+%Straight Lines [id:da06428960315401433] 
+\draw    (310,240) -- (320,230) ;
+%Straight Lines [id:da7732543318917602] 
+\draw    (330,240) -- (340,230) ;
+%Straight Lines [id:da7544212064888517] 
+\draw    (350,240) -- (360,230) ;
+%Straight Lines [id:da9699435924293961] 
+\draw    (370,240) -- (380,230) ;
+%Straight Lines [id:da4928357475624251] 
+\draw    (390,240) -- (400,230) ;
+%Straight Lines [id:da952354089719576] 
+\draw    (410,240) -- (420,230) ;
+%Straight Lines [id:da2820465635927757] 
+\draw    (430,240) -- (440,230) ;
+%Straight Lines [id:da7568084497678664] 
+\draw    (450,240) -- (460,230) ;
+%Straight Lines [id:da9121540373410668] 
+\draw    (470,240) -- (480,230) ;
+%Straight Lines [id:da17683266041429568] 
+\draw    (180,130) -- (190,120) ;
+%Straight Lines [id:da8134568638498193] 
+\draw    (180,150) -- (190,140) ;
+%Straight Lines [id:da9984593523585779] 
+\draw    (180,170) -- (190,160) ;
+%Straight Lines [id:da006829172139502071] 
+\draw    (180,190) -- (190,180) ;
+%Straight Lines [id:da45076310277705844] 
+\draw    (180,210) -- (190,200) ;
+%Straight Lines [id:da7407972176901751] 
+\draw    (180,230) -- (190,220) ;
+
+% Text Node
+\draw (141,218.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
+% Text Node
+\draw (97,166.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
+% Text Node
+\draw (531.5,170) node    {$10\ \mathrm{N} \cdot \mathrm{s}$};
+% Text Node
+\draw (273,70) node  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ]  {$L$};
+% Text Node
+\draw (346,162.4) node [anchor=north west][inner sep=0.75pt]    {$1\ \mathrm{kg}$};
+
+
+\end{tikzpicture}
+
+
+    \caption{Mass-Spring System Problem Set-Up}
+    \label{fig:mass spring}
+\end{figure}
+\begin{enumerate}
+    \item Consider the system to be frictionless. Derive the \glspl{eom} for the system in both of the component directions.
+    \item Find the analytical solution of the system from the \gls{eom} you derived. Graph the solution.
+    \item Numerically integrate the \glspl{eom} ascertain the position and velocity as a function of time. Graph the solution. How does it compare to the analytical solution?
+    \item Consider the system with some frictional force that is proportional to the velocity, with a proportionality constant of $c=1\mathrm{\frac{kg}{s}}$. This frictional force opposes the motion of the system. Repeat steps a through c with this new system.
+\end{enumerate}
+    \item After your escape from the frat house, you run into your friend, Buckminster, who is a big fan of circular-shaped objects. He asks you if you can model the orbit of a satellite to see if it looks anything like his geodesic domes. Not wanting to let him down, you write a MATLAB script to do so. You can assume the earth has a radius $R_\oplus=$6380 km and $\mu_\oplus=3.986\cdot10^5\, \frac{\mathrm{km^3}}{\mathrm{s^2}}$.
+\begin{figure}[ht]
+    \centering
+
+
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Shape: Circle [id:dp16691195552333382] 
+\draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][fill={rgb, 255:red, 173; green, 209; blue, 241 }  ,fill opacity=1 ] (260,161.23) .. controls (260,117.05) and (295.82,81.23) .. (340,81.23) .. controls (384.18,81.23) and (420,117.05) .. (420,161.23) .. controls (420,205.42) and (384.18,241.23) .. (340,241.23) .. controls (295.82,241.23) and (260,205.42) .. (260,161.23) -- cycle ;
+%Straight Lines [id:da08799392003464845] 
+\draw    (140,200) -- (140,162) ;
+\draw [shift={(140,160)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da16946831015851427] 
+\draw    (140,200) -- (178,200) ;
+\draw [shift={(180,200)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Shape: Arc [id:dp2632274214469099] 
+\draw  [draw opacity=0] (140,210) .. controls (140,210) and (140,210) .. (140,210) .. controls (140,210) and (140,210) .. (140,210) .. controls (134.48,210) and (130,205.52) .. (130,200) .. controls (130,194.48) and (134.48,190) .. (140,190) .. controls (145.52,190) and (150,194.48) .. (150,200) -- (140,200) -- cycle ; \draw   (140,210) .. controls (140,210) and (140,210) .. (140,210) .. controls (140,210) and (140,210) .. (140,210) .. controls (134.48,210) and (130,205.52) .. (130,200) .. controls (130,194.48) and (134.48,190) .. (140,190) .. controls (145.52,190) and (150,194.48) .. (150,200) ;  
+\draw   (135,205) .. controls (136.67,207.78) and (138.33,209.44) .. (140,210) .. controls (138.33,210.56) and (136.67,212.22) .. (135,215) ;
+%Shape: Arc [id:dp9820699747427737] 
+\draw  [draw opacity=0] (457.85,105.05) .. controls (465.65,121.74) and (470,140.36) .. (470,160) -- (340,160) -- cycle ; \draw    (459.1,107.82) .. controls (466.11,123.79) and (470,141.44) .. (470,160) ; \draw [shift={(470,160)}, rotate = 270] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (0,5.59) -- (0,-5.59)   ; \draw [shift={(457.85,105.05)}, rotate = 64.96] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ;
+%Shape: Arc [id:dp4819431408488013] 
+\draw  [draw opacity=0][line width=1.5]  (407.17,118.44) .. controls (419.05,119.31) and (427.08,122.71) .. (429.27,128.74) .. controls (434.94,144.31) and (399.56,171.48) .. (350.26,189.42) .. controls (300.96,207.37) and (256.4,209.29) .. (250.73,193.73) .. controls (248.55,187.74) and (252.44,180.03) .. (260.87,171.79) -- (340,161.23) -- cycle ; \draw  [line width=1.5]  (407.17,118.44) .. controls (419.05,119.31) and (427.08,122.71) .. (429.27,128.74) .. controls (434.94,144.31) and (399.56,171.48) .. (350.26,189.42) .. controls (300.96,207.37) and (256.4,209.29) .. (250.73,193.73) .. controls (248.55,187.74) and (252.44,180.03) .. (260.87,171.79) ;  
+%Straight Lines [id:da7892814012335462] 
+\draw [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,draw opacity=1 ][line width=0.75]    (350,190) -- (458.12,150.68) ;
+\draw [shift={(460,150)}, rotate = 160.02] [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,draw opacity=1 ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+\draw [shift={(350,190)}, rotate = 25.02] [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,draw opacity=1 ][line width=0.75]    (-5.59,0) -- (5.59,0)(0,5.59) -- (0,-5.59)   ;
+
+% Text Node
+\draw (181,188.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
+% Text Node
+\draw (142,213.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
+% Text Node
+\draw (481,122.4) node [anchor=north west][inner sep=0.75pt]    {$i=25\degree $};
+% Text Node
+\draw (136,136.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
+
+\end{tikzpicture}
+
+    \caption{Satellite in Orbit Problem Set-Up}
+    \label{fig:orbit}
+\end{figure}
+\begin{enumerate}
+    \item Assuming all 3-\gls{dof}, derive the \gls{eom} for the satellite motion assuming that gravity is the only force acting on the satellite and the earth is a point mass.
+    \item You find a satellite in orbit with a height of 400 km. You also measure the inclination of the orbit as it passes overhead as $25\degree$. Assuming a circular orbit, what is the magnitude of the velocity and the component velocities in $\hat{x}$ and $\hat{y}$ as it passes overhead?
+    \item You show Buckminster and he looks unimpressed. He wants you to model 
+\end{enumerate}
+    \item  NASA, inspired by your expert analysis of the orbits, asks you to help analyze the rotational dynamics of the Explorer 1 satellite for your job interview. The satellite can be modeled approximately as a cylinder with a length of 2 m and a diameter of 16 cm. Assume the mass is 16kg with a uniform mass distribution.
+\begin{figure}[ht]
+    \centering
+ 
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Shape: Can [id:dp21172872656172192] 
+\draw   (435.38,171) -- (214.63,171) .. controls (212.07,171) and (210,162.05) .. (210,151) .. controls (210,139.95) and (212.07,131) .. (214.63,131) -- (435.38,131) .. controls (437.93,131) and (440,139.95) .. (440,151) .. controls (440,162.05) and (437.93,171) .. (435.38,171) .. controls (432.82,171) and (430.75,162.05) .. (430.75,151) .. controls (430.75,139.95) and (432.82,131) .. (435.38,131) ;
+%Straight Lines [id:da41388689366433795] 
+\draw    (320,151) -- (320,113) ;
+\draw [shift={(320,111)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da6701135215445572] 
+\draw    (320,151) -- (358,151) ;
+\draw [shift={(360,151)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Shape: Arc [id:dp6670514917911996] 
+\draw  [draw opacity=0] (320,161) .. controls (320,161) and (320,161) .. (320,161) .. controls (320,161) and (320,161) .. (320,161) .. controls (314.48,161) and (310,156.52) .. (310,151) .. controls (310,145.48) and (314.48,141) .. (320,141) .. controls (325.52,141) and (330,145.48) .. (330,151) -- (320,151) -- cycle ; \draw   (320,161) .. controls (320,161) and (320,161) .. (320,161) .. controls (320,161) and (320,161) .. (320,161) .. controls (314.48,161) and (310,156.52) .. (310,151) .. controls (310,145.48) and (314.48,141) .. (320,141) .. controls (325.52,141) and (330,145.48) .. (330,151) ;  
+\draw   (315,156) .. controls (316.67,158.78) and (318.33,160.44) .. (320,161) .. controls (318.33,161.56) and (316.67,163.22) .. (315,166) ;
+%Straight Lines [id:da9894971015882463] 
+\draw    (210,191) -- (430,191) ;
+\draw [shift={(430,191)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (0,5.59) -- (0,-5.59)   ;
+\draw [shift={(210,191)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (0,5.59) -- (0,-5.59)   ;
+%Straight Lines [id:da08378461172235874] 
+\draw    (460,169) -- (460,133) ;
+\draw [shift={(460,131)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (6.56,-1.97) .. controls (4.17,-0.84) and (1.99,-0.18) .. (0,0) .. controls (1.99,0.18) and (4.17,0.84) .. (6.56,1.97)   ;
+\draw [shift={(460,171)}, rotate = 270] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (6.56,-1.97) .. controls (4.17,-0.84) and (1.99,-0.18) .. (0,0) .. controls (1.99,0.18) and (4.17,0.84) .. (6.56,1.97)   ;
+
+% Text Node
+\draw (361,139.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
+% Text Node
+\draw (322,151.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
+% Text Node
+\draw (316,87.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
+% Text Node
+\draw (301,203.4) node [anchor=north west][inner sep=0.75pt]    {$2\ \mathrm{m}$};
+% Text Node
+\draw (470,144.4) node [anchor=north west][inner sep=0.75pt]    {$16\ \mathrm{cm}$};
+
+
+\end{tikzpicture}
+
+    \caption{Explorer 1 Satellite}
+    \label{fig:explorer 1}
+\end{figure}
+\begin{enumerate}
+    \item Calculate the moment of inertia for the Explorer 1 in the body frame along each of the axes. \textit{Hint: You may benefit from a change in coordinate system.}
+    \item NASA wants to spin-stabilize the satellite with a final rotation rate of $2\pi \ \mathrm{rad/s}$. Calculate the total impulse needed by small spin motors mounted on the circumference of the satellite to achieve this rotation rate. You may assume that this impulse is provided by two motors, so that they act as a force couple.
+    \item 
+\end{enumerate}
+\end{enumerate}
+\chapter{Energy Methods of Mechanics}
+\begin{chapquote}{Joseph Fourier}
+    ''Mathematics compares the most diverse phenomena and discovers the secret analogies that unite them.''
+\end{chapquote}
+
+Energy methods of mechanics employ the concepts of the energy of a system to solve a problem in mechanics. This is in contrast to the Newtonian method, which considers the forces of a system. The good news is that both will result in the same answer. However, having both in your set of tools as an engineer can prove especially useful.
+
+To grasp energy methods, it is best to have an intuition for Newtonian dynamics first. A thorough reading of \ref{sec: Newtonian Dynamics} and other sources will help prepare the reader for this section.
+
+There are two main types of energy mechanics, referred to as Hamiltonian and Lagrangian Mechanics. In this chapter, we will mostly focus on the Lagrangian version of these mechanics.
+
+Although the Hamiltonian and Lagrangian are not directly used in the case of our 6-\gls{dof}, they are fundamental to other areas of mechanics and make derivations far simpler in many cases. The Hamiltonian and Lagrangian descriptions of mechanics are more often taught to physics students rather than engineers, but we feel that they deserve inclusion among the topics presented here. When we discuss numerical integration, we can use \textit{symplectic} integrators when our problem has a Hamiltonian description. This will be further discussed in \ref{sec:other numerical ints}. You may find that certain \gls{eom} derivations, such as the spinning top and problems in orbital mechanics are more easily accomplished with energy methods.
+
+Another reason to motivate these systems is that these energy methods are often rotationally invariant because energy methods can employ a generalized coordinate system. We will see this later in an example of a pendulum.
+
+\section{Calculus of Variations}
+
+The calculus of variations underpins the ideas of Lagrangian and Hamiltonian mechanics, so it is important to understand the principles behind it before moving on to the actual mechanics. In analogy to how single variable calculus is fundamental to Newtonian mechanics, the calculus of variations is fundamental to energy mechanics.
+
+The following section borrows heavily from the derivations of Chapter 6 of  \cite{thornton_classical_nodate} and Chapter 5 of  \cite{noauthor_variational_2017}. A good video overview of this topic to prime the reader can be found at \cite{veritasium_closest_2024}.
+
+The fundamental idea of the calculus of variations is simple. We want to find the maximums and minimums of some quantity in our problem. Why? In physics, we often see that quantities are minimized or maximized for some reason. For example, a soap surface will minimize its surface area, or a beam of photons will follow a \textit{geodesic} of spacetime. Light will also refract through surfaces to minimize time as seen in Snell's Law. 
+
+Because so many physical phenomena are governed by this behavior to minimize certain quantities, Hamilton (the same mathematical hero we will see later with attitude dynamics), decided to formulate a mathematical description of this.
+
+Before we get to Hamilton's formulation, we need to understand what the calculus of variations is trying to do. To find a minima means that naturally, we should look for the extrema of some quantity. We call this quantity a \textit{functional}, which we define as:
+\begin{equation}\label{eq:functional}
+    J=\int_{x_1}^{x_2}f\left[y(x),y'(x);x\right]{dx}
+\end{equation}
+The functional,$J$, is a quantity which maps a function onto the real number line. This means that it takes the function as an input and outputs a single real number. We are attempting to find an input function, $y(x)$, that yields an extrema of $J$. 
+
+To be precise about this definition of an extrema - we are attempting to find a function $y(x)$ such that any other function added to $y(x)$, no matter how close it is to $y(x)$, must change the value of $J$ such that it is no longer an extrema. By convention, this other function added to $y(x)$ is called the \textit{neighborhood function}, and is denoted $\eta(x)$.
+
+We can compactly write this $y(x)+\eta(x)$ as $y(\varepsilon,x)$. We define the condition $y(0,x)\equiv y(x)$, where $y(x)$ is the function that gives the extrema of $J$. So, we can write $y(\varepsilon,x)$ as
+\begin{equation}\label{eq:y epsilon}
+    y(\varepsilon,x)=y(0,x)+\varepsilon\eta(x)
+\end{equation}
+The important restriction that we impose on $\eta(x)$ is that it must vanish at the endpoints, $x_1$ and $x_2$. This will prove important later so we can apply integration rules on our function. We also want a continuous first derivative so that $y'(\varepsilon,x)$ can be defined as
+\begin{equation}\label{eq:y prime epsilon}
+    y'(\varepsilon,x)=\frac{dy(0,x)}{dx}+\varepsilon\frac{d\eta}{dx}
+\end{equation}
+
+Using this definition of the neighborhood function, we can rewrite \eqref{eq:functional} as
+\begin{equation}\label{eq:neighborhood functional}
+    J(\varepsilon)=\int_{x_1}^{x_2}f\left[y(\varepsilon,x),y'(\varepsilon,x);x\right]{dx}
+\end{equation}
+So, with this redefined version of the function, we can finally find the extrema using the familiar calculus rule, setting the derivative equal to zero. We also evaluate at zero since this is where we defined the extrema to exist:
+\begin{equation}
+    \left.\frac{\partial J(\varepsilon)}{\partial\varepsilon}\right\vert_{\varepsilon=0}=0
+\end{equation}
+Applying this to \eqref{eq:functional}, we arrive at
+\begin{equation}\label{eq:neighborhood functional diff}
+    \frac{\partial J(\varepsilon)}{\partial\varepsilon}= \frac{\partial}{\partial\varepsilon}\int_{x_1}^{x_2}f\left[y(0,x),y'(0,x);x\right]{dx}
+\end{equation}
+The $\varepsilon$ terms drop out from the RHS from the evaluation of $\varepsilon=0$. Applying the \textit{Leibniz Integral Rule}, the partial derivative can be moved inside the RHS integral:
+\begin{equation}
+    \frac{\partial J(\varepsilon)}{\partial\varepsilon}= \int_{x_1}^{x_2}\frac{\partial}{\partial\varepsilon}f\left[y(x),y'(x);x\right]{dx}
+\end{equation}
+Applying the rules of implicit integration on the integrand, we get:
+\begin{equation}\label{eq:diff functional}
+    \frac{\partial J(\varepsilon)}{\partial\varepsilon}= \int_{x_1}^{x_2}f\left(\frac{\partial f}{\partial y}\frac{\partial y}{\partial\varepsilon}+\frac{\partial f}{\partial y'}\frac{\partial y'}{\partial\varepsilon}\right){dx}
+\end{equation}
+Note that we still must take the partial derivative with respect to $\varepsilon$ on the RHS, even though we have plugged in 0 for $\varepsilon$.
+
+Next, we can find expressions for $\frac{\partial y}{\partial \varepsilon}$ and $\frac{\partial y'}{\partial \varepsilon}$. This is done with the expressions \eqref{eq:y epsilon} and \eqref{eq:y prime epsilon}. Starting with the first, we differentiate \eqref{eq:y epsilon} with respect to $\varepsilon$:
+\begin{equation}\label{eq:y diff epsilon}
+    \frac{\partial}{\partial \varepsilon}y(\varepsilon,x)=\frac{\partial}{\partial \varepsilon}\left[y(0,x)+\varepsilon\eta(x)\right]
+\end{equation}
+Here, $y(0,x)$ is independent of $\varepsilon$ since we define it to occur at value $\varepsilon=0$. So this leaves us with
+\begin{equation}\label{eq:diff y diff epsilon}
+     \frac{\partial y}{\partial \varepsilon}= \eta(x)
+\end{equation}
+Doing the same for \eqref{eq:y diff epsilon}, we arrive at
+\begin{equation}\label{diff y' diff epsilon}
+     \frac{\partial y'}{\partial \varepsilon}= \frac{\partial \eta}{\partial x}
+\end{equation}
+Finally, plugging these back into the original expression for \eqref{eq:diff functional}, we get the expression
+\begin{equation}\label{eq:diff functional subs}
+    \frac{\partial J(\varepsilon)}{\partial\varepsilon}= \int_{x_1}^{x_2}\left(\frac{\partial f}{\partial y}\eta(x)+\frac{\partial f}{\partial y'}\frac{\partial \eta}{\partial x}\right){dx}
+\end{equation}
+Finally, performing some integration by parts, we arrive at the final integral expression of the maximum:
+\begin{equation}\label{eq:diff functional final}
+    \frac{\partial J(\varepsilon)}{\partial\varepsilon}= \int_{x_1}^{x_2}\left(\frac{\partial f}{\partial y}-\frac{d}{dx}\frac{\partial f}{\partial y'}\right)\eta(x){dx}
+\end{equation}
+Since we are evaluating the maximum, $\frac{\partial J(\varepsilon)}{\partial\varepsilon}$ evaluates to 0. Since $\eta(x)$ is an arbitrary function, the only way to guarantee an equality is to ensure that the part of the integrand in parenthesis is 0.
+
+This gives us the fundamental equation of the calculus of variations, called \textit{Euler's Equation}:
+\begin{equation}\label{eq: Euler's Diff eq}
+    \frac{\partial f}{\partial y}-\frac{d}{dx}\frac{\partial f}{\partial y'}=0
+\end{equation}
+\subsection{Delta Notation}
+In later sections, it is useful to have a shorthand for these partial derivative quantities. For a quantity $\chi$, the variation, $\delta$ is given as:
+$$\delta\equiv\frac{\partial\chi}{\partial \varepsilon}d\varepsilon$$Using this notation, we can rewrite \eqref{eq:diff functional final} after some algebraic manipulation as:
+\begin{equation}
+    \delta J= \int_{x_1}^{x_2}\left(\frac{\partial f}{\partial y}-\frac{d}{dx}\frac{\partial f}{\partial y'}\right)\delta y{dx}
+\end{equation}
+And thus, \eqref{eq: Euler's Diff eq} can be written concisely as:
+\begin{equation}
+    \delta J=0
+\end{equation}
+This is a very general and far reaching conclusion that can be applied to many systems. For our use cases in dynamics, we have more useful forms of this equation which will be explored in the following section.
+
+\section{Hamilton's Principle}
+
+Following directly from the ideas of the calculus of variations, Hamilton (alongside many other mathematicians) wanted to apply this to physical systems. Hamilton's Principle is as follows:
+\begin{theorem}[Hamilton's Principle]
+A system which may travel from one point to another within a specific time interval, the path that is followed is the path which minimizes the time integral of the difference between the kinetic and potential energies.
+$$\delta \int_{t_1}^{t_2}{T-U}{dt}=0$$
+\end{theorem}
+
+The quantity $T-U$, the kinetic energy minus the potential energy, is a quantity called the \textit{Lagrangian}, denoted $L$. 
+\begin{equation}
+    L\equiv T-U
+\end{equation}
+
+The time integral of the Lagrangian is the \textit{action}, denoted $S$. This is often why Hamilton's Principle is also called the \textit{Principle of Least Action}. 
+
+\begin{equation}
+    S=\int_{t_1}^{t_2}{L}{dt}
+\end{equation}
+So, our action takes the form of the functional from the calculus of variations. From Hamilton's principle, this functional, the action, must be minimized. So, we often see the compact form of Hamilton's Principle as:
+$$\delta S=0$$
+Expressed using Euler's differential equation, \eqref{eq: Euler's Diff eq}, we get the \textit{Euler-Lagrange Equations}:
+\begin{equation}\label{eq: Euler-Lagrange}
+    \frac{\partial L}{\partial x_i}-\frac{d}{dt}\frac{\partial L}{\partial \dot{x}_i}=0
+\end{equation}
+Before we look into some examples of how to utilize these equations in practice, we should consider in what situations these will be better than the Newtonian methods.
+
+We note that in this chapter, we will only consider potential functions which are \textit{conservative}, or path independent. This does mean that frictional forces and aerodynamics are not modeled with the Lagrangian we describe here (although they can be with the utilization of Rayleigh's dissipation function and other techniques, such as those discussed in \cite{rabei_hamiltonian_2004}). This is the reason we do not directly use these equations in the 6-DoF.\footnote{However, much of the rotational dynamics we describe can be represented equivalently using the Lagrangian approach, so we do use these equations in a roundabout manner.}
+
+So, for systems that are non-conservative, it is best to stick with the Newtonian method of mechanics, as we do for our 6-DoF. However, for those that are frictionless, the methods described here will work well. While it may seem that frictionless systems are very idealistic, we do see systems that can be approximated as frictionless quite often! Orbits, of course, are one case where this is especially true. For many other systems, such as a spinning top or other rotating bodies, we can often ignore the small amount of friction and arrive at analytical solutions without much hassle using the Lagrangian. 
+
+With that noted, let us use the Lagrangian in a few examples to see how it can turn some complex Newtonian systems into fairly trivial problems.
+\subsection{Mass-Spring System}
+As a very basic first system, we will consider a mass spring system as shown in \ref{fig:mass spring lagrange}. We consider the length $x$ to be referenced from the rest length of the spring.
+\begin{figure}[ht]
+
+\centering
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Rounded Rect [id:dp34438430167397516] 
+\draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ] (310,154) .. controls (310,140.75) and (320.75,130) .. (334,130) -- (406,130) .. controls (419.25,130) and (430,140.75) .. (430,154) -- (430,226) .. controls (430,239.25) and (419.25,250) .. (406,250) -- (334,250) .. controls (320.75,250) and (310,239.25) .. (310,226) -- cycle ;
+%Straight Lines [id:da2744613466135113] 
+\draw    (110,250) -- (110,212) ;
+\draw [shift={(110,210)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da08431663295207847] 
+\draw    (110,250) -- (148,250) ;
+\draw [shift={(150,250)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Shape: Spring [id:dp2050444045141704] 
+\draw   (200,190) .. controls (201.25,180) and (205.25,170) .. (213.25,170) .. controls (229.25,170) and (229.25,210) .. (223.25,210) .. controls (217.25,210) and (217.25,170) .. (233.25,170) .. controls (249.25,170) and (249.25,210) .. (243.25,210) .. controls (237.25,210) and (237.25,170) .. (253.25,170) .. controls (269.25,170) and (269.25,210) .. (263.25,210) .. controls (257.25,210) and (257.25,170) .. (273.25,170) .. controls (289.25,170) and (289.25,210) .. (283.25,210) .. controls (277.25,210) and (277.25,170) .. (293.25,170) .. controls (309.25,170) and (309.25,210) .. (303.25,210) .. controls (297.69,210) and (297.28,175.62) .. (310,170.61) ;
+%Straight Lines [id:da8109677911849542] 
+\draw [line width=1.5]    (200,250) -- (500,250) ;
+%Straight Lines [id:da9738860715008741] 
+\draw [line width=1.5]    (200,130) -- (200,250) ;
+%Straight Lines [id:da8479892294914445] 
+\draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (290,110) -- (368,110) ;
+\draw [shift={(370,110)}, rotate = 180] [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+\draw [shift={(290,110)}, rotate = 180] [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][line width=0.75]    (0,5.59) -- (0,-5.59)   ;
+%Straight Lines [id:da38778280879589844] 
+\draw    (200,260) -- (210,250) ;
+%Straight Lines [id:da13716831040628819] 
+\draw    (220,260) -- (230,250) ;
+%Straight Lines [id:da5435450145291132] 
+\draw    (240,260) -- (250,250) ;
+%Straight Lines [id:da6012450156738026] 
+\draw    (260,260) -- (270,250) ;
+%Straight Lines [id:da006204164316379712] 
+\draw    (280,260) -- (290,250) ;
+%Straight Lines [id:da6672054023307342] 
+\draw    (300,260) -- (310,250) ;
+%Straight Lines [id:da05532576658672206] 
+\draw    (320,260) -- (330,250) ;
+%Straight Lines [id:da713074642825677] 
+\draw    (340,260) -- (350,250) ;
+%Straight Lines [id:da054951797337481234] 
+\draw    (360,260) -- (370,250) ;
+%Straight Lines [id:da44290965384713543] 
+\draw    (380,260) -- (390,250) ;
+%Straight Lines [id:da1554621606788551] 
+\draw    (400,260) -- (410,250) ;
+%Straight Lines [id:da18496092525096441] 
+\draw    (420,260) -- (430,250) ;
+%Straight Lines [id:da9097830383289192] 
+\draw    (440,260) -- (450,250) ;
+%Straight Lines [id:da2668563479968923] 
+\draw    (460,260) -- (470,250) ;
+%Straight Lines [id:da6488797889553993] 
+\draw    (480,260) -- (490,250) ;
+%Straight Lines [id:da8070575578091496] 
+\draw    (190,150) -- (200,140) ;
+%Straight Lines [id:da3401604231163561] 
+\draw    (190,170) -- (200,160) ;
+%Straight Lines [id:da12031548793524682] 
+\draw    (190,190) -- (200,180) ;
+%Straight Lines [id:da3325006766252374] 
+\draw    (190,210) -- (200,200) ;
+%Straight Lines [id:da6789154128761035] 
+\draw    (190,230) -- (200,220) ;
+%Straight Lines [id:da23421921174832838] 
+\draw    (190,250) -- (200,240) ;
+
+% Text Node
+\draw (151,238.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
+% Text Node
+\draw (107,186.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
+% Text Node
+\draw (327,90) node  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ]  {$x$};
+
+\end{tikzpicture}
+
+    \caption{Mass-Spring System for Lagrangian}
+    \label{fig:mass spring lagrange}
+\end{figure}
+
+We know the analytical form of the \gls{eom} from Newtonian Dynamics:
+$$m\ddot{x}+kx=0$$
+So, in essence, we are using the Lagrangian \textit{a posteriori } to match this solution.
+
+First, we will find the Lagrangian of the system. The kinetic energy of the particle is given by the linear translation only (there is no rotational motion for a point particle), so we have $T=\frac{1}{2}m\dot{x}^2$. The potential energy is the energy of the spring, given as $U=\frac{1}{2}kx^2$. So, the Lagrangian is:
+$$L=\frac{1}{2}m\dot{x}^2-\frac{1}{2}kx^2$$
+Now, applying \eqref{eq: Euler-Lagrange} in the $\hat{x}$-direction, as this is the only degree of freedom:
+$$\frac{\partial L}{\partial x}-\frac{d}{dt}\frac{\partial L}{\partial \dot{x}}=0$$
+Taking each term individually,
+$$\frac{\partial L}{\partial x}=-kx$$
+$$\frac{\partial L}{\partial \dot{x}}=m\dot{x}$$
+$$\frac{d}{dt}\left(m\dot{x}\right)=m\ddot{x}$$
+So, the \eqref{eq: Euler-Lagrange} equation gives us:
+$$-kx-m\ddot{x}=0$$
+A simple change of signs gives the exact same result as the Newtonian approach:
+$$m\ddot{x}+kx=0$$
+In this problem, we used a simple case where the dynamics were constrained along a single axis of motion. Before we move to a move complex problem, we will introduce the method by which Lagrangian mechanics deals with these reference frames.
+\section{Generalized Coordinates}
+We recall that in Newtonian mechanics, we describe reference frames for an object. We represent the position, velocity, and acceleration of an object in terms of these coordinate systems as a tridimensional vector. 
+
+
+Next we will show a problem where the rotational invariance proves especially useful in simplifying our derivation:
+\subsection{Pendulum EOM Derivation}
+\subsubsection{Problem Set-Up}
+\begin{figure}[ht]
+
+\centering
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Straight Lines [id:da8354203825727349] 
+\draw    (320,60) -- (420,240) ;
+\draw [shift={(320,60)}, rotate = 60.95] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]      (0, 0) circle [x radius= 2.68, y radius= 2.68]   ;
+%Shape: Arc [id:dp31284247913451657] 
+\draw  [draw opacity=0] (403.12,208.97) .. controls (378.54,222.36) and (350.19,230) .. (320,230) -- (320,65) -- cycle ; \draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (400.15,210.55) .. controls (376.27,222.96) and (348.98,230) .. (320,230) ; \draw [shift={(320,230)}, rotate = 357.91] [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][line width=0.75]    (0,5.03) -- (0,-5.03)   ; \draw [shift={(403.12,208.97)}, rotate = 153.52] [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.04,-3.86) -- (0,0) -- (8.04,3.86) -- cycle    ;
+%Shape: Circle [id:dp5099783674397224] 
+\draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][fill={rgb, 255:red, 74; green, 74; blue, 74 }  ,fill opacity=1 ] (410,240) .. controls (410,234.48) and (414.48,230) .. (420,230) .. controls (425.52,230) and (430,234.48) .. (430,240) .. controls (430,245.52) and (425.52,250) .. (420,250) .. controls (414.48,250) and (410,245.52) .. (410,240) -- cycle ;
+%Straight Lines [id:da8713569921261672] 
+\draw [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,draw opacity=1 ]   (340,50) -- (438.54,227.38) ;
+\draw [shift={(440,230)}, rotate = 240.95] [fill={rgb, 255:red, 208; green, 2; blue, 27 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ;
+\draw [shift={(340,50)}, rotate = 240.95] [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,draw opacity=1 ][line width=0.75]    (0,5.59) -- (0,-5.59)   ;
+%Straight Lines [id:da9538559670922312] 
+\draw    (200,240) -- (200,202) ;
+\draw [shift={(200,200)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da3275390122881038] 
+\draw    (200,240) -- (238,240) ;
+\draw [shift={(240,240)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da24072013587186947] 
+\draw [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,draw opacity=1 ]   (451.54,222.12) -- (470.54,255.03) ;
+\draw [shift={(471.54,256.77)}, rotate = 240] [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,draw opacity=1 ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da7099456662568205] 
+\draw [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,draw opacity=1 ]   (451.54,222.12) -- (484.45,203.12) ;
+\draw [shift={(486.18,202.12)}, rotate = 150] [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,draw opacity=1 ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+
+
+% Text Node
+\draw (362,227.4) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ]  {$\theta $};
+% Text Node
+\draw (391,122.4) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,opacity=1 ]  {$L$};
+% Text Node
+\draw (241,228.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
+% Text Node
+\draw (197,176.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
+% Text Node
+\draw (481.25,191.58) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,opacity=1 ,rotate=-330]  {$\hat{a}_{\theta }$};
+% Text Node
+\draw (467.54,261.84) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,opacity=1 ,rotate=-330]  {$\hat{a}_{r}$};
+
+\end{tikzpicture}
+
+    \caption{Pendulum Set-Up}
+    \label{fig:Pendulum}
+\end{figure}
+\subsubsection{Newtonian Approach}
+\subsubsection{Lagrangian Approach}
+\section{Further Reading}
+\section{Practice Problems}
+\begin{enumerate}
+    \item You are a mathematician in the year 1696. Bernoulli proposes a problem to you to find a curve from a point $(x_0,y_0)$ to $\left(x_f,y_f\right)$ under the influence of only gravity that takes the least amount of time.
+%    \item brachistochrone
+\item  A satellite is in the earth-moon system. Assume that the orbit of the earth and the moon are circular. The weight of the satellite is negligible compared to the weight of the earth and moon.
+\begin{enumerate}
+    \item Find the EOM of the system governing this interactin
+\end{enumerate}
+\end{enumerate}
 \chapter{Attitude Dynamics}\label{sec:attitude dynamics}
 \begin{chapquote}{Lord Kelvin, 1892}
 ''Quaternions came from Hamilton after his really good work had been done; and, though beautifully ingenious, have been an unmixed evil to those who have touched them in any way, including Clerk Maxwell.''
 \end{chapquote}
-Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. However, we hope that, here more than anywhere, our centralization of all basic necessary information to understand the topic eases the pain a little.\footnote{For further understanding, see section 8 for more provided materials. } In fact, don’t be afraid to reach out to either Hudson Reynolds (@Hudson Reynolds) or I (@Preston Wright) on Slack with questions! A final note on the section: many of the derivations closely follow both the process and notation of resources which will become available to you throughout your time here at Purdue AAE. These are the AAE340 class script by Professors Frueh and Longuski, and the AAE590 Attitude Dynamics and Control script by Professor Frueh. In addition, a handbook delving into all the nitty-gritty details of attitude determination and dynamics, following the derivations here and then some, is also available to aid in your understanding! % It's happening
+Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. However, we hope that, here more than anywhere, our centralization of all basic necessary information to understand the topic eases the pain a little.\footnote{For further understanding, see section 8 for more provided materials. } In fact, don’t be afraid to reach out to either Hudson Reynolds (@Hudson Reynolds) or I (@Preston Wright) on Slack with questions! A final note on the section: many of the derivations closely follow both the process and notation of resources which will become available to you throughout your time here at Purdue AAE. These are the AAE340 class script by Professors Frueh and Longuski, and the AAE590 Attitude Dynamics and Control script by Professor Frueh. In addition, a handbook delving into all the nitty-gritty details of attitude determination and dynamics, following the derivations here and then some, is also available to aid in your understanding in Volume 2 of the Flight Dynamics Bible! % It's happening
 
 
 % All editing for this section/relating to this section is now being done in a separate document
@@ -990,7 +1544,7 @@ For the $\hat{y}$ unit vector we follow an identical process and derive the seco
 \begin{equation}\label{eq:2DMatrix}
     R=
     \begin{bmatrix}
-        cos(\theta)&-sin(\theta)\\sin(\theta)&cos(\theta)
+        \cos(\theta)&-\sin(\theta)\\\sin(\theta)&\cos(\theta)
     \end{bmatrix}
 \end{equation}
 The understanding of this derivation is helpful to the understanding of the derivation of the rotation matrix in 3-dimensional space, so we will be sure to keep this process handy!
@@ -1000,15 +1554,15 @@ After deriving the matrix for rotations in regular 2-dimensional space, we can u
 
 To derive an expression for complex rotations, we will start with the famous Euler's Formula:
 \begin{equation}
-    e^{i\theta}=cos\theta+i\cdot sin\theta
+    e^{i\theta}=\cos\theta+i\cdot \sin\theta
 \end{equation}
-A succinct and intuitive explanation of Euler's Formula is given in two 3Blue1Brown videos, shown in sources \cite{3blue1brown_eipi_2019} and \cite{3blue1brown_how_2021}. Because these videos so expertly describe this topic, we choose not to do so here. As an exercise to the reader, you can try proving this statement yourself by considering the Taylor Series expansion of $e^{ix}$ and comparing it with the Taylor Series of $sin(x)$ and $cos(x)$.
+A succinct and intuitive explanation of Euler's Formula is given in two 3Blue1Brown videos, shown in sources \cite{3blue1brown_eipi_2019} and \cite{3blue1brown_how_2021}. Because these videos so expertly describe this topic, we choose not to do so here. As an exercise to the reader, you can try proving this statement yourself by considering the Taylor Series expansion of $e^{ix}$ and comparing it with the Taylor Series of $\sin(x)$ and $\cos(x)$.
 
 So, since the magnitude of $e^{i\theta}$ is always 1, we can parameterize the length of our vector as its magnitude, $r$.
 
 So, we now have a complex rotator which we can describe as:
 \begin{gather}
-    r=cos(\theta)+isin(\theta)\\
+    r=\cos(\theta)+i\sin(\theta)\\
     \text{or}\\
     r=e^{i\theta}
 \end{gather}
@@ -1017,7 +1571,7 @@ $$\begin{bmatrix}
     v_1'\\v_2'
 \end{bmatrix}=
 \begin{bmatrix}
-    cos(\theta)&-sin(\theta)\\sin(\theta)&cos(\theta)
+    \cos(\theta)&-\sin(\theta)\\\sin(\theta)&\cos(\theta)
 \end{bmatrix}\begin{bmatrix}
     v_1\\v_2
 \end{bmatrix}$$
@@ -1281,15 +1835,188 @@ From here, we can implement this in "ode45". We show all of the code for this mo
 Our initialization of the \gls{state vector} and all of the basic setup in contained in the main file, shown in listing \ref{code:DzhanMain}. The code that gets the derivative of the \gls{state vector} is the function passed into ode45. This code is shown in listing \ref{code:DzhanInt}. There is additionally a file to display the rotation of the body in an animation, which is shown in listing \ref{code:DzhanRotVis}.
 
 %% add listings.
+\section{Key Ideas}
+\begin{enumerate}
+    \item Rotations can be encoded in a variety of ways, but the most useful and compact encoding of rotations involves the use of complex-valued functions.
+    \item 
+\end{enumerate}
+\section{Further Reading}
+\section{Practice Problems}
+\begin{enumerate}
+    \item Your old friend Jimothy, impressed by your MATLAB skills, has challenged you to model a spinning top. The top is axially symmetric about its $\hat{X}$-axis and has an initial spin rate of 1200 rpm and has an initial angle to the vertical of $20\degree$. The top spins down at a rate governed by an exponential decay of form $\omega(t)=\omega_0e^{\frac{1}{10}\ln(2)t}$ such that the spin rate is halved every 10 seconds. Gravity acts on the top in the negative $\hat{x}$-direction. The top has a mass of 20 grams. Relevant details are given in \ref{fig:Spinning Top}.
+Define any additional quantities that you deem necessary to solve the problem.
+
+\begin{figure}[ht]
+    \centering
+    
+
+
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Straight Lines [id:da0769742316105797] 
+\draw [color={rgb, 255:red, 128; green, 128; blue, 128 }  ,draw opacity=1 ] [dash pattern={on 4.5pt off 4.5pt}]  (330,33) -- (330,240) ;
+\draw [shift={(330,30)}, rotate = 90] [fill={rgb, 255:red, 128; green, 128; blue, 128 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ;
+%Straight Lines [id:da1132170918389106] 
+\draw  [dash pattern={on 4.5pt off 4.5pt}]  (400,50) -- (330,240) ;
+%Shape: Arc [id:dp36125796323627934] 
+\draw  [draw opacity=0] (330,40) .. controls (354.03,40) and (377.08,44.24) .. (398.42,52.01) -- (330,240) -- cycle ; \draw    (330,40) .. controls (353.07,40) and (375.23,43.91) .. (395.85,51.09) ; \draw [shift={(398.42,52.01)}, rotate = 198.33] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ; 
+%Straight Lines [id:da7007937790003157] 
+\draw    (413.53,85.14) -- (426.53,49.43) ;
+\draw [shift={(427.21,47.55)}, rotate = 110] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da06599393470532178] 
+\draw    (413.53,85.14) -- (449.24,98.14) ;
+\draw [shift={(451.12,98.82)}, rotate = 200] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Shape: Arc [id:dp17837469917236315] 
+\draw  [draw opacity=0] (407.51,93.13) .. controls (404.09,90.55) and (402.59,85.96) .. (404.13,81.72) .. controls (406.02,76.53) and (411.76,73.86) .. (416.95,75.74) .. controls (421.01,77.22) and (423.53,81.06) .. (423.53,85.14) -- (413.53,85.14) -- cycle ; \draw    (407.51,93.13) .. controls (404.09,90.55) and (402.59,85.96) .. (404.13,81.72) .. controls (406.02,76.53) and (411.76,73.86) .. (416.95,75.74) .. controls (420.01,76.86) and (422.2,79.32) .. (423.09,82.22) ; \draw [shift={(423.53,85.14)}, rotate = 253.29] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (8.04,-3.86) -- (0,0) -- (8.04,3.86) -- (5.34,0) -- cycle    ; 
+%Shape: Arc [id:dp3928902186341109] 
+\draw  [draw opacity=0][line width=1.5]  (338.55,231.4) .. controls (338.55,231.4) and (338.55,231.4) .. (338.55,231.4) .. controls (347.05,208.05) and (379.18,198.3) .. (410.32,209.64) -- (394.93,251.92) -- cycle ; \draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][line width=1.5]  (338.55,231.4) .. controls (338.55,231.4) and (338.55,231.4) .. (338.55,231.4) .. controls (347.05,208.05) and (379.18,198.3) .. (410.32,209.64) ;  
+%Shape: Arc [id:dp5793923710488058] 
+\draw  [draw opacity=0][line width=1.5]  (394.95,193.4) .. controls (394.95,193.4) and (394.95,193.4) .. (394.95,193.4) .. controls (374.19,185.85) and (372.67,137.65) .. (391.56,85.75) -- (429.15,99.43) -- cycle ; \draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][line width=1.5]  (394.95,193.4) .. controls (394.95,193.4) and (394.95,193.4) .. (394.95,193.4) .. controls (374.19,185.85) and (372.67,137.65) .. (391.56,85.75) ;  
+%Straight Lines [id:da29296516704211717] 
+\draw [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][line width=1.5]    (394.95,193.4) -- (413.74,200.24) ;
+%Shape: Arc [id:dp172864506116845] 
+\draw  [draw opacity=0][line width=1.5]  (329.15,227.98) .. controls (329.15,227.98) and (329.15,227.98) .. (329.15,227.98) .. controls (337.65,204.63) and (319.3,176.51) .. (288.16,165.18) -- (272.77,207.46) -- cycle ; \draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][line width=1.5]  (329.15,227.98) .. controls (329.15,227.98) and (329.15,227.98) .. (329.15,227.98) .. controls (337.65,204.63) and (319.3,176.51) .. (288.16,165.18) ;  
+%Shape: Arc [id:dp826920979630418] 
+\draw  [draw opacity=0][line width=1.5]  (310.38,162.62) .. controls (310.38,162.62) and (310.38,162.62) .. (310.38,162.62) .. controls (331.14,170.18) and (363.28,134.23) .. (382.17,82.33) -- (344.58,68.65) -- cycle ; \draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][line width=1.5]  (310.38,162.62) .. controls (310.38,162.62) and (310.38,162.62) .. (310.38,162.62) .. controls (331.14,170.18) and (363.28,134.23) .. (382.17,82.33) ;  
+%Straight Lines [id:da857275584482871] 
+\draw [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][line width=1.5]    (310.38,162.62) -- (291.58,155.78) ;
+%Shape: Arc [id:dp034226157118510736] 
+\draw  [draw opacity=0][line width=1.5]  (382.17,82.33) .. controls (385,74.55) and (389.4,69) .. (392,69.95) .. controls (394.59,70.89) and (394.4,77.97) .. (391.56,85.75) -- (386.87,84.04) -- cycle ; \draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][line width=1.5]  (382.17,82.33) .. controls (385,74.55) and (389.4,69) .. (392,69.95) .. controls (394.59,70.89) and (394.4,77.97) .. (391.56,85.75) ;  
+%Shape: Arc [id:dp20461476848593807] 
+\draw  [draw opacity=0][line width=1.5]  (338.55,231.4) .. controls (336.66,236.59) and (333.03,240.03) .. (330.43,239.09) .. controls (327.84,238.15) and (327.27,233.17) .. (329.15,227.98) -- (333.85,229.69) -- cycle ; \draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][line width=1.5]  (338.55,231.4) .. controls (336.66,236.59) and (333.03,240.03) .. (330.43,239.09) .. controls (327.84,238.15) and (327.27,233.17) .. (329.15,227.98) ;  
+%Shape: Arc [id:dp8481778978565548] 
+\draw  [draw opacity=0][line width=1.5]  (413.74,200.24) .. controls (415.69,200.95) and (416.5,203.63) .. (415.56,206.22) .. controls (414.61,208.82) and (412.27,210.35) .. (410.32,209.64) -- (412.03,204.94) -- cycle ; \draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][line width=1.5]  (413.74,200.24) .. controls (415.69,200.95) and (416.5,203.63) .. (415.56,206.22) .. controls (414.61,208.82) and (412.27,210.35) .. (410.32,209.64) ;  
+%Shape: Arc [id:dp7350448683730666] 
+\draw  [draw opacity=0][line width=1.5]  (288.16,165.18) .. controls (286.22,164.47) and (285.41,161.79) .. (286.35,159.19) .. controls (287.29,156.6) and (289.64,155.07) .. (291.58,155.78) -- (289.87,160.48) -- cycle ; \draw  [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][line width=1.5]  (288.16,165.18) .. controls (286.22,164.47) and (285.41,161.79) .. (286.35,159.19) .. controls (287.29,156.6) and (289.64,155.07) .. (291.58,155.78) ;  
+
+%Shape: Arc [id:dp9418565667715348] 
+\draw  [draw opacity=0] (394.76,135.41) .. controls (389.07,134.97) and (380.76,133) .. (371.81,129.74) .. controls (356.24,124.07) and (344.64,116.67) .. (345.9,113.21) .. controls (346.89,110.49) and (355.55,111.02) .. (366.79,114.13) -- (374.09,123.47) -- cycle ; \draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (391.73,135.07) .. controls (386.31,134.28) and (379.28,132.46) .. (371.81,129.74) .. controls (356.24,124.07) and (344.64,116.67) .. (345.9,113.21) .. controls (346.89,110.49) and (355.55,111.02) .. (366.79,114.13) ;  \draw [shift={(394.76,135.41)}, rotate = 184.37] [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- (5.93,0) -- cycle    ;
+%Shape: Circle [id:dp3665185272862511] 
+\draw   (342.6,176.58) .. controls (344.49,171.39) and (350.23,168.71) .. (355.42,170.6) .. controls (360.61,172.49) and (363.29,178.23) .. (361.4,183.42) .. controls (359.51,188.61) and (353.77,191.29) .. (348.58,189.4) .. controls (343.39,187.51) and (340.71,181.77) .. (342.6,176.58) -- cycle ;
+%Shape: Pie [id:dp30818813562610303] 
+\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (348.58,189.4) .. controls (348.58,189.4) and (348.58,189.4) .. (348.58,189.4) .. controls (343.39,187.51) and (340.71,181.77) .. (342.6,176.58) -- (352,180) -- cycle ;
+%Shape: Pie [id:dp2000983987153906] 
+\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (355.42,170.6) .. controls (360.61,172.49) and (363.29,178.23) .. (361.4,183.42) -- (352,180) -- cycle ;
+
+%Straight Lines [id:da9599267346557246] 
+\draw    (418,273) -- (439.31,214.88) ;
+\draw [shift={(440,213)}, rotate = 110.14] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (8.74,-2.63) .. controls (5.56,-1.12) and (2.65,-0.24) .. (0,0) .. controls (2.65,0.24) and (5.56,1.12) .. (8.74,2.63)   ;
+\draw [shift={(418,273)}, rotate = 110.14] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (0,4.47) -- (0,-4.47)   ;
+%Straight Lines [id:da6213617322196454] 
+\draw [color={rgb, 255:red, 128; green, 128; blue, 128 }  ,draw opacity=1 ] [dash pattern={on 4.5pt off 4.5pt}]  (330,240) -- (377,240) ;
+\draw [shift={(380,240)}, rotate = 180] [fill={rgb, 255:red, 128; green, 128; blue, 128 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ;
+
+% Text Node
+\draw (360,21.4) node [anchor=north west][inner sep=0.75pt]    {$\theta _{0}$};
+% Text Node
+\draw (428.67,23.97) node [anchor=north west][inner sep=0.75pt]  [rotate=-20]  {$\hat{X}$};
+% Text Node
+\draw (414.25,89.02) node [anchor=north west][inner sep=0.75pt]  [rotate=-20]  {$\hat{Z}$};
+% Text Node
+\draw (457.01,85.6) node [anchor=north west][inner sep=0.75pt]  [rotate=-20]  {$\hat{Y}$};
+% Text Node
+\draw (402.64,124.06) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ,rotate=-20]  {$\omega _{0}$};
+% Text Node
+\draw (324,10.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
+% Text Node
+\draw (436.96,235.6) node [anchor=north west][inner sep=0.75pt]  [rotate=-20]  {$L=15\ \mathrm{mm}$};
+% Text Node
+\draw (381,228.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
+
+
+\end{tikzpicture}
+
+    \caption{Spinning Top Set-Up}
+    \label{fig:Spinning Top}
+\end{figure}
+
+\begin{enumerate}
+    \item Write the \gls{state vector} for the system.
+    \item Describe the forces and moments acting on the system and write the \glspl{eom} for the system.
+    \item Numerically integrate the system. For this problem, you may be able to use either Euler angles or quaternions if you choose your singularity point carefully. 
+    \item Output the 
+\end{enumerate}
+\end{enumerate}
 \chapter{Aerodynamic Modeling}\label{sec: aerodynamics}
 \begin{chapquote}{Werner Heisenberg}
 ''When I meet God, I am going to ask him two questions: Why relativity? And why turbulence? I really believe he will have an answer for the first.''
 \end{chapquote}
 In Section \ref{sec: 3DoF Case} we discussed the 4 fundamental forces on a vehicle and how we define their directions. In that section we did not define the magnitude of the aerodynamic forces, $F_L$ and $F_D$. The magnitude of these forces are quite difficult to calculate and require the most approximation to do correctly. The governing equation for calculating the magnitude of our aerodynamics is $\frac{1}{2}\rho_{\infty}V^2_{\infty}SC_X$, where $C_X$ is either $C_L$ or $C_D$.
 
-% buckingham pi derivation of CD and CL - hugo
-
 Despite the innocuous appearance of this equation, calculating the aerodynamics of our system is deceptively hard because the calculation of $C_X$ is very complicated. In fact, without real data, any calculation that we made of these values will just be an approximation.\footnote{Even with wind tunnel data, it is still likely that some approximations need to be made. Aerodynamics in general has no definite answers.} That being said, there are approaches we can take which will get us close enough to true values to prove useful.
+
+\section{Non Dimensionalization}
+
+It is useful to understand why the equations for the aerodynamic forces take the form that they do, with the $\frac{1}{2}\rho V^2S$ term. Along the way, we will also discover some other important properties that influence the airflow. We will start by enumerating the various factors that could impact the drag experienced by an object. Some intuition will tell us that drag is likely effected by the following factors:
+\begin{enumerate}
+    \item Viscosity of the fluid that is being traveled through - higher viscosity creates more 'stickiness' in the air that needs to be countered.
+    \item Velocity - higher velocity creates more interactions with the fluid at any given time, so it will contribute to our drag foce.
+    \item Density of fluid - higher density will great more interactions per time.
+    \item Characteristic size - the size of the object traveling through the fluid will increase the particle interactions per time and drag.
+    \item Speed of sound - the properties of the fluid will depend on the speed of sound in the fluid.
+\end{enumerate}
+Already, we can see that some of the terms that we see in the lift and drag equations are present above. However, we do not know in what may they are correlated and what else they depend on.
+
+\newglossaryentry{dim anal}
+{
+    name=dimensional analysis,
+    first = {\textit{dimensional analysis}},
+    description={The process of determining information from a physical equation by considering the dimensions, or units, of quantities in the equation}
+}
+
+\newglossaryentry{buck pi}
+{
+    name=Buckingham Pi Theorem,
+    first = {\textit{Buckingham Pi Theorem}},
+    description={In a system with $N$ parameters and $K$ physical dimensions, it is possible to express$P=N-K$ dimensionless groups}
+}
+
+To determine these dependencies, we can invoke \gls{dim anal} and the \textit{Buckingham Pi Theorem}. Both of these will allow us to derive dimensionless quantities that prove to be particularly useful.
+
+\begin{theorem}[Buckingham Pi Theorem]
+
+Given a system with $N$ parameters and $K$ physical dimensions, it is possible to express the result of this system with $P$ dimensionless $\Pi$ groups, where $P=N-K$.
+\end{theorem}
+\begin{corollary}\label{thm: buck pi corollary}
+Additionally, each $\Pi$ group is independent of each other. Thus, each $\Pi$ group is a function of all the other $\Pi$ groups:
+$$\Pi_1=f\left(\Pi_2, \Pi_3,\cdots \Pi_{N-K}\right)$$
+and so on for the other $\Pi$ groups.
+\end{corollary}
+For more information on \gls{buck pi}, refer to 
+\cite{noauthor_httpsengineeringpurdueeduwassgrenteachingme30800notesandreadingdimensionalanalysis_buckinghampi_methodofrepeatingvariables_readingpdf_nodate}
+
+Using our system from before, let us use \gls{buck pi} to write the non-dimensional groups for our aerodynamic system. We start by writing the dimensions for each of the variables we enumerated:
+
+\begin{center}
+$\begin{array}{ccc}
+     \text{Variable} & \text{Dimension}
+     &  \\ \rho & \frac{M}{L^3}
+     &  \\ V    & \frac{L}{T}
+     &  \\ S    & L
+     &  \\\mu &  \frac{M}{LT}
+     &  \\a & \frac{L}{T}
+\end{array}$
+\end{center}
+
+Applying \gls{buck pi}, we can create 3 $\Pi$ groups from the 6 variables.
+
+%solve the pi functions, introduce AoA
+
+Solving the $\Pi$ groups, we get:
+\begin{gather}
+    \Pi_1=\frac{\rho VS}{\mu}\\
+    \Pi_2=\frac{V}{a}\\
+    \Pi_3=\frac{F}{\rho V^2S}
+\end{gather}
+$\Pi_1$ is a quantity known as the Reynolds number, the ratio of inertial forces to viscous forces. $\Pi_2$ is the Mach number, the ratio of velocity to the speed of sound of the fluid. $\Pi_3$ is the force coefficient that we have described earlier.
+
+From \ref{thm: buck pi corollary}, we can also write
+$$\Pi_3=f\left(Re,M\right)$$
+This is a very important condition of the theorem, showing that the force coefficient is a function of the Reynolds number and Mach number (as well as the angle of attack). Thus, whenever we do modeling of aerodynamics, we only need to consider Reynolds number, Mach number, and angle of attack. This will become a cornerstone of how we model aerodynamics in our 6-\gls{dof} modeling.
 
 \section{Aerodynamics Terminology}
 Aerodynamics has a lot of terminology associated with it that is important to understand before we can approach modeling the aerodynamics of the system. We will mostly cover aerodynamics terminology for rockets, but the modeling done here should be transferable to aspects of aircraft systems as well.\footnote{The principles we describe are the same, but much of the modelling is simpler for rockets since they have axial symmetry in most cases. We will utilize these assumptions early on to simplify this section.}
@@ -1298,7 +2025,7 @@ While some of the theory here is not directly used in our 6-\gls{dof}, having an
 \subsection{Lift and Drag}\label{Lift and Drag}
 We start this section by noting that lift and drag are just conventions that are commonly used to describe the aerodynamic force. It should be noted that both the lift and the drag arise from the same source - the air acting on the vehicle to create a force. It is simply convenient to define this resultant force with respect to the direction of the freestream velocity, which we call lift and drag.
 
-When modeling aerodynamic forces, we can imagine that two differential force elements act at each point along the body. At each point, there is a pressure which acts normal to the surface and a shear stress (you can think of it as a friction) that acts tangentially to the surface. These are shown in Figure \ref{fig:pressure and shear}.
+When modeling aerodynamic forces, we can imagine that two differential force elements act at each point along the body. At each point, there is a pressure which acts normal to the surface and a shear stress (you can think of it as a friction) that acts tangentially to the surface. This shear stress arises from the viscosity of the air. These are shown in Figure \ref{fig:pressure and shear}.
 
 \begin{figure}[ht]
     \centering
@@ -1319,8 +2046,8 @@ The normal force acts normal in the $\hat{y}$ direction and the axial force acts
      D'\\L'
  \end{bmatrix}
  =\begin{bmatrix}
-        cos\alpha &sin\alpha\\
-        -sin\alpha&cos\alpha
+        \cos\alpha &\sin\alpha\\
+        -\sin\alpha&\cos\alpha
     \end{bmatrix}
     \begin{bmatrix}
         A'\\N'
@@ -1328,8 +2055,8 @@ The normal force acts normal in the $\hat{y}$ direction and the axial force acts
 \end{equation}
 We can expand \eqref{eq:LDMatrix} to give two scalar equations:
 \begin{gather}
-        L'=N'cos\alpha-A'sin\alpha\\
-        D'=A'cos\alpha+N'sin\alpha
+        L'=N'\cos\alpha-A'\sin\alpha\\
+        D'=A'\cos\alpha+N'\sin\alpha
 \end{gather}
 So, if we know the distribution of pressure over our body, we have shown that we can find the resultant aerodynamic forces acting on our body. As briefly described in Section \ref{sec:moments}, another important parameter to find is our center of pressure.
 \subsection{Center of Pressure}
@@ -1359,7 +2086,7 @@ All of this is to say that using "atmosisa" gives us a good baseline model of th
 \section{Computational Aerodynamics}
 In the case of our rocket, we encounter a variety of flight regimes from subsonic to high supersonic. Because of this variety, hand calculations of our aerodynamics can become very complicated. As a result, we choose to use computational tools to compute the aerodynamics of our rocket.
 
-\chapter{Numerical Integration Schemes}
+\chapter{Numerical Integration Schemes}\label{sec:numerical integration schemes}
 
 \begin{chapquote}{Wolfgang Pauli}
     ''The best that most of us can hope to achieve in physics is simply to misunderstand at a deeper level.''
@@ -1368,7 +2095,7 @@ For more information and derivations on the following section, refer to \cite{tr
 
 In our exploration of numerical integration schemes, it will be useful to have a good understanding of ordinary differential equations. We highly recommend \cite{dawkins_differential_2023} for reviewing differential equations.
 
-\section{Euler Integration}
+\section{Euler Integration}\label{sec:euler integration}
 We have previously discussed the simplest integration scheme, the explicit Euler method, which we used in Section \ref{sec: Numerical Integration in the 1DoF}. Understanding the Euler method is key to understanding and using more complex integration schemes, so we recommend writing a few of your own Euler integration scripts in MATLAB or a coding language of your choice to really solidify your knowledge before moving on to more complex integration schemes. 
 
 We formalize the explicit Euler integration below. Given a linear ODE:
@@ -1557,7 +2284,7 @@ end
 Often, we use a function in MATLAB called "ode45" to perform RK4 integration. This function has the benefit that it will change the step size to produce high accuracy when needed and decrease computation time otherwise.
 
 An understanding of the operation of "ode45" is best motivated by an example. We include an example of a Lorenz Attractor in the Appendix \ref{sec:Lorenz Attractor RK4 Example} as an example of ode45. We recommend reading through this code and running it, as well as changing parameters to see how it affects the outputs.
-\section{Other Numerical Integration Considerations}
+\section{Other Numerical Integration Considerations}\label{sec:other numerical ints}
 \subsection{More on Error}
 We briefly discuss the error of the integration schemes in each of the previous sections. However, it is useful to see examples of these to solidify understanding. 
 
@@ -1575,7 +2302,7 @@ As we can see from this example, even with a fairly large timestep of $\Delta t=
 The difference in these numerical integration schemes will become more apparent when modeling the behavior of different differential equation systems. Systems containing higher order terms will be better modeled by the higher order integration schemes, unsurprisingly. The true use of these methods is when analytical solutions to the differential equations are hard or impossible to obtain. That being said, we still want to know characteristics of our system so we can appropriately select integration parameters.
 
 \subsection{Sampling and Stiffness}\label{sampling and stiffness}
- To begin our discussion of sampling and stiffness, we can take the differential equation $y'=cos(4\pi t)$with the initial condition of $y(0)=0$. This function is periodic in nature, so it will be good for our demonstration here. In this first example, we will keep the same timestep of $\Delta t=0.5s$. As is seen in \ref{fig:Numerical Int Periodic}, this timestep is the same as the period of the sinusoidal solution of this differential equation. When this is the case, we can see that the solutions diverge from the original periodic function greatly for all of the integration schemes (aside from the RK2, although this is only the case when the period is exactly the same as the timestep). This occurs because we are not sampling the function at a high enough frequency to capture the nature of the periodic function.
+ To begin our discussion of sampling and stiffness, we can take the differential equation $y'=\cos(4\pi t)$with the initial condition of $y(0)=0$. This function is periodic in nature, so it will be good for our demonstration here. In this first example, we will keep the same timestep of $\Delta t=0.5s$. As is seen in \ref{fig:Numerical Int Periodic}, this timestep is the same as the period of the sinusoidal solution of this differential equation. When this is the case, we can see that the solutions diverge from the original periodic function greatly for all of the integration schemes (aside from the RK2, although this is only the case when the period is exactly the same as the timestep). This occurs because we are not sampling the function at a high enough frequency to capture the nature of the periodic function.
 
 \begin{figure} [ht]
     \centering
@@ -1634,9 +2361,14 @@ While "ode45" works very well for most use cases with numerical integration, the
 
 We previously discuss the concept of \gls{stiff} systems in \ref{sampling and stiffness}. 
 
-For systems that have moderate stiffness, we can use "ode23" instead of the more typical "ode45" in MATLAB.
+For systems that have moderate stiffness, we can use "ode23" instead of the more typical "ode45" in MATLAB. Using a lower order integration leads to more course results, but it also allows very stiff parts of the system to be computed faster.
 
-\section{Code Optimization with Numerical Integration}
+On the converse side, for systems that require very high precision, such as orbits, algorithms of the 8th or 9th order are often used. In MATLAB, such algorithms are used in the "ode78" and "ode89" functions. Using a higher order, the truncation error can be significantly reduced and fewer timesteps are needed when very high tolerances are required. However, in most scenarios, there algorithms are about 300-500\% slower than "ode45" while providing few accuracy benefits. Thus, these algorithms are mostly used for only very high precision use cases.
+
+\subsection{Symplectic Integrators}
+In addition to these numerical integration schemes, there are a variety of integration schemes that use energy conservation as the basis of their integration schemes. These types of integrators are called \textit{symplectic}. These types of integrators solve Hamilton's equations for a Hamiltonian system. The form of these equations is discussed briefly 
+
+\section{Numerical Integration Code Optimization}
 \subsection{Monte Carlo Simulation}
 Often, we want to run many simulations with various parameters to gain a better understanding of our system. We call this method of running many simulations the \textit{Monte Carlo} method. Using the Monte Carlo method, we can ascertain information about the likelihood of certain events or approximate quantities that are hard to find analytically by running a large number of simulations and performing statistical analysis on the results. In this document, we will not dive into the methods of statistical analysis and the best ways to perform Monte Carlo simulations. This topic is very deep and is the focus of many peoples’ whole careers.
 
@@ -1660,6 +2392,16 @@ Poorly optimized code will spend a long time running an excessive number of oper
 However, other operations, such as "atmosisa", should not comprise a large portion of simulation time. As seen in Figure 15, calling the atmosisa function on every loop takes about 40\% of the total time spent in ‘RK4Integrator’ function. By instead creating a table of the atmosisa data before running the simulation, we can reduce the runtime quite drastically. Implementing this simple change, we can see the reduction in simulation time as shown in Figure 16.
 
 % figure here
+
+\section{Key Ideas}
+
+\section{Notes and Further Reading}
+
+\section{Practice Problems}
+
+\begin{enumerate}
+    \item Orbital systems are often numerically integrated when multiple bodies are present. Because these systems are often highly sensitive, they are often integrated with higher order integration schemes. 
+\end{enumerate}
 
 \chapter{The 6-DoF}
 In this section we will combine everything from the previous sections and explain how our 6-\gls{dof} model works. We will follow a similar set up to \ref{sec:Dzhan}  here, describing the elements of the model in detail and then attaching relevant code either in-line or in the appendix.
