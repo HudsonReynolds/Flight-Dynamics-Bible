@@ -27,34 +27,30 @@ tspanCurve = linspace(0,tEnd, 100);
 %figure plotting:
 hfig = figure;  % save the figure handle in a variable
 fname = 'Numerical Integrator Comparison Figure';
+picturewidth = 20;
+hw_ratio = 0.75;
 
-picturewidth = 20; % set this parameter and keep it forever
-hw_ratio = 0.75; % feel free to play with this ratio
-set(findall(hfig,'-property','FontSize'),'FontSize',18) % adjust fontsize to your document
 
 plot(t, y, '.', LineStyle='-', MarkerSize= 12)
 hold on
 plot(t, yRK2, '.', LineStyle='-', MarkerSize= 12)
 plot(t, yRK4, '.', LineStyle='-', MarkerSize= 12)
-plot(tspanCurve, tspanCurve.^2, LineWidth=1)
+plot(tspanCurve, tspanCurve.^2, LineWidth=1.5)
 
 legend('Explicit Euler', 'RK2', 'RK4', '$y=t^2$', 'Location', 'northwest')
 
 %title('Explicit Euler Numerical Approximation')
 xlabel('$t$')
 ylabel('$y(t)$')
+title('Comparison of Runge-Kutta Integration Orders')
 
 grid on
 axis tight
 
-set(findall(hfig,'-property','Box'),'Box','off') % optional
-set(findall(hfig,'-property','Interpreter'),'Interpreter','latex') 
-set(findall(hfig,'-property','TickLabelInterpreter'),'TickLabelInterpreter','latex')
 set(hfig,'Units','centimeters','Position',[3 3 picturewidth hw_ratio*picturewidth])
 pos = get(hfig,'Position');
 set(hfig,'PaperPositionMode','Auto','PaperUnits','centimeters','PaperSize',[pos(3), pos(4)])
 print(hfig,fname,'-dpng','-r600')
-
 
 % functions
 
