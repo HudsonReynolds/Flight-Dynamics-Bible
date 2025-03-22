@@ -2650,6 +2650,9 @@ Our definitions of our frames follow from those discussed in \ref{sec:Frame of R
 For the body frame, we follow the convention in \ref{fig:BodyFrameRocket}. This has $\hat{X}$ pointing through the nose of the rocket and $\hat{Y}$and $\hat{Z}$ along the transverse plane. The directionality of $\hat{Y}$ and $\hat{Z}$ is not particularly important since the rocket is axially symmetric, so we arbitrarily select the $\hat{Y}$ axis to point through one of the fins and choose $\hat{Z}$ to complete the right-handed frame.
 
 For our \gls{Euler angles}, we use a 3-2-1 rotation sequence. We define the zero angles to be when the body frame and the earth-centered inertial frame are coincident.
+
+We note here that this is the section where we have the most room for improvement. We hope that you can translate your knowledge into better features for the 6-\gls{dof} as we note some of the simplifications we make in this section.
+
 \section{State Vector}
 Our \gls{state vector} is very similar to that shown in the \ref{sec:Dzhan} section, but it bears repeating here because there are some important differences. Another thing to note is that some of the values of the \gls{state vector} are altered for Monte Carlo simulations. These possible changes, when applicable, are discussed.
 
@@ -2722,6 +2725,8 @@ paraDragForce = forceMag .* (-vel ./ norm(vel));
 \end{lstlisting}
 This force is only active when the vertical velocity is negative, so this is controlled by an "if/else" structure as: "if vel(1) < 0". 
 
+The parachute dynamics can be far more complicated that this, but currently we do not model this added complexity. 
+
 Currently, there are no other forces that act in our 6DoF model. Internal forces and vibrations are not currently modeled, as we assume a completely rigid vehicle.
 \subsection{Moments}
 The modeling of moments in the 6-\gls{dof} is fairly straightforward. In the previous section \ref{6DoF Forces}, we converted each of our forces into the body frame. Here, we will use these forces in the body frame to describe the moments acting on our vehicle. 
@@ -2742,8 +2747,19 @@ Thus, the only moments that are present are from the aerodynamic forces. The mom
 \end{equation}
 Where $\vec{R}$ is the resultant aerodynamic force (the combination of both lift and drag).
 
+\subsection{Attitude Dynamics}
+These moments are used to find angular acceleration using the Euler rigid body equations described in \eqref{eq: moment eq 2}. 
 
-
+Lastly, the quaternion rates are described in the same as in the \ref{sec:Dzhan} section.
+\begin{equation}
+    \dot{\textbf{q}}=\frac{1}{2}\begin{bmatrix}
+        0&-\omega_x&-\omega_y&-\omega_z\\
+        \omega_x&0&\omega_z&-\omega_y\\
+        \omega_y&-\omega_z&0&\omega_x\\
+        \omega_z&\omega_y&-\omega_x&0
+    \end{bmatrix}\vec{q}
+\end{equation}
+So, taking all of these together, we have the derivative of our state needed for numerical integration.
 \section{Validation of 6-DoF}
 
 \section{Data Visualization}
@@ -2801,6 +2817,8 @@ We also have a script to display the results of this in a nice animation:
 \lstinputlisting[style=Matlab-editor, caption = Numerical Integration Error Comparison]{6DoF Explanation Scripts/NumericalIntegratorError.m}\label{code:Numerical Error $y'=2t$}
 
 \lstinputlisting[style=Matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
+\subsection{6-DoF Code}
+\lstinputlisting[style=Matlab-editor, caption = Numerical Integration Error Comparison]{6DoF Explanation Scripts/6DoF/MainRK4.m}\label{code:mainRK4}
 
 \setglossarystyle{altlist}
 \printglossary[title=Special Terms, toctitle = Special Terms]
