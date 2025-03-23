@@ -231,7 +231,7 @@ In each chapter (aside from this overview chapter), there will be some additiona
 
 Additionally, a  'Further Reading and Notes' is included which the curious reader may benefit from. Many topics are covered in this document; each of which deserve their own book-length discussion. Because we have neither the desire nor capability to write such a long document, we have linked these beneficial books whenever possible. It is not necessary to read any / all of these sources to comprehend the content here, but they may prove useful for deeper research into topic areas that interest the reader.
 
-The end of each section also provides several practice problems to ensure the key ideas of each topic are understood by the reader. These problems are expected to be difficult. For readers new to this content, it is expected that each problem may take several hours and some consultation with other sources to complete. However, we have attempted to make these problems challenging while not being out of reach. These problems are designed to make the reader struggle and push their knowledge. Generally, each subsequent problem is more difficult than the last.
+The end of some sections also provides several practice problems to ensure the key ideas of each topic are understood by the reader. These problems are expected to be difficult. For readers new to this content, it is expected that each problem may take several hours and some consultation with other sources to complete. However, we have attempted to make these problems challenging while not being out of reach. These problems are designed to make the reader struggle and push their knowledge. Generally, each subsequent problem is more challenging than the last.
 
 \section{Necessary Background}
 The goal of this document is to provide a comprehensive overview of the process and means of creating, maintaining, and building on a 6 Degree of Freedom model. Although we strive to make the document as easy as possible to understand, there are some instances where technical jargon is necessary and a strong understanding of mathematical concepts is required. 
@@ -1031,6 +1031,133 @@ Although the Hamiltonian and Lagrangian are not directly used in the case of our
 
 Another reason to motivate these systems is that these energy methods are often rotationally invariant because energy methods can employ a generalized coordinate system. We will see this later in an example of a pendulum.
 
+A brief overview of the differences between the two schemes of \gls{eom} derivation is shown in \ref{fig:newt v lang}
+
+\begin{figure}[ht]
+    \centering
+    
+
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,307); %set diagram left start at 0, and has height of 307
+
+%Flowchart: Decision [id:dp7233285773485726] 
+\draw  [fill={rgb, 255:red, 207; green, 207; blue, 207 }  ,fill opacity=1 ] (300,110) -- (350,150) -- (300,190) -- (250,150) -- cycle ;
+%Straight Lines [id:da23285688596679088] 
+\draw    (210,150) -- (248,150) ;
+\draw [shift={(250,150)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Flowchart: Alternative Process [id:dp302743495564027] 
+\draw  [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=0 ] (210,40.5) .. controls (210,34.7) and (214.7,30) .. (220.5,30) -- (509.5,30) .. controls (515.3,30) and (520,34.7) .. (520,40.5) -- (520,79.5) .. controls (520,85.3) and (515.3,90) .. (509.5,90) -- (220.5,90) .. controls (214.7,90) and (210,85.3) .. (210,79.5) -- cycle ;
+%Straight Lines [id:da32370945071471136] 
+\draw    (300,110) -- (300,92) ;
+\draw [shift={(300,90)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da5150501682503866] 
+\draw    (300,190) -- (300,208) ;
+\draw [shift={(300,210)}, rotate = 270] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Flowchart: Alternative Process [id:dp4701889184197712] 
+\draw   (120,137) .. controls (120,133.13) and (123.13,130) .. (127,130) -- (203,130) .. controls (206.87,130) and (210,133.13) .. (210,137) -- (210,163) .. controls (210,166.87) and (206.87,170) .. (203,170) -- (127,170) .. controls (123.13,170) and (120,166.87) .. (120,163) -- cycle ;
+%Flowchart: Alternative Process [id:dp9991566127280761] 
+\draw   (220,47) .. controls (220,43.13) and (223.13,40) .. (227,40) -- (273,40) .. controls (276.87,40) and (280,43.13) .. (280,47) -- (280,73) .. controls (280,76.87) and (276.87,80) .. (273,80) -- (227,80) .. controls (223.13,80) and (220,76.87) .. (220,73) -- cycle ;
+%Flowchart: Alternative Process [id:dp3781527195949975] 
+\draw   (300,47) .. controls (300,43.13) and (303.13,40) .. (307,40) -- (383,40) .. controls (386.87,40) and (390,43.13) .. (390,47) -- (390,73) .. controls (390,76.87) and (386.87,80) .. (383,80) -- (307,80) .. controls (303.13,80) and (300,76.87) .. (300,73) -- cycle ;
+%Flowchart: Alternative Process [id:dp44246911339647754] 
+\draw   (220,227) .. controls (220,223.13) and (223.13,220) .. (227,220) -- (293,220) .. controls (296.87,220) and (300,223.13) .. (300,227) -- (300,253) .. controls (300,256.87) and (296.87,260) .. (293,260) -- (227,260) .. controls (223.13,260) and (220,256.87) .. (220,253) -- cycle ;
+%Flowchart: Alternative Process [id:dp3723988845908619] 
+\draw   (320,227) .. controls (320,223.13) and (323.13,220) .. (327,220) -- (413,220) .. controls (416.87,220) and (420,223.13) .. (420,227) -- (420,253) .. controls (420,256.87) and (416.87,260) .. (413,260) -- (327,260) .. controls (323.13,260) and (320,256.87) .. (320,253) -- cycle ;
+%Flowchart: Alternative Process [id:dp44680017489514834] 
+\draw   (410,47) .. controls (410,43.13) and (413.13,40) .. (417,40) -- (503,40) .. controls (506.87,40) and (510,43.13) .. (510,47) -- (510,73) .. controls (510,76.87) and (506.87,80) .. (503,80) -- (417,80) .. controls (413.13,80) and (410,76.87) .. (410,73) -- cycle ;
+%Flowchart: Alternative Process [id:dp3986497092067455] 
+\draw   (440,227) .. controls (440,223.13) and (443.13,220) .. (447,220) -- (503,220) .. controls (506.87,220) and (510,223.13) .. (510,227) -- (510,253) .. controls (510,256.87) and (506.87,260) .. (503,260) -- (447,260) .. controls (443.13,260) and (440,256.87) .. (440,253) -- cycle ;
+%Straight Lines [id:da07392727672316557] 
+\draw    (300,240) -- (318,240) ;
+\draw [shift={(320,240)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da24064295385025491] 
+\draw    (420,240) -- (438,240) ;
+\draw [shift={(440,240)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da6713215946680514] 
+\draw    (280,60) -- (298,60) ;
+\draw [shift={(300,60)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da463019374864058] 
+\draw    (390,60) -- (408,60) ;
+\draw [shift={(410,60)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Flowchart: Alternative Process [id:dp13808176557797036] 
+\draw  [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=0 ] (210,220.5) .. controls (210,214.7) and (214.7,210) .. (220.5,210) -- (509.5,210) .. controls (515.3,210) and (520,214.7) .. (520,220.5) -- (520,259.5) .. controls (520,265.3) and (515.3,270) .. (509.5,270) -- (220.5,270) .. controls (214.7,270) and (210,265.3) .. (210,259.5) -- cycle ;
+
+% Text Node
+\draw (165,150) node  [font=\normalsize] [align=left] {Governing\\Mechanics};
+% Text Node
+\draw (300,150) node  [font=\normalsize] [align=left] {\begin{minipage}[lt]{36.77pt}\setlength\topsep{0pt}
+\begin{center}
+EOM\\Method
+\end{center}
+
+\end{minipage}};
+% Text Node
+\draw (301,28) node [anchor=south west] [inner sep=0.75pt]  [font=\normalsize] [align=left] {\begin{minipage}[lt]{50.94pt}\setlength\topsep{0pt}
+\begin{center}
+Newtonian
+\end{center}
+
+\end{minipage}};
+% Text Node
+\draw (301,272) node [anchor=north west][inner sep=0.75pt]  [font=\normalsize] [align=left] {\begin{minipage}[lt]{53.81pt}\setlength\topsep{0pt}
+\begin{center}
+Lagrangian
+\end{center}
+
+\end{minipage}};
+% Text Node
+\draw (250,60) node  [font=\normalsize] [align=left] {\begin{minipage}[lt]{33.91pt}\setlength\topsep{0pt}
+\begin{center}
+Forces
+\end{center}
+
+\end{minipage}};
+% Text Node
+\draw (345,60) node  [font=\normalsize] [align=left] {\begin{minipage}[lt]{54.34pt}\setlength\topsep{0pt}
+\begin{center}
+Frame\\Conversion
+\end{center}
+
+\end{minipage}};
+% Text Node
+\draw (260,240) node  [font=\normalsize] [align=left] {\begin{minipage}[lt]{54.33pt}\setlength\topsep{0pt}
+\begin{center}
+Constraints
+\end{center}
+
+\end{minipage}};
+% Text Node
+\draw (370,240) node  [font=\normalsize] [align=left] {\begin{minipage}[lt]{57.75pt}\setlength\topsep{0pt}
+\begin{center}
+Generalized\\Coordinates
+\end{center}
+
+\end{minipage}};
+% Text Node
+\draw (460,60) node  [font=\normalsize] [align=left] {\begin{minipage}[lt]{63.98pt}\setlength\topsep{0pt}
+\begin{center}
+Inertial\\Accelerations
+\end{center}
+
+\end{minipage}};
+% Text Node
+\draw (475,240) node  [font=\normalsize] [align=left] {\begin{minipage}[lt]{35.05pt}\setlength\topsep{0pt}
+\begin{center}
+Energy
+\end{center}
+
+\end{minipage}};
+
+
+\end{tikzpicture}
+
+    \caption{Newtonian vs. Lagrangian Mechanics Approach}
+    \label{fig:newt v lang}
+\end{figure}
+
 \section{Calculus of Variations}
 
 The calculus of variations underpins the ideas of Lagrangian and Hamiltonian mechanics, so it is important to understand the principles behind it before moving on to the actual mechanics. In analogy to how single variable calculus is fundamental to Newtonian mechanics, the calculus of variations is fundamental to energy mechanics.
@@ -1543,6 +1670,7 @@ $$\left(I_1-I_2\right)\omega_1\omega_2=I_3\dot{\omega_3}$$
     \item The Lagrangian is scalar, so it is invariant to coordinate transforms. This means we can choose any variables we want for our generalized coordinates when performing derivations.
 \end{enumerate}
 \section{Further Reading}
+
 \section{Practice Problems}
 \begin{enumerate}
     \item Tony the Elephant keeps finding bugs on the peanuts that the zookeepers are feeding to him. Tony heard that you have been learning about generalized coordinates. He wants a way to describe the position of the bugs on his peanuts using a minimal set of coordinates.
@@ -2079,7 +2207,7 @@ Our initialization of the \gls{state vector} and all of the basic setup in conta
 \section{Further Reading}
 \section{Practice Problems}
 \begin{enumerate}
-    \item Your old friend Jimothy, impressed by your MATLAB skills, has challenged you to model a spinning top. The top is axially symmetric about its $\hat{X}$-axis and has an initial spin rate of 1200 rpm and has an initial angle to the vertical of $20\degree$. The top spins down at a rate governed by an exponential decay of form $\omega(t)=\omega_0e^{\frac{1}{10}\ln(2)t}$ such that the spin rate is halved every 10 seconds. Gravity acts on the top in the negative $\hat{x}$-direction. The top has a mass of 20 grams. Relevant details are given in figure \ref{fig:Spinning Top}.
+    \item Your friend Jimothy, impressed by your MATLAB skills, has challenged you to model a spinning top. The top is axially symmetric about its $\hat{X}$-axis and has an initial spin rate of 1200 rpm and has an initial angle to the vertical of $20\degree$. The top spins down at a rate governed by an exponential decay of form $\omega(t)=\omega_0e^{\frac{1}{10}\ln(2)t}$ such that the spin rate is halved every 10 seconds. Gravity acts on the top in the negative $\hat{x}$-direction. The top has a mass of 20 grams. Relevant details are given in figure \ref{fig:Spinning Top}.
 Define any additional quantities that you deem necessary to solve the problem.
 
 \begin{figure}[ht]
@@ -2172,10 +2300,11 @@ Define any additional quantities that you deem necessary to solve the problem.
 
 \begin{enumerate}
     \item Write the \gls{state vector} for the system.
-    \item Describe the forces and moments acting on the system and write the \glspl{eom} for the system (You may find the Lagrangian approach simpler!)
+    \item  write the \glspl{eom} for the system. If you choose the Newtonian approach, write the forces and moments of the system. If you choose the Lagrangian Approach, write the energy equations and constraint equations.
     \item Numerically integrate the system. For this problem, you may be able to use either Euler angles or quaternions if you choose your singularity point carefully. 
     \item Create a visualization of the system. Create any other plots that you deem useful.
 \end{enumerate}
+\item After your stint in modelling the Explorer 1 Satellite, NASA has asked you to come back to model a new satellite. NASA wants the satellite to be nadir-pointing at all times, and has decided to use gravity gradient stabilization to do so. 
 \end{enumerate}
 \chapter{Aerodynamic Modeling}\label{sec: aerodynamics}
 \begin{chapquote}{Werner Heisenberg}
@@ -2185,7 +2314,7 @@ In Section \ref{sec: 3DoF Case} we discussed the 4 fundamental forces on a vehic
 
 Despite the innocuous appearance of this equation, calculating the aerodynamics of our system is deceptively hard because the calculation of $C_X$ is very complicated. In fact, without real data, any calculation that we made of these values will just be an approximation.\footnote{Even with wind tunnel data, it is still likely that some approximations need to be made. Aerodynamics in general has no definite answers.} That being said, there are approaches we can take which will get us close enough to true values to prove useful.
 
-\section{Non Dimensionalization}
+\section{Non-Dimensionalization}
 
 It is useful to understand why the equations for the aerodynamic forces take the form that they do, with the $\frac{1}{2}\rho V^2S$ term. Along the way, we will also discover some other important properties that influence the airflow. We will start by enumerating the various factors that could impact the drag experienced by an object. Some intuition will tell us that drag is likely effected by the following factors:
 \begin{enumerate}
@@ -2242,7 +2371,7 @@ $\begin{array}{ccc}
 
 Applying \gls{buck pi}, we can create 4 $\Pi$ groups from the 7 variables.
 
-%solve the pi functions, introduce AoA
+The solving of these $\Pi$ groups is shown in the Appendix in \ref{Buckingham Pi Deriv} because it is quite lengthy.
 
 Solving the $\Pi$ groups, we get:
 \begin{gather}
@@ -2315,7 +2444,7 @@ For a rocket, we generally consider the body to be \textit{axisymmetric} about t
 
 Because our rocket is axisymmetric, we assume that the center of pressure always lies along the longitudinal axis. Although this assumption is not necessarily true, as we will see later, the largest effects on the aerodynamic moments will occur from changes along the longitudinal direction rather than changes along the \textit{transverse plane. }We can think of this intuitively because of the center of pressure is separated from the center of mass by more than the diameter of the rocket, so changes in this direction have a greater effect.
 \section{Atmospheric Modeling}
-The first hurdle to overcome when describing the aerodynamics of our system is to find values for our \gls{freestream} quantities. We explore the calculation of $V_{\infty}$ in Section \ref{sec: Newtonian Dynamics}. The other parameters we need to calculate are $\rho_{\infty}$ and $a_{\infty}$. Fortunately, the standard density and Mach number of the atmosphere on Earth is well defined. In MATLAB, we can find this density at any altitude with "atmosisa" as:
+Another hurdle to overcome when describing the aerodynamics of our system is to find values for our \gls{freestream} quantities. We explore the calculation of $V_{\infty}$ in Section \ref{sec: Newtonian Dynamics}. The other parameters we need to calculate are $\rho_{\infty}$ and $a_{\infty}$. Fortunately, the standard density and Mach number of the atmosphere on Earth is well defined. In MATLAB, we can find this density at any altitude with "atmosisa" as:
 \begin{lstlisting}[style=Matlab-editor]
     [T, a, P, rho] = atmosisa(height);
 \end{lstlisting}
@@ -2324,6 +2453,15 @@ This gives us a standard value of $\rho_{\infty}$ and $a_{\infty}$ to use. Howev
 All of this is to say that using "atmosisa" gives us a good baseline model of the atmosphere, but is not the final say in atmospheric modeling. For now, we use "atmosisa" in our modeling because we can live with this variation in our model. However, it may be useful in the future to use other sources of atmospheric data that give location- and time-specific data.
 \section{Computational Aerodynamics}
 In the case of our rocket, we encounter a variety of flight regimes from subsonic to high supersonic. Because of this variety, hand calculations of our aerodynamics can become very complicated. As a result, we choose to use computational tools to compute the aerodynamics of our rocket.
+\subsection{RasAero}
+The main tool that we use presently is RasAero. This tool allows us to input the geometry of the rocket and will output the drag coefficient as a function of the Mach number. This is less than perfect, as we lose some of the dependence on Reynolds number. Additionally, the dependence on angle of attack is quite course (only measurements every 2$\degree$. That being said, RasAero has been used to model many rocket systems around the same scale as our rocket with an average error in apogee of $3.47\%$ and $80\%$ of the flights within $\pm10\%$ of the true apogee. For us, this is an acceptable compromise so that we can focus on flight dynamics modeling rather than aerodynamics.
+
+More information on RasAero can be found at \cite{rogers_rasaero_2019}. The documentation on this page does a better job explaining the software than we could here in a short summary. Our implementation uses the .csv export files from RasAero in MATLAB.
+\subsection{Other Computational Models}
+\newacronym{cfd}{CFD}{Computational Fluid Dynamics}
+It is worth noting that other computational models exist. RasAero does have shortcomings in modeling some of the aspects of the rocket geometry, so other methods such as \gls{cfd} are also options to be explored. However, in the current state of our model, we have not looked into \gls{cfd} methods very heavily for direct use in MATLAB. These are in the preliminary stages of investigation and will likely be explored more heavily in future editions of this text.
+\section{Wind Modeling}
+Add our wind modelling stuff here (might actually want to model wind first lmao)
 
 \chapter{Numerical Integration Schemes}\label{sec:numerical integration schemes}
 
@@ -2748,7 +2886,7 @@ Thus, the only moments that are present are from the aerodynamic forces. The mom
 Where $\vec{R}$ is the resultant aerodynamic force (the combination of both lift and drag).
 
 \subsection{Attitude Dynamics}
-These moments are used to find angular acceleration using the Euler rigid body equations described in \eqref{eq: moment eq 2}. 
+These moments are used to find angular acceleration, $\vec{\alpha}$ using the Euler rigid body equations described in \eqref{eq: moment eq 2}. 
 
 Lastly, the quaternion rates are described in the same as in the \ref{sec:Dzhan} section.
 \begin{equation}
@@ -2759,7 +2897,14 @@ Lastly, the quaternion rates are described in the same as in the \ref{sec:Dzhan}
         \omega_z&\omega_y&-\omega_x&0
     \end{bmatrix}\vec{q}
 \end{equation}
-So, taking all of these together, we have the derivative of our state needed for numerical integration.
+So, taking all of these together, we have the derivative of our \gls{state vector} needed for numerical integration.
+\begin{equation}
+    \dot{\textbf{X}}=\begin{bmatrix}
+        \vec{v}\\\vec{a}\\\vec{\alpha}\\\dot{\textbf{q}}
+    \end{bmatrix}
+\end{equation}
+\subsection{6-DoF Code}
+We take this integrated state vector along with the initial conditions and integrate them using "ode45". The two most important scripts in this process are the "MainRK4.m" and "RK4Integrator.m" MATLAB scripts. These are shown in the Appendix in Listings \ref{code:mainRK4} and  \ref{code:6DoF Integrator}, respectively. Other files exist, but we do not think they are important enough to be fully written in the appendix. The full code can be found at: %google drive or something else
 \section{Validation of 6-DoF}
 
 \section{Data Visualization}
@@ -2785,15 +2930,48 @@ The code in \ref{code:startup} is the default plotting used in this document, wh
 \section{Notation}
 Mathematical notation for the subjects that we discuss is largely formalized and commonly used, but there are some areas where we may use notation slightly unfamiliar or different to what you have seen in the past. You may also see different notation when looking at papers and literature for future work on the 6-\gls{dof}. To remove any doubt, we describe the notation that we use here.
 
-For derivatives with respect to time, we will use the compact Newtonian notation. For example, $\dot{x}=\frac{dx}{dt}$, $\ddot{x}=\frac{d^2x}{dt^2}$, and so on. Generally, we avoid the prime notation such as $x'$ as this notation does not make clear what we are taking the derivative with respect to.
+For derivatives with respect to time, we will use the compact Newtonian notation. For example, $\dot{x}=\frac{dx}{dt}$, $\ddot{x}=\frac{d^2x}{dt^2}$, and so on. Generally, we avoid the prime notation such as $x'$ as this notation does not make clear what we are taking the derivative with respect to. The prime notation is only used in specific circumstances where the other notation is not applicable.
 
 For vectors, any vector with a hat like $\hat{x}$ refers to a vector with a magnitude of 1 (normalized vector). These are often seen as basis vectors or unit vectors describing the direction of a force. Vectors with a ‘arrow’ hat like $\hat{x}$ refers to a general vector with a non-normalized magnitude. Vectors with a non-normalized magnitude may also be represented by a bold-faced symbol such as in the case of Euler angle rates. When taking the time derivative of a vector, we prefer to write using this boldface notation, such as $\dot{\textbf{x}}$ instead of $\dot{\vec{x}}$.
 
 For short pieces of code written inline, we use a mono-spaced font with the appearance of "code snippet" as shown. Longer code is included in listings with line numbers using the same font.
 
 \section{Proofs and Derivations}\label{sec:ProofsAndDerivations}
+\subsection{Buckingham Pi}\label{Buckingham Pi Deriv}
+
+\begin{center}
+$\begin{array}{ccc}
+     \text{Variable} & \text{Dimension}
+     &  \\ \rho & \frac{M}{L^3}
+     &  \\ V    & \frac{L}{T}
+     &  \\ S    & L
+     &  \\\mu &  \frac{M}{LT}
+     &  \\a & \frac{L}{T}
+     & \\\alpha & -
+\end{array}$
+\end{center}
+
+For \gls{buck pi}, we want to select repeating variables that span the base dimensions and do not want to select two variables that have the same dimensions. Somewhat arbitrarily, we select $p$, $V$, and $S$ as the 3 repeating variables.
+
+With each $\Pi$ group, we solve by equating the exponents of the expressions to zero. For example:
+$$\Pi_1=\rho^aV^bS^c\mu=M^0L^0T^0$$
+Plugging in the dimension of each of these:
+$$\Pi_1=\left[\frac{M}{L^3}\right]^a\left[\frac{L}{T}\right]^b[L]^c\left[\frac{M}{LT}\right]=M^0L^0T^0$$
+This yields a system of equations with three equations:
+\begin{gather}
+    M:a+1=0\\L:-3a+b+c-1=0\\T:-b-1=0
+\end{gather}
+Solving this system gives $a=b=c=-1$. Plugging in these values for the coefficients, we arrive at:
+$$\Pi_1=\frac{\mu}{\rho VS}$$
+Which is $\frac{1}{Re}$. 
 
 
+\begin{gather}
+    \Pi_1=\frac{\rho VS}{\mu}\\
+    \Pi_2=\frac{V}{a}\\
+    \Pi_3=\frac{F}{\rho V^2S}\\
+    \Pi_4=\alpha
+\end{gather}
 
 
 
@@ -2818,7 +2996,9 @@ We also have a script to display the results of this in a nice animation:
 
 \lstinputlisting[style=Matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
 \subsection{6-DoF Code}
-\lstinputlisting[style=Matlab-editor, caption = Numerical Integration Error Comparison]{6DoF Explanation Scripts/6DoF/MainRK4.m}\label{code:mainRK4}
+\lstinputlisting[style=Matlab-editor, caption = 6-DoF Main Script]{6DoF Explanation Scripts/6DoF/MainRK4.m}\label{code:mainRK4}
+
+\lstinputlisting[style=Matlab-editor, caption = 6-DoF Integrator]{6DoF Explanation Scripts/6DoF/RK4Integrator.m}\label{code:6DoF Integrator}
 
 \setglossarystyle{altlist}
 \printglossary[title=Special Terms, toctitle = Special Terms]
