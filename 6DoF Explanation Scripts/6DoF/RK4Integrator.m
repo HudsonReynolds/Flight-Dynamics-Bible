@@ -108,6 +108,11 @@ mach = norm(vel) / a;
 machTable = rasData(1:300,1); % mach values from 0.01 to 3
 cDTable = rasData(1:300,3); % coefficient of drag
 
+% cL vs. AoA:
+cLAoA0 = data(1:300, 6);
+cLAoA2 = data(301:600, 6);
+cLAoA4 = data(601:900, 6);
+
 % find cD matching the closest mach value to table
 [~, machIndex] = min(abs(machTable-mach));
 cD = cDTable(machIndex);
@@ -134,6 +139,7 @@ end
 % These values are loosely based on DATCOM / RasAero data we have
 % previously gathered. Currently there is no dependence on mach either,
 % which should be implemented at some point
+
 
 cL = min(1/8 * AoA, 2);
 
