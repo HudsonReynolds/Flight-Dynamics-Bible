@@ -1932,7 +1932,14 @@ Putting it all together, we're going to write a simple code using Euler angles t
 
 \lstset{style=mystyle}
 
-\lstinputlisting[language=Matlab, caption=Euler Angle Dynamics Example]{6DoF Explanation Scripts/OneDofEuler.m}\label{
+\lstinputlisting[language=Matlab, caption=Euler Angle Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyEuler.m}\label{Euler Dynamics Listing}
+
+
+
+% At this point, we would use our numerical integration scheme to
+% approximate the next timestep's Euler angles using the Euler rates we
+% just found. We won't do that here, but you can see the implementation in
+% the 6DoF itself or the Dzhanibekov example!
 
 
 \section{Quaternions}\label{sec:quaternions}
@@ -1968,7 +1975,17 @@ Having initialized our quaternion vector, we can now use another MATLAB script t
 
 \subsection{Quaternion Rates}\label{sec: quaternion rates}
 
-Just as we had done for Euler angles with Euler rates, we want to find a vector of quaternion rates that allows us to integrate and obtain a new quaternion vector. Also just as with Euler angles, there is no MATLAB function allowing us to relate quaternion rates with angular velocity. But just as with Euler angles, we've already found the necessary matrix to do so! So plugging it into our script is an easy fix to make this operation possible.
+Just as we had done for Euler angles with Euler rates, we want to find a vector of quaternion rates that allows us to integrate and obtain a new quaternion vector. Also just as with Euler angles, there is no MATLAB function allowing us to relate quaternion rates with angular velocity. But just as with Euler angles, we've already found the necessary matrix to do so! This equation is shown in \eqref{eq: quat rates}. So plugging it into our script is an easy fix to make this operation possible.
+
+\begin{gather}\label{eq: quat rates}
+    \color{blue}\boxed{\color{black}\dot{\textbf{q}}=\frac{1}{2}\begin{bmatrix}
+        0&-\omega_x&-\omega_y&-\omega_z\\
+        \omega_x&0&\omega_z&-\omega_y\\
+        \omega_y&-\omega_z&0&\omega_x\\
+        \omega_z&\omega_y&-\omega_x&0
+    \end{bmatrix}\vec{q}}
+    \\\mathrm{\color{blue}Quaternion \ Rates}
+\end{gather}
 
 \subsection{Quaternion MATLAB Function Example}
 
@@ -1976,6 +1993,14 @@ Let's take the exact same example as before. We have the force of gravity acting
     2.5&0.1&0.1
 \end{bmatrix}^T$. Wanting to obtain the gravity vector expressed in the body frame instead of the inertial frame, this time we're going to use quaternions to do so. In addition, we're now going to find the quaternion rate at the given moment. The listing below does this, and is sufficiently explained in the comments between operations. Note: you should see numerous similarities, with some sections of the code identical to the previous. The output of the same final gravity vector gives confidence that we've implemented MATLAB's functions correctly.
 
+\lstset{style=mystyle}
+
+\lstinputlisting[language=Matlab, caption=Quaternion Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyQuat.m}\label{Quat Dynamics Listing}
+
+% Once agian, at this point, we would use our numerical integration scheme
+% to approximate the next timestep's quaternion using the quaternion rates
+% we just found. We won't do that here, but you can see the implementation 
+% in the 6DoF itself or the Dzhanibekov example!
 
 \section{3D Rotation Example: Dzhanibekov effect}\label{sec:Dzhan}
 
@@ -2101,13 +2126,12 @@ Our attitude dynamics are fairly simple since there are no moments acting on the
 \end{gather}
 To find our \gls{quaternion} rates, we simply use the same methods as in section \ref{sec: quaternion rates}. This gives us:
 \begin{gather}
-    \color{blue}\boxed{\color{black}\dot{\textbf{q}}=\frac{1}{2}\begin{bmatrix}
+{\color{black}\dot{\textbf{q}}=\frac{1}{2}\begin{bmatrix}
         0&-\omega_x&-\omega_y&-\omega_z\\
         \omega_x&0&\omega_z&-\omega_y\\
         \omega_y&-\omega_z&0&\omega_x\\
         \omega_z&\omega_y&-\omega_x&0
     \end{bmatrix}\vec{q}}
-    \\\mathrm{\color{blue}Quaternion \ Rates}
 \end{gather}
 \subsection{Translating to Code}
 With all of these defined, we can write the derivative of our \gls{state vector} as:
@@ -2128,6 +2152,13 @@ Our initialization of the \gls{state vector} and all of the basic setup in conta
     \item Be sure to keep your chosen rotation sequence straight when utilizing MATLAB's functions, and be sure to have a thorough understanding of how these functions work!
 \end{enumerate}
 \section{Further Reading}
+
+Wertz
+
+That one website
+
+Some other horseshit
+
 \section{Practice Problems}
 
 
@@ -2225,7 +2256,7 @@ Define any additional quantities that you deem necessary to solve the problem.
 
 \begin{enumerate}
     \item Write the \gls{state vector} for the system.
-    \item  write the \glspl{eom} for the system. If you choose the Newtonian approach, write the forces and moments of the system. If you choose the \gls{Lagrangian} Approach, write the energy equations and constraint equations.
+    \item  Write the \glspl{eom} for the system. If you choose the Newtonian approach, write the forces and moments of the system. If you choose the \gls{Lagrangian} Approach, write the energy equations and constraint equations.
     \item Numerically integrate the system. For this problem, you may be able to use either Euler angles or quaternions if you choose your singularity point carefully. 
     \item Create a visualization of the system. Create any other plots that you deem useful.
 \end{enumerate}
