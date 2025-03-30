@@ -7,6 +7,7 @@ phi = 2.71;
 theta = 0.2;
 psi = 0.2;
 gravityInertial = [-100;0;0];
+thrustBody = [-1000;0;0];
 omega = [2.5;0.1;0.1];
 bMatrix = [1, tan(theta)*sin(phi), tan(theta)*cos(phi); ...
            0,       cos(phi),         -sin(phi); ...
@@ -15,8 +16,9 @@ bMatrix = [1, tan(theta)*sin(phi), tan(theta)*cos(phi); ...
 % Calculate the DCM for the instantaneous orientation of the vehicle. Remember we're using a 3-2-1 rotation sequence for this problem; therefore, we will input the corresponding z, then y, then x angle and define our order at the end
 DCM = angle2dcm(psi,theta,phi,"ZYX");
 
-% Matrix multiply the DCM with the inertial gravity vector to find the body frame representation of the gravity vector
+% Matrix multiply the DCM with the inertial gravity vector to find the body frame representation of the gravity vector. Multiply the thrust vector by the transpose (inverse) of the DCM to obtian the thrust vector in the inertial frame
 gravityBody = DCM*gravityInertial;
+thrustInertial = (DCM')*thrustBody;
 
 % We now want to multiply our b matrix by the angular velocity vector to get the Euler rate
 eulerRate = bMatrix*omega;
