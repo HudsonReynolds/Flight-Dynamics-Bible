@@ -1,6 +1,6 @@
 % Title: GravityToBodyEuler
 % Author: Preston Wright
-% Example converting a gravity force from the inertial to body frame using Euler angles
+% Example converting a gravity force from the inertial to body frame and thrust force from body to inertail frame using Euler angles
 
 % Start with your initializations. Every angle should be in radians, and our force is in Newtons
 phi = 2.71;
