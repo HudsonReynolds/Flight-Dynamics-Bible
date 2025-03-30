@@ -143,7 +143,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Book's title and subtitle
-\title{\Huge \textbf{Flight Dynamics Bible}  \\ \huge Volume 1: \\Everything about 6 Degree of Freedom Modeling}
+\title{\Huge \textbf{Flight Dynamics Bible}  \\ \huge Volume I: \\Everything about 6 Degree of Freedom Modeling}
 
 % Author
 \author{\textsc{Hudson Reynolds} \\ \textit{Author}
@@ -155,7 +155,7 @@
 
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
-\fancyhead[R]{}
+\fancyhead[R]{\thesection}
 \fancyhead[L]{\thechapter\ --\ \leftmark}
 
 %\frontmatter
@@ -200,7 +200,7 @@ To use this document to its fullest extent, we recommend that you write scripts 
 
 In this first volume, we cover primarily the translational dynamics and basics of rotational dynamics needed to set up a 6-\gls{dof} model. We mainly focus on the implementation of these equations in MATLAB and best practices. The methods of deriving equations of motions are also heavily discussed for their importance. These are, in our opinion, the fundamental things that need to be understood before working on other aspects of a flight dynamics model. As such, these subjects comprise a large majority of both the effort and the length of the first volume.
 
-Because of the depth of the subjects described here, we have decided to cover most of attitude dynamics in a separate volume. In this volume, we mostly describe how attitude dynamics can be implemented in MATLAB. The second volume contains most of the theory about attitude dynamics. This second volume is especially useful for the mathematically inclined reader or those who want to implement attitude dynamics math in another programming language.
+Because of the depth of the subjects described here, we have decided to cover most of attitude dynamics in a separate volume. In this volume, we mostly describe how attitude dynamics can be implemented in MATLAB. Volume II contains most of the theory about attitude dynamics. This second volume is especially useful for the mathematically inclined reader or those who want to implement attitude dynamics math in another programming language.
 
 As a note, while our work on flight dynamics has mainly focused on modeling rockets, we hope that this document can be used more widely for a variety of 3-DoF and 6-DoF models. As such, we have attempted to include content that is useful for other systems, such as aircraft modeling and orbital dynamics, insofar as we have experience in these areas. That being said, to limit the scope of this document, we have decided to explore these concepts in the context of rocket modeling, and hope that our explanations provide enough clarity for the intrepid reader to explore modeling in other domains.
 
@@ -403,22 +403,16 @@ In Figure \ref{fig: 1DoF forces} below, we show an example of a very simple 1-\g
 
 In Figure \ref{fig: 1DoF forces}, a total of three forces are shown, all of which act along the $\hat{y}$-direction. The colinearity of all these forces is what makes this a 1-\gls{dof} model. The three forces shown are the thrust force, the drag force, and the gravity force.
 
-Following what you may do in an introductory physics class, we will describe each of these forces via their functional form. These are described in Table \ref{Force Equations 1 DoF}. 
+Following what you may do in an introductory physics class, we will describe each of these forces via their functional form. These are described in Table \ref{force table}
+$$
+\begin{array}{cc}\label{force table}
+    \mathrm{\textbf{Force}}&\mathrm{\textbf{Functional Form}}\\
+    \vec{F}_g &  -mg\\
+     \vec{F}_D& -\frac{1}{2} \rho_{\infty} V^2_{\infty}SC_D\\
+     \vec{F}_T & F_T\cdot[1-u(t-t_b)], t\ge0
+\end{array}
+$$
 
-\begin{table}
-\centering
-\caption{Functional Form of Force Equations}
-\label{Force Equations 1 DoF}
-\begin{tabular}{l | l}
-Force & Functional Form \\
-\hline
- $F_g$&  $-mg$\\
- $F_D$&  $-\frac{1}{2} \rho_{\infty} V^2_{\infty}SC_D$\\
- $F_T$&  $F_T\cdot[1-u(t-t_b)], t\ge0$\\
-
-\end{tabular}
-
-\end{table}
 \newglossaryentry{freestream}
 {
     name=freestream,
@@ -1934,12 +1928,7 @@ Putting it all together, we're going to write a simple code using Euler angles t
 
 \lstinputlisting[language=Matlab, caption=Euler Angle Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyEuler.m}\label{Euler Dynamics Listing}
 
-
-
-% At this point, we would use our numerical integration scheme to
-% approximate the next timestep's Euler angles using the Euler rates we
-% just found. We won't do that here, but you can see the implementation in
-% the 6DoF itself or the Dzhanibekov example!
+At this point, we would use our numerical integration scheme to approximate the next timestep's Euler angles using the Euler rates we just found. We won't do that here, but you can see the implementation in the 6DoF itself or the Dzhanibekov example!
 
 
 \section{Quaternions}\label{sec:quaternions}
@@ -1964,7 +1953,7 @@ Putting it all together, we're going to write a simple code using Euler angles t
     description={A matrix which obeys the property that every $a_{ij}=-a_{ji}$. This can be interpreted to mean every term across the diagonal is equal in magnitude, but opposite in sign. Sometimes called an anti-symmetric matrix or anti-metric matrix}
 }
 
-To match industry/academia standards, our 6DoF model uses \glspl{quaternion}. The use of hyper-imaginary numbers allows us to avoid losing a degree of freedom at a specific orientation in our rocket, making the simulation more robust. Just as with Euler angles, MATLAB has an extensive suite of functions that make the implementation of \glspl{quaternion} just as easy. 
+To match industry/academia standards, our 6DoF model uses \glspl{quaternion}. The use of hyper-imaginary numbers allows us to avoid losing a degree of freedom at a specific orientation in our rocket (called \textit{gimbal lock}), making the simulation more robust. Just as with Euler angles, MATLAB has an extensive suite of functions that make the implementation of \glspl{quaternion} just as easy. 
 
 \subsection{Quaternion Rotation Matrix}
 
@@ -1997,10 +1986,7 @@ Let's take the exact same example as before. We have the force of gravity acting
 
 \lstinputlisting[language=Matlab, caption=Quaternion Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyQuat.m}\label{Quat Dynamics Listing}
 
-% Once agian, at this point, we would use our numerical integration scheme
-% to approximate the next timestep's quaternion using the quaternion rates
-% we just found. We won't do that here, but you can see the implementation 
-% in the 6DoF itself or the Dzhanibekov example!
+Once agian, at this point, we would use our numerical integration scheme to approximate the next timestep's quaternion using the quaternion rates we just found. We won't do that here, but you can see the implementation in the 6DoF itself or the Dzhanibekov example! A quick note about this script in relation to the other: if you run both you can see the gravity vector in the body frame is identical for both. This proves our implementation of our attitude dynamics is correct!
 
 \section{3D Rotation Example: Dzhanibekov effect}\label{sec:Dzhan}
 
@@ -2147,9 +2133,11 @@ Our initialization of the \gls{state vector} and all of the basic setup in conta
 %% add listings.
 \section{Key Ideas}
 \begin{enumerate}
-    \item Rotations can be encoded in a variety of ways, but the most useful and compact encoding of rotations involves the use of complex-valued functions.
+    \item Read Volume II to learn more.
+    \item Rotations can be encoded in a variety of ways, but the most useful and compact encoding of rotations involves the use of complex numbers.
     \item The use of MATLAB's built in suite of functions is incredibly useful in the implementation of attitude dynamics in 6DoF modeling.
     \item Be sure to keep your chosen rotation sequence straight when utilizing MATLAB's functions, and be sure to have a thorough understanding of how these functions work!
+    \item No matter which style of describing rotations we choose - Euler angles or quaternions - they both result in identical answers
 \end{enumerate}
 \section{Further Reading}
 
@@ -2266,7 +2254,7 @@ Define any additional quantities that you deem necessary to solve the problem.
 \begin{chapquote}{Werner Heisenberg}
 ''When I meet God, I am going to ask him two questions: Why relativity? And why turbulence? I really believe he will have an answer for the first.''
 \end{chapquote}
-In Section \ref{sec: 3DoF Case} we discussed the 4 fundamental forces on a vehicle and how we define their directions. In that section we did not define the magnitude of the aerodynamic forces, $F_L$ and $F_D$. The magnitude of these forces are quite difficult to calculate and require the most approximation to do correctly. The governing equation for calculating the magnitude of our aerodynamics is $\frac{1}{2}\rho_{\infty}V^2_{\infty}SC_X$, where $C_X$ is either $C_L$ or $C_D$.
+In Section \ref{sec: 3DoF Case} we discussed the 4 fundamental forces on a vehicle and how we define their directions. In that section we did not define the magnitude of the aerodynamic forces, $\vec{F}_L$ and $\vec{F}_D$. The magnitude of these forces are quite difficult to calculate and require the most approximation to do correctly. The governing equation for calculating the magnitude of our aerodynamics is $\frac{1}{2}\rho_{\infty}V^2_{\infty}SC_X$, where $C_X$ is either $C_L$, $C_D$, $C_N$, or $C_A$.
 
 Despite the innocuous appearance of this equation, calculating the aerodynamics of our system is deceptively hard because the calculation of $C_X$ is very complicated. In fact, without real data, any calculation that we made of these values will just be an approximation.\footnote{Even with wind tunnel data, it is still likely that some approximations need to be made. Aerodynamics in general has no definite answers.} That being said, there are approaches we can take which will get us close enough to true values to prove useful.
 
@@ -2275,11 +2263,11 @@ Despite the innocuous appearance of this equation, calculating the aerodynamics 
 It is useful to understand why the equations for the aerodynamic forces take the form that they do, with the $\frac{1}{2}\rho V^2S$ term. Along the way, we will also discover some other important properties that influence the airflow. We will start by enumerating the various factors that could impact the drag experienced by an object. Some intuition will tell us that drag is likely effected by the following factors:
 \begin{enumerate}
     \item Viscosity of the fluid that is being traveled through - higher viscosity creates more 'stickiness' in the air that needs to be countered.
-    \item Velocity - higher velocity creates more interactions with the fluid at any given time, so it will contribute to our drag foce.
+    \item Velocity - higher velocity creates more interactions with the fluid at any given time, so it will contribute to our drag force.
     \item Density of fluid - higher density will great more interactions per time.
     \item Characteristic size - the size of the object traveling through the fluid will increase the particle interactions per time and drag.
     \item Speed of sound - the properties of the fluid will depend on the speed of sound in the fluid.
-    \item \gls{angle of attack} - the angle of the object will change the apparent size in the airflow.
+    \item \Gls{angle of attack} - the angle of the object will change the apparent size in the airflow.
 \end{enumerate}
 Already, we can see that some of the terms that we see in the lift and drag equations are present above. However, we do not know in what may they are correlated and what else they depend on.
 
@@ -2358,12 +2346,12 @@ When modeling aerodynamic forces, we can imagine that two differential force ele
     \label{fig:pressure and shear}
 \end{figure}
 
-Since a force is a pressure multiplied by an area, $F=pA$, we can integrate our pressure distribution over an area to understand the total forces that are acting on a geometry. Often, we see this expressed in the form of an integral over the length of the geometry. This length is denoted $c$, the chord length, in the example of the airfoil. These integrals are shown below:
+Since a force is a pressure multiplied by an area, $F=pA$, we can integrate our pressure distribution over an area to understand the total forces that are acting on a geometry. Often, we see this expressed in the form of an integral over the length of the geometry. This length is denoted by $c$, the chord length, in the example of the airfoil. These integrals are shown below:
 \begin{gather}
     N'=\int_0^{c}{p_lu-p_u}{dx}+\int_0^{c}{\left[\tau_u\frac{dy_u}{dx} + \tau_l\frac{dy_l}{dx}\right]}{dx}\\\\
     A'=\int_0^{c}{\left[p_u\frac{dy_u}{dx} + p_l\frac{dy_l}{dx}\right]}{dx}+\int_0^c{(\tau_u+\tau_l)}{dx}
 \end{gather}
-Where the $N'$ and $A'$ are the normal and axial force on the aerodynamic surface. Here, the apostrophe (We would say 'N prime') refers to the fact that the force acts over a unit length in the $\hat{z}$ direction. We are assuming a unit length here since we are considering the 2-D case in this example. More generally, we would perform this calculation more generally in 3D, but that is beyond the scope of this example.
+Where the $N'$ and $A'$ are the normal and axial force on the aerodynamic surface. Here, the apostrophe (We would say 'N prime') refers to the fact that the force acts over a unit length in the $\hat{z}$ direction. We are assuming a unit length here since we are considering the 2-D case in this example. More generally, we would perform this calculation in 3D, but that is beyond the scope of this example.
 
 The normal force acts normal in the $\hat{y}$ direction and the axial force acts in the $\hat {x}$ direction as shown in Figure \ref{fig:pressure and shear}. Normal and axial forces are not commonly used in our modeling outside of these calculations. More often, we see the quantities lift and drag, which are defined with respect to the \gls{freestream} velocity. We can easily transform our normal and axial forces into a lift and drag using a rotation matrix with our \gls{angle of attack}, $\alpha$. This rotation matrix takes the form:
 \begin{equation}\label{eq:LDMatrix}
@@ -2419,9 +2407,32 @@ More information on RasAero can be found at \cite{rogers_rasaero_2019}. The docu
 \subsection{Other Computational Models}
 \newacronym{cfd}{CFD}{Computational Fluid Dynamics}
 It is worth noting that other computational models exist. RasAero does have shortcomings in modeling some of the aspects of the rocket geometry, so other methods such as \gls{cfd} are also options to be explored. However, in the current state of our model, we have not looked into \gls{cfd} methods very heavily for direct use in MATLAB. These are in the preliminary stages of investigation and will likely be explored more heavily in future editions of this text.
-\section{Wind Modeling}
-Add our wind modelling stuff here (might actually want to model wind first lmao)
 
+% \section{Wind Modeling}
+% Add our wind modelling stuff here (might actually want to model wind first lmao)
+\section{Key Ideas}
+\begin{enumerate}
+    \item When we model a system such as our rocket, we can capture most of the phenomena by capturing data at different $Re$, $M$, and $\alpha$. This is true for both \gls{cfd} and wind tunnel modeling.
+    \item While exact analytical solutions are hard to attain in aerodynamics, we can use computational tools to estimate aerodynamics
+\end{enumerate}
+
+\section{Further Reading}
+
+\section{Practice Problems}
+\begin{enumerate}
+    \item You are flying home one day in your P-51 Mustang At cruise, your aircraft is 10,000 ft above sea level.
+\begin{enumerate}
+    \item What is the density of air at this altitude?
+    \item Your wings provide a $C_L$ of 0.3 at cruising speed. Your plane has a mass of 4,000 kg and a planform area of $21.8 \mathrm{\ m}^2$. Find the speed necessary to maintain level light at this altitude.
+    \item Your airplane is equipped with  unguided HVAR rockets. As a daring pilot, you want to model the aerodynamics of this rocket so you can launch it at your friends house with astounding accuracy (\textit{that} will teach them to never steal your mini corn dogs).
+    
+    Using your best engineering judgment of the nose cone shape and any other parameters you cannot find, model the HVAR rocket in RasAero.
+    \item As it turns out, shooting rockets at Canadian civilians is illegal (I know, right?). The Royal Canadian Air Force F/A-18's are on your tail now and you will be shot down in 15 minutes unless you can make it to US airspace. You are 160 km from the airspace boundary. You push your throttles to full to book it back home. 
+
+    At full throttle, your Merlin V12 produces 1676 hp (1250 kw). Your aircraft has a $C_D$ of 0.017. At the same altitude of 10,000 ft, find the maximum flight speed. Will you make it back to American airspace in time?
+
+\end{enumerate}
+\end{enumerate}
 \chapter{Numerical Integration Schemes}\label{sec:numerical integration schemes}
 
 \begin{chapquote}{Wolfgang Pauli}
@@ -2435,18 +2446,22 @@ In our exploration of numerical integration schemes, it will be useful to have a
 We have previously discussed the simplest integration scheme, the explicit Euler method, which we used in Section \ref{sec: Numerical Integration in the 1DoF}. Understanding the Euler method is key to understanding and using more complex integration schemes, so we recommend writing a few of your own Euler integration scripts in MATLAB or a coding language of your choice to really solidify your knowledge before moving on to more complex integration schemes. 
 
 We formalize the explicit Euler integration below. Given a linear ODE:
-$$y'=f\left(x,y\right)$$
+$$\frac{dy}{dt}=f\left(x,y\right)$$
 With initial condition:
 $$y(x_0)=y_0$$
 We perform Euler integration first by defining an interval over which to perform the numerical integration. For Euler integration, we equally space these points by our timestep, $dt$. We can parameterize these points as:
 $$x_i=x_0+i\Delta t$$
-Our next step is to find the value of the tangent line at each point. This is trivial, since our differential equation tells us what $y'$ looks like at any value. All we have to do is evaluate:
-$$y'=f\left(x_i,y(x_i)\right)$$
+Our next step is to find the value of the tangent line at each point. This is trivial, since our differential equation tells us what $\frac{dy}{dt}$ looks like at any value. All we have to do is evaluate:
+$$\frac{dy}{dt}=f\left(x_i,y(x_i)\right)$$
 The problem here is that $y(x_i)$ is an unknown quantity (if we knew it, we wouldn’t have to do integration). So, to find the value of $y(x_i)$ we take an iterative approach. We know the starting value, $y(x_0)=y_0$, so we can find an approximation of the new value by multiplying the timestep by the current slope. For the first timestep, this will look like:
 $$y_1=y_0+\Delta t\cdot f(x_0,y_0)$$
 Now that we have found an approximation for $y_1$, we can extend this to find approximations for $y_2$, $y_3$, etc. This formula is generally extensible as:
-$$\color{blue}\boxed{\color{black}y_{n+1}=y_i+\Delta t \cdot f(x_i,y_i)}$$
-We represent this Euler integration scheme graphically with a simple example. Suppose our differential equation is $y'=2t$ with initial condition $y(0)=0$. In this example, we can see from inspection that the solution curve is $y=t^2$. Performing Euler integration with a $\Delta t$ of 0.5 yields the black approximation in Figure \ref{fig:Euler}.
+\begin{gather}
+    \color{blue}\boxed{\color{black}y_{n+1}=y_i+\Delta t \cdot f(x_i,y_i)}\\
+    \color{blue}\mathrm{Euler's \ Method}
+\end{gather}
+
+We represent this Euler integration scheme graphically with a simple example. Suppose our differential equation is $\frac{dy}{dt}=2t$ with initial condition $y(0)=0$. In this example, we can see from inspection that the solution curve is $y=t^2$. Performing Euler integration with a $\Delta t$ of 0.5 yields the black approximation in Figure \ref{fig:Euler}.
 \begin{figure}[ht]
     \centering
     
@@ -2494,22 +2509,22 @@ We can of course, reduce errors in the simulation by reducing our timestep, $\De
 \section{Improved Euler / RK2}
 Given the limitations of the Explicit Euler method, we will start by investigating the improved Euler Method. This improved Euler method is the first of a family of integration schemes known as Runge-Kutta (RK) integration schemes. The number, 2, represents the order of the integration scheme, which we will explore more later.
 
-The main area that led to inaccuracies in the explicit Euler method was the slope that we calculated. We can improve on this by taking two points and finding the average slope. We choose to take a point at our start and our end point,  and , and evaluate the slope at both of those points and average them. From the previous section, we can remember that:
+The main area that led to inaccuracies in the explicit Euler method was the slope that we calculated. We can improve on this by taking two points and finding the average slope. We choose to take a point at our start and our end point, $x_i$ and $x_{i+1}$, and evaluate the slope at both of those points and average them. From the previous section, we can remember that:
 \begin{equation}
-    y'=f\left(x_i,y(x_i)\right)
+    \frac{dy}{dt}=f\left(x_i,y(x_i)\right)
 \end{equation}
 So, we can write the average slope as
 \begin{equation}
-    m=\frac{y_1'+y_2'}{2}
+    m=\frac{\dot{y}_1+\dot{y}_2}{2}
 \end{equation}
 Where
 \begin{gather}
-    y_1'=f\left(x_i,y(x_i)\right)\\
-    y_2'=f\left(x_{i+1},y(x_{i+1})\right)
+    \dot{y}_1=\frac{dy_1}{dt}=f\left(x_i,y(x_i)\right)\\
+    \dot{y}_2=\frac{dy_2}{dt}=f\left(x_{i+1},y(x_{i+1})\right)
 \end{gather}
 Now that we have the slope, we follow the same process as we did for the Explicit Euler method to find the next value. We take the slope and multiply it by the timestep, $\Delta t$, and add the current value, $y(x_i)$. This gives us our approximation as:
 \begin{equation}
-    y=y(x_i)+\frac{y_1'+y_2'}{2}\Delta t
+    y=y(x_i)+\frac{\dot{y}_1+\dot{y}_2}{2}\Delta t
 \end{equation}
 We can write this then as:
 \begin{equation}
@@ -2579,11 +2594,11 @@ end
 RK4 integration is the last major integration scheme that we will explore. RK4 integration is often the best balance between the precision of the algorithm and the speed of computation. 
 
 To explain the RK4, we will go back to the RK2 and explain it in a slightly different way that will shed light on what we are doing with RK4. In RK2, we described taking the average slope of the function. We can also imagine taking the Taylor expansion of our function:
-$$y_{i+1}=y_i+y_i'\Delta t+y_i''\frac{\Delta t}{2}+O\left(\Delta t^3\right)$$
-From this Taylor expansion of the solution, we can that our approximation accounts for linear and quadratic terms. Thus, our error is proportional to terms to the 3\textsuperscript{rd} power, represented by $O(\Delta t^3)$. We know $y_i$ and $y_i'$, but the 2nd order derivative of our function is unknown. We can approximate this 2nd order derivative as:
-$$y_i=\frac{y'_{i+1}-y_i'}{\Delta t}$$
+$$y_{i+1}=y_i+\dot{y}_i\Delta t+\ddot{y}_i\frac{\Delta t}{2}+O\left(\Delta t^3\right)$$
+From this Taylor expansion of the solution, we can that our approximation accounts for linear and quadratic terms. Thus, our error is proportional to terms to the 3\textsuperscript{rd} power, represented by $O(\Delta t^3)$. We know $y_i$ and $\dot{y}_i$, but the 2nd order derivative of our function is unknown. We can approximate this 2nd order derivative as:
+$$y_i=\frac{\dot{y}_{i+1}-\dot{y}_i}{\Delta t}$$
 Upon rearranging this equation, we can see that we arrive at the same expression as we did before. We can apply the same approach for the RK4 integration, except we consider terms up to the 4\textsuperscript{th} order expansion of the Taylor series:
-$$y_{i+1}=y_i+y_i'\Delta t+y_i''\frac{\Delta t}{2}+y_i'''\frac{\Delta t}{6}+y_i''''\frac{\Delta t}{24}O\left(\Delta t^5\right)$$
+$$y_{i+1}=y_i+\dot{y}_i\Delta t+\ddot{y}_i\frac{\Delta t}{2}+\dddot{y}_i\frac{\Delta t}{6}+\ddddot{y}_i\frac{\Delta t}{24}O\left(\Delta t^5\right)$$
 Immediately, we can see that our error has shrunk to be proportional to terms of the 5\textsuperscript{th} order, a dramatic reduction as compared to RK2 or Explicit Euler method.
 
 \subsection{RK4 Integration in Code}
@@ -2620,11 +2635,25 @@ end
 Often, we use a function in MATLAB called "ode45" to perform RK4 integration. This function has the benefit that it will change the step size to produce high accuracy when needed and decrease computation time otherwise.
 
 An understanding of the operation of "ode45" is best motivated by an example. We include an example of a Lorenz Attractor in the Appendix \ref{sec:Lorenz Attractor RK4 Example} as an example of ode45. We recommend reading through this code and running it, as well as changing parameters to see how it affects the outputs.
+\subsection{ODE45 Usage}
+While examples are helpful, it is useful to see the inner workings of "ode45" for a new user. 
+
+"ode45" relies on the function handles that we mentioned earlier. "ode45" takes as inputs the integration function, time span, and initial state vector.
+
+"ode45" only takes integration functions that are a function of time and the state variable, or "(t,x)" in MATLAB notation. If we have an integration function that is a function of more than just these two variables, we need to pass them through using function handles. We can do this in the following manner:
+
+\begin{lstlisting}[language=Matlab]
+@(t,x) integrator(t,x,a,b)
+\end{lstlisting}
+In this example, we have a function that performs our numerical integration, called "integrator", the output of which will be the derivative of our state vector. We want "ode45" to see this function and only input "(t,x)", so we put that in a function handle at the front. After the function handle, we are free to pass in any other variables, such as "a" and "b". These will simply be read in as constants in the "ode45" integration scheme.
+
+The benefit of adding these in as a function pass through instead of being computed in "ode45" will become apparent when we discuss code optimization in Section \ref{sec: code optimization}. This also keeps our code hierarchy cleaner and more easily modifiable.
+
 \section{Other Numerical Integration Considerations}\label{sec:other numerical ints}
 \subsection{More on Error}
 We briefly discuss the error of the integration schemes in each of the previous sections. However, it is useful to see examples of these to solidify understanding. 
 
-Using the same example differential equation from \ref{sec:errors in the euler method} as $y'=2t$, we can show the approximation for Explicit Euler, RK2, and RK4. This is shown in \ref{fig:Numerical Comparison}.
+Using the same example differential equation from \ref{sec:errors in the euler method} as $\frac{dy}{dt}=2t$, we can show the approximation for Explicit Euler, RK2, and RK4. This is shown in \ref{fig:Numerical Comparison}.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\linewidth]{6DoF Explanation Scripts/Numerical Integrator Comparison Figure.png}
@@ -2638,7 +2667,7 @@ As we can see from this example, even with a fairly large timestep of $\Delta t=
 The difference in these numerical integration schemes will become more apparent when modeling the behavior of different differential equation systems. Systems containing higher order terms will be better modeled by the higher order integration schemes, unsurprisingly. The true use of these methods is when analytical solutions to the differential equations are hard or impossible to obtain. That being said, we still want to know characteristics of our system so we can appropriately select integration parameters.
 
 \subsection{Sampling and Stiffness}\label{sampling and stiffness}
- To begin our discussion of sampling and stiffness, we can take the differential equation $y'=\cos(4\pi t)$with the initial condition of $y(0)=0$. This function is periodic in nature, so it will be good for our demonstration here. In this first example, we will keep the same timestep of $\Delta t=0.5s$. As is seen in \ref{fig:Numerical Int Periodic}, this timestep is the same as the period of the sinusoidal solution of this differential equation. When this is the case, we can see that the solutions diverge from the original periodic function greatly for all of the integration schemes (aside from the RK2, although this is only the case when the period is exactly the same as the timestep). This occurs because we are not sampling the function at a high enough frequency to capture the nature of the periodic function.
+ To begin our discussion of sampling and stiffness, we can take the differential equation $\frac{dy}{dt}=\cos(4\pi t)$with the initial condition of $y(0)=0$. This function is periodic in nature, so it will be good for our demonstration here. In this first example, we will keep the same timestep of $\Delta t=0.5s$. As is seen in \ref{fig:Numerical Int Periodic}, this timestep is the same as the period of the sinusoidal solution of this differential equation. When this is the case, we can see that the solutions diverge from the original periodic function greatly for all of the integration schemes (aside from the RK2, although this is only the case when the period is exactly the same as the timestep). This occurs because we are not sampling the function at a high enough frequency to capture the nature of the periodic function.
 
 \begin{figure} [ht]
     \centering
@@ -2704,7 +2733,7 @@ On the converse side, for systems that require very high precision, such as orbi
 \subsection{Symplectic and Variational Integrators}
 In addition to these numerical integration schemes, there are a variety of integration schemes that use energy conservation as the basis of their integration schemes. These types of integrators are called \textit{symplectic}. These types of integrators directly solve Hamilton's equations for a Hamiltonian system. The form of these equations is discussed briefly 
 
-\section{Numerical Integration Code Optimization}
+\section{Numerical Integration Code Optimization}\label{sec: code optimization}
 \subsection{Monte Carlo Simulation}
 Often, we want to run many simulations with various parameters to gain a better understanding of our system. We call this method of running many simulations the \textit{Monte Carlo} method. Using the Monte Carlo method, we can ascertain information about the likelihood of certain events or approximate quantities that are hard to find analytically by running a large number of simulations and performing statistical analysis on the results. In this document, we will not dive into the methods of statistical analysis and the best ways to perform Monte Carlo simulations. This topic is very deep and is the focus of many peoples’ whole careers.
 
@@ -2742,7 +2771,7 @@ However, other operations, such as "atmosisa", should not comprise a large porti
 \chapter{The 6-DoF}
 In this section we will combine everything from the previous sections and explain how our 6-\gls{dof} model works. We will follow a similar set up to \ref{sec:Dzhan}  here, describing the elements of the model in detail and then attaching relevant code either in-line or in the appendix.
 
-Our definitions of our frames follow from those discussed in \ref{sec:Frame of Reference}. For the earth-centered inertial frame, we follow the conventions discussed in \ref{fig:InertialFrame}. Recall that the $\hat{x}$ axis points upward toward the zenith, the $\hat{y}$ axis points east along the surface, and the $\hat{z}$ axis finishes the right-handed coordinate system, pointing north.
+Our definitions of our frames follow from those discussed in Section\ref{sec:Frame of Reference}. For the earth-centered inertial frame, we follow the conventions discussed in Figure\ref{fig:InertialFrame}. Recall that the $\hat{x}$ axis points upward toward the zenith, the $\hat{y}$ axis points east along the surface, and the $\hat{z}$ axis finishes the right-handed coordinate system, pointing north.
 
 For the body frame, we follow the convention in \ref{fig:BodyFrameRocket}. This has $\hat{X}$ pointing through the nose of the rocket and $\hat{Y}$and $\hat{Z}$ along the transverse plane. The directionality of $\hat{Y}$ and $\hat{Z}$ is not particularly important since the rocket is axially symmetric, so we arbitrarily select the $\hat{Y}$ axis to point through one of the fins and choose $\hat{Z}$ to complete the right-handed frame.
 
@@ -2764,17 +2793,17 @@ $$\vec{v}_0=\begin{bmatrix}
 We also need the initial orientation. Here, we use \gls{Euler angles} again. We often choose to launch at a slight angle to simulate adverse affects that may push the launch vehicle slightly off-course during the initial launch. We choose to add a small angle in the $\theta$ and $\psi$ directions in this case:
 \begin{equation}\label{eq: euler angles 6DoF}
     \begin{bmatrix}
-    \phi\\\theta\\\psi
+    \psi\\\theta\\\phi
 \end{bmatrix} =
 \begin{bmatrix}
-    0\\0.1\\0.1
+    0.1\\0.1\\0
 \end{bmatrix}
 \end{equation}
 We note that we could also parametrize this as a $45\degree$ rotation on the $\phi$ axis and then a $0.1$ radian angle on either the $\theta$ or the $\psi$ axis. For different scenarios one may be more useful than another. For example, if we want to simulate a $10\degree$ launch angle (from zenith), we can then use the $\phi$ angle to determine the azimuth at which we launch.
 
-We use the command "eul2quat" with a specification of "XYZ" for the frame. The specificiation is important now because we need to explicitly define our rotation sequence when two or more rotations are present. In the case of \eqref{eq: euler angles 6DoF}, this gives an the initial \gls{quaternion} vector of :
+We use the command "eul2quat" with a specification of "ZYX" for the frame and chosen 3-2-1 rotation sequence. The specification is important now because we need to explicitly define our rotation sequence when two or more rotations are present. In the case of \eqref{eq: euler angles 6DoF}, this gives an the initial \gls{quaternion} vector of :
 $$\vec{q}_0=\begin{bmatrix}
-    0.9975\\0.0025\\0.0499\\0.0499
+    0.9975\\-0.0025\\0.0499\\0.0499
 \end{bmatrix}$$
 \newglossaryentry{rail whip}
 {
@@ -2807,7 +2836,7 @@ Thrust is also fairly simple to model. If we consider the thrust to be coinciden
 \begin{equation}
     F_T=\dot{m}V_e+\left(P_{e}-P_{atm}\right)\cdot A_e
 \end{equation}
-Where $\dot{m}$ is the mass flow rate of the engine, $V_e$ is the exit velocity of the engine, $P_e$ is the exit pressure of the engine, $P_{atm}$ is the atmospheric pressure, and $A_e$ is the area of the nozzle exit. For a propulsion, these parameters are usually specified or can be easily derived, although we will not do so here. See \cite{noauthor_chemical_nodate} or the propulsion team for more details.
+Where $\dot{m}$ is the mass flow rate of the engine, $V_e$ is the exit velocity of the engine, $P_e$ is the exit pressure of the engine, $P_{atm}$ is the atmospheric pressure, and $A_e$ is the area of the nozzle exit. For a given propulsion system, these parameters are usually specified or can be easily derived, although we will not do so here. See \cite{noauthor_chemical_nodate} or the propulsion team for more details.
 
 Here, we introduce the use of the rotation matrix to convert between different frames. MATLAB allows for the creation of a rotation matrix with the input of a \gls{quaternion} using the "quat2dcm" function. Using this, we can perform frame conversion to and from the body and earth frame. We show this below in \ref{code:RotationMatrix}:
 \lstinputlisting[style=Matlab-editor, caption = Rotation Matrix]{6DoF Explanation Scripts/RotationMatrix.m}\label{code:RotationMatrix}
@@ -2830,7 +2859,7 @@ The modeling of moments in the 6-\gls{dof} is fairly straightforward. In the pre
 
 The moment arm of the aerodynamic forces is equivalent to the distance from the center of mass to the center of pressure. 
 \begin{equation}
-    M^c=\vec{r}^{\ cm}-\vec{r}^{\ cp}
+    M^c=\vec{r}_{cm}-\vec{r}_{cp}
 \end{equation}
 Assuming that both lie along the longitudinal axis, we can express this moment as:
 \begin{equation}
@@ -2863,7 +2892,9 @@ So, taking all of these together, we have the derivative of our \gls{state vecto
     \end{bmatrix}
 \end{equation}
 \subsection{6-DoF Code}
-We take this integrated state vector along with the initial conditions and integrate them using "ode45". The two most important scripts in this process are the "MainRK4.m" and "RK4Integrator.m" MATLAB scripts. These are shown in the Appendix in Listings \ref{code:mainRK4} and  \ref{code:6DoF Integrator}, respectively. Other files exist, but we do not think they are important enough to be fully written in the appendix. The full code can be found at: %google drive or something else
+We take this integrated state vector along with the initial conditions and integrate them using "ode45". The two most important scripts in this process are the "MainRK4.m" and "RK4Integrator.m" MATLAB scripts. Because these MATLAB scripts are quite long, we have chosen not to include them in the appendix. Instead, a link to the GitHub is given where the scripts can be found is .
+
+The full code can be found at: %google drive or something else
 \section{Validation of 6-DoF}
 The validation of our 6-\gls{dof} model is achieved through modeling other rocket systems that have flown to check the validity of our model and modeling other physical phenomema. Validation can range from very simple to far more complex depending on the system that is being validated. For us, validation falls under two main categories:
 \begin{enumerate}
@@ -2975,9 +3006,7 @@ We also have a script to display the results of this in a nice animation:
 
 \lstinputlisting[style=Matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
 \subsection{6-DoF Code}
-\lstinputlisting[style=Matlab-editor, caption = 6-DoF Main Script]{6DoF Explanation Scripts/6DoF/MainRK4.m}\label{code:mainRK4}
-
-\lstinputlisting[style=Matlab-editor, caption = 6-DoF Integrator]{6DoF Explanation Scripts/6DoF/RK4Integrator.m}\label{code:6DoF Integrator}
+The code for the 6-\gls{dof} can be found at \cite{} or accessed via GitHub with the following QR code:
 
 \setglossarystyle{altlist}
 \printglossary[title=Special Terms, toctitle = Special Terms]
