@@ -2867,6 +2867,15 @@ In addition to these \gls{numerical int} schemes, there are a variety of integra
 
 Because the Hamiltonian equations are first order already, they are ready for numerical integration without the need for order reduction.
 
+A similar operation can be done to reduce the \gls{Lagrangian} to two first order equations, in a system known as a variational integrator.
+
+MATLAB has no built in functions for variational or \glspl{symplectic int}, so we do not discuss them further here for now.
+
+\subsubsection{Use Case of Symplectic Integrators}
+Although MATLAB does not have built-in functions for these integrators, scripts to do so can be written or found online.
+
+The best use case for these algorithms is for systems with a Hamiltonian or Lagrangian description that need to be integrated over a long time span. Because these integrators conserve energy, they will better preserve the characteristics of these systems over long times as compared to RK integrators.
+
 \section{Numerical Integration Code Optimization}\label{sec: code optimization}
 \subsection{Monte Carlo Simulation}
 Often, we want to run many simulations with various parameters to gain a better understanding of our system. We call this method of running many simulations the Monte Carlo method. Using the Monte Carlo method, we can ascertain information about the likelihood of certain events or approximate quantities that are hard to find analytically by running a large number of simulations and performing statistical analysis on the results. In this document, we will not dive into the methods of statistical analysis and the best ways to perform Monte Carlo simulations. This topic is very deep and is the focus of many peoples’ whole careers.
@@ -3081,7 +3090,7 @@ If you want to have these changes to figures universally applied in MATLAB, you 
 The code in Listing \ref{code:startup} is the d efault plotting used in this document, which should be a good baseline for professional plots.
 \lstinputlisting[style=Matlab-editor, caption = Startup File for Plotting]{startup.m}\label{code:startup}
 
-And with that, we have completed the first Volume of the Flighy Dynamics Bible. Additional information and code can be found in the Appendix. If you have any questions, concerns, or suggestions, feel free to reach out to Hudson Reynolds on Slack or via email at Hudsonj.reynolds@gmail.com
+And with that, we have completed the first Volume of the Flight Dynamics Bible. Additional information and code can be found in the Appendix. If you have any questions, concerns, or suggestions, feel free to reach out to Hudson Reynolds on Slack or via email at Hudsonj.reynolds@gmail.com
 
 
 \chapter{Appendix}
