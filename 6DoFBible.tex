@@ -136,6 +136,7 @@
   {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
 \makeatother
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First page of book which contains 'stuff' like: %
 %  - Book title, subtitle                         %
@@ -308,7 +309,7 @@ To fully comprehend and successfully use this document, it is recommended that y
 Some concepts will arise in this document that are derived from graduate-level coursework and complex mathematics. In these instances, we may not attempt to derive the background and full understanding, but rather only what is necessary for building a 6-\gls{dof} model. In these cases, we also try to link to source material if you are inclined to learn more about those topics.
 
 \section{Why 6-DoF?}
-Let’s start off with some terminology in this section. A \acrlong{dof} (\gls{dof}) refers to the number of ways an object can move in space. A more technically precise and rigorous definition defines this as the number of independent parameters that define the motion of a system. This concept is explored more deeply in \ref{sec:constaints}.  
+Let’s start off with some terminology in this section. A \acrlong{dof} (\gls{dof}) refers to the number of ways an object can move in space. A more technically precise and rigorous definition defines this as the number of independent parameters that define the motion of a system. This concept is explored more deeply in Section\ref{sec:constaints}.  
 
 When modeling rigid body dynamics, it is common to see 1-\gls{dof}, 3-\gls{dof}, and 6-\gls{dof} models all used in aerospace applications. Each of these are useful constructs, and sometimes a simulation with more degrees of freedom is not necessarily better, depending on the application.
 \subsection{1-DoF}
@@ -316,7 +317,7 @@ The first modeling that is often done for the sizing of rockets may use 1-\gls{d
 
 Another example of this type of model is a simple mass-spring system along one axis. Such models may be useful for estimating the vibrations of bodies or as a first-order approximation of fuel slosh.
 
-We will use the example of a 1-\gls{dof} in section \ref{sec: The 1DoF Case} to explain the creation of equations of motion in the simplest way. However, these models are often too constrained to give the most valuable information about a system, which is why 3-\gls{dof} and 6-\gls{dof} models are more often used, especially in the context of flight dynamics.
+We will use the example of a 1-\gls{dof} in Section \ref{sec: The 1DoF Case} to explain the creation of equations of motion in the simplest way. However, these models are often too constrained to give the most valuable information about a system, which is why 3-\gls{dof} and 6-\gls{dof} models are more often used, especially in the context of flight dynamics.
 \subsection{3-DoF}
 After 1-\gls{dof}, the next step up is often a 3-\gls{dof} model. This type of model should be familiar to all flight dynamics members, as it is the subject of our onboarding project. In a 3-\gls{dof} model, there may be any combination of translational degrees of freedom and rotational degrees of freedom.
 
@@ -349,7 +350,7 @@ Each of the previously mentioned sections will be discussed in more detail throu
 \begin{chapquote}{Isaac Newton}
 ''I can calculate the motion of heavenly bodies, but not the madness of people.''
 \end{chapquote}
-The first step when approaching any physics problem of this type is to consider the Newtonian dynamics of the system. In our case, we define Newtonian dynamics as the translational dynamics of the system as well as the moments acting on the system. This differs from particle dynamics because we are considering a rigid body which can exhibit rotation. The exploration of this rotation will be explored in much more detail in Section \ref{sec:energy methods},\ref{sec:attitude dynamics}, and Volume II. 
+The first step when approaching any physics problem of this type is to consider the Newtonian dynamics of the system. In our case, we define Newtonian dynamics as the translational dynamics of the system as well as the moments acting on the system. This differs from particle dynamics because we are considering a rigid body which can exhibit rotation. The exploration of this rotation will be explored in much more detail in Section \ref{sec:energy methods}, Section \ref{sec:attitude dynamics}, and Volume II. 
 \section{The 1-DoF Case}\label{sec: The 1DoF Case}
 To begin our exploration of Newtonian dynamics, we will return to the example of the 1-\gls{dof} which we mentioned earlier. Our goal with this is to use a simple example that you are familiar with from high school physics and bring it up to speed with the terminology and techniques we will use for more complex analysis.
 
@@ -455,7 +456,7 @@ However, you may notice something strange with our equation. In our expression f
     description={The process of making a numerical approximation of a differential equation through discretization of the independent variable (usually time for most physical phenomenon)}
 }
 
-The way we resolve this is to make an approximation of the solution in a process called \gls{numerical int}. Here, we will outline the simplest type of numerical integration, known as Euler’s Method. This section aims to show how to implement Euler’s method in code, and the mathematical reasoning will be given a more formal treatment in section \ref{sec:euler integration}. We will describe more complex numerical integration schemes and why you might want to use them, but it’s good to see the code for a simple case first.
+The way we resolve this is to make an approximation of the solution in a process called \gls{numerical int}. Here, we will outline the simplest type of numerical integration, known as Euler’s Method. This section aims to show how to implement Euler’s method in code, and the mathematical reasoning will be given a more formal treatment in Section \ref{sec:euler integration}. We will describe more complex numerical integration schemes and why you might want to use them, but it’s good to see the code for a simple case first.
 
 Euler’s Method involves discretizing our time interval. You may remember the concept of a Riemann sum from calculus, where you approximate an integral in discrete time steps. We will take a similar approach with Euler’s Method. Euler’s method is applicable to solving first order ordinary differential equations (ODE’s). However, in our problem, we have a second order differential equation, because $\vec{a}=\ddot{y}$.
 
@@ -481,7 +482,7 @@ Now, we will apply Euler’s method to solve the problem. We will use the follow
 
 6. Iterate through values of $\Delta t$ until the desired time of simulation is achieved.
 
-We follow the same process for the integration of acceleration to find the velocity. Of note, we will use the previous value of $\vec{v}$ in the computation of the new acceleration. Note that a more formal definition of Euler’s method is given in section \ref{sec:euler integration}.
+We follow the same process for the integration of acceleration to find the velocity. Of note, we will use the previous value of $\vec{v}$ in the computation of the new acceleration. Note that a more formal definition of Euler’s method is given in Section \ref{sec:euler integration}.
 
 We also show this example in MATLAB Script \ref{Script 1} below. Note that $\frac{1}{2}\rho_{\infty}SC_D$ is called $k$ in the script for simplicity. This simplification assumes that $\rho_{\infty}$ and the $C_D$ are constant, which we will later see is a quite poor assumption but is okay for a first approximation.
 
@@ -500,7 +501,7 @@ A frame of reference is an \textit{orthonormal} set within three-dimensional spa
 \subsection{The Inertial Frame}
 The first and most important frame of reference is the \textit{inertial frame}. Typically denoted by $e$ or $i$, or in our case $(\hat{x},\hat{y},\hat{z})$, this motionless frame is the one that allows for the use of Newton’s second law in the first place, as the frame itself has ''zero'' translational and rotational movement.\footnote{An inertial frame can have some constant velocity and still be inertial. Of course, the earth has some velocity around the sun and with respect to the distant stars which we can approximate as constant for our time scales and thus ignore.} We say “zero” as this motion must be negligible in relation to the vehicle of interest. For example, this specific 6-\gls{dof} sets the inertial frame to be anchored within the Earth on the launch pad. And while we are well aware the Earth is moving and rotating through space at a non-zero rate, this motion is negligible relative to the motion of our vehicle which remains close to Earth within the atmosphere for a short period of time. Therefore, we can assume that the Earth acts appropriately as an inertial frame of reference, and Newton’s second law is valid for this frame. 
 
-Returning to the specific example of a 6-\gls{dof}, the directions you set your basis vectors to point in are mostly left to the coder’s discretion. If your chosen directions retain the orthonormal nature of a frame of reference, as well as obeying \textit{the right-hand rule}, the choice is all yours. Within the example we are following, our inertial frame’s origin is anchored within the launch pad as previously stated. The first inertial basis vector points up perpendicular to the Earth’s surface, the second inertial basis vector points due East, while the third inertial basis vector follows the right-hand rule and points due North. An image for quick reference is provided in \ref{fig:InertialFrame}:
+Returning to the specific example of a 6-\gls{dof}, the directions you set your basis vectors to point in are mostly left to the coder’s discretion. If your chosen directions retain the orthonormal nature of a frame of reference, as well as obeying \textit{the right-hand rule}, the choice is all yours. Within the example we are following, our inertial frame’s origin is anchored within the launch pad as previously stated. The first inertial basis vector points up perpendicular to the Earth’s surface, the second inertial basis vector points due East, while the third inertial basis vector follows the right-hand rule and points due North. An image for quick reference is provided in Figure \ref{fig:InertialFrame}:
 
 \begin{figure}[H]
 \centering
@@ -538,7 +539,7 @@ Returning to the specific example of a 6-\gls{dof}, the directions you set your 
 \end{figure}
 
 \subsection{The Body Frame}
-The second most important frame of reference is the \textit{body frame}. Typically denoted by $b$, or in our case $(\hat{X},\hat{Y},\hat{Z})$, this frame of reference is always anchored at some point in the vehicle and allows us to describe the \gls{state vector} in relation to the vehicle itself. This frame is moving and rotating with respect to the inertial frame. For every body frame you create – from a frame for the entire vehicle to a frame for a small electronic part – you want simplicity. This means that in aerospace, it is often the case for a general body frame to have a basis vector pointing along the longitudinal axis of the vehicle, as well as one out a wing. A generic image of such a convention is provided in \ref{fig:BodyFrameTypical} In addition, it means at a zero angle of rotation, every basis vector of the body frame is parallel to the corresponding basis vector in the inertial frame. This is imperative to rotational dynamics, as the offset of each basis vector in the body frame will correspond to the pitch, yaw, and roll of the vehicle. But more on that in Volume II.
+The second most important frame of reference is the \textit{body frame}. Typically denoted by $b$, or in our case $(\hat{X},\hat{Y},\hat{Z})$, this frame of reference is always anchored at some point in the vehicle and allows us to describe the \gls{state vector} in relation to the vehicle itself. This frame is moving and rotating with respect to the inertial frame. For every body frame you create – from a frame for the entire vehicle to a frame for a small electronic part – you want simplicity. This means that in aerospace, it is often the case for a general body frame to have a basis vector pointing along the longitudinal axis of the vehicle, as well as one out a wing. A generic image of such a convention is provided in Figure\ref{fig:BodyFrameTypical} In addition, it means at a zero angle of rotation, every basis vector of the body frame is parallel to the corresponding basis vector in the inertial frame. This is imperative to rotational dynamics, as the offset of each basis vector in the body frame will correspond to the pitch, yaw, and roll of the vehicle. But more on that in Volume II.
 
 % Either change or give credit to MATLAB ig
 
@@ -611,7 +612,7 @@ For particle dynamics, the most complex case is full 3D translational motion. Lu
         \ddot{x}_3\\
     \end{bmatrix}
 \end{gather}
-This is done not only for the sake of compactness, but also to facilitate the use of matrix operations for translation between reference frames. This concept is further explored in section \ref{sec:Frame of Reference}. For this reason, expressing these elements in vector form will become crucial as we move forward. In MATLAB, we express a tri-dimensional column vector as:
+This is done not only for the sake of compactness, but also to facilitate the use of matrix operations for translation between reference frames. This concept is further explored in Section \ref{sec:Frame of Reference}. For this reason, expressing these elements in vector form will become crucial as we move forward. In MATLAB, we express a tri-dimensional column vector as:
 \begin{lstlisting}[language=Matlab]
 pos=[0;0;0];
 \end{lstlisting}
@@ -700,7 +701,7 @@ We present below a modified version of the 1-\gls{dof} below in full 3D in Figur
     first={\textit{angle of attack}},
     description={The angle of offset of the freestream velocity with the $\hat{X}$/$\hat{b}_1$, or longitudinal axis, of the vehicle. This is often denoted with the Greek letter $\alpha$}
 }
-As compared to 1-\gls{dof} case, we have three new quantities that are present. The first of these is $\vec{V}_{\infty}$, the freestream airflow vector.\footnote{\gls{freestream} velocity  is drawn in the direction of incoming air by convention. However, for calculations, we will use the convention that  is the direction of the velocity of the vehicle (opposite sign to drawing).} This is represented diagrammatically because it is no longer constrained along the $\hat{y}$ direction. When we have an angle between the nose (the direction through which the thrust force points in Figure \ref{fig:3 DoF Forces}) and the \gls{freestream} velocity, we refer to this as an \gls{angle of attack}. This \gls{angle of attack} is often denoted with the letter $\alpha$. We will discuss \gls{angle of attack} and its effects more in section \ref{sec: aerodynamics}. For now, we simply need to understand how to calculate $\alpha$ given the vector through the nose and the \gls{freestream} velocity vector.
+As compared to 1-\gls{dof} case, we have three new quantities that are present. The first of these is $\vec{V}_{\infty}$, the freestream airflow vector.\footnote{\gls{freestream} velocity  is drawn in the direction of incoming air by convention. However, for calculations, we will use the convention that  is the direction of the velocity of the vehicle (opposite sign to drawing).} This is represented diagrammatically because it is no longer constrained along the $\hat{y}$ direction. When we have an angle between the nose (the direction through which the thrust force points in Figure \ref{fig:3 DoF Forces}) and the \gls{freestream} velocity, we refer to this as an \gls{angle of attack}. This \gls{angle of attack} is often denoted with the letter $\alpha$. We will discuss \gls{angle of attack} and its effects more in Section \ref{sec: aerodynamics}. For now, we simply need to understand how to calculate $\alpha$ given the vector through the nose and the \gls{freestream} velocity vector.
 
 To do this, we use the fact that the dot product is related to the cosine of the angle between the vectors. Denoting the vector through the nose of the rocket $\hat{X}$, we can find the \gls{angle of attack} as:
 \begin{equation}\label{eq:alpha}
@@ -825,7 +826,7 @@ We also define a new vector, $\vec{F}_R$, the resultant aerodynamic vector, whic
 \newacronym{rhr}{RHR}{right hand rule}
 We note that the direction of this moment is in the $-\hat{z}$ direction from the \gls{rhr}. If we assume that our forces are planar, this moment will generate a rotation about a single axis. This makes our model into a 3-\gls{dof}.
 
-One thing to note is that some quantities are more easily defined with respect to vectors that are defined with respect to the vehicle (which we will call the \textit{body frame}), such as the vector $\hat{X}$. As seen in Equation \eqref{eq:alpha} and \eqref{eq:Lift}, we often want to use these vectors in the body frame for computation. As such, we will need a method in which we can convert between the body and inertial frames. This conversion between frames is explored in section \ref{sec:Frame of Reference}. We should also note that our moments will be in this body frame as well, which turns out to be especially useful in Section \ref{Euler Rotation Equations}.
+One thing to note is that some quantities are more easily defined with respect to vectors that are defined with respect to the vehicle (which we will call the \textit{body frame}), such as the vector $\hat{X}$. As seen in Equation \eqref{eq:alpha} and \eqref{eq:Lift}, we often want to use these vectors in the body frame for computation. As such, we will need a method in which we can convert between the body and inertial frames. This conversion between frames is explored in Section \ref{sec:Frame of Reference}. We should also note that our moments will be in this body frame as well, which turns out to be especially useful in Section \ref{Euler Rotation Equations}.
 
 The last thing that we note in this section is that our forces are moments are coupled. This means that the aerodynamic forces are a function of the orientation of the vehicle, so the moments and forces must be solved as a system.
 \subsection{State Vector}
@@ -925,6 +926,19 @@ Using the inertia tensor, a matrix form of \eqref{eq:Iw}  is written as:
     \vec{H}=I\vec{\omega}
 \end{equation}
 In the simplification using the principle axes, we often refer to the terms $I_{xx}$, $I_{yy}$, and $I_{zz}$ simply as $I_x$, $I_y$, and $I_z$. There are called the \glspl{pmoi}.
+
+\subsection{Parallel Axis Theorem}
+Similar to the way in which we described the moment of inertia of a particle to be $mr^2$, we can describe the change in moment of inertia of a body due to the offset of its axis.
+
+We accomplish this with the \textit{parallel axis theorem}, which relates the moment and products of inertia through different rotation points. To use parallel axis theorem, we simply take the known moment of inertia and add $mr^2$ along that component direction. This looks like:
+$$I_{x'x'}=I_{xx}+m\left(y^2+z^2\right)$$
+This is similarly computed for the other axes, with the $r$ always being the axis that is not the one we are computing the moment of inertia of. We can think of this intuitively because we are translating the center along the two axes perpendicular to the one describing the moment of inertia.
+
+We also must do the same for the products of inertia. We note that even if we select body axes with no products of inertia, we may still have them in the translated center!
+
+The parallel axis for the products of inertia is given as:
+$$I_{x'y'}=I_{xy}-mxy$$
+This is similarly computed for the other axes.
 \subsection{Rotations in the Body Frame}\label{sec:rotations in the body frame}
 Now that we have defined our inertia tensor in the body frame, it is useful to reexamine \eqref{eq:Euler 2nd Law} and \eqref{eq:Iw} to express them in terms of the body frame.
 
@@ -938,7 +952,7 @@ Plugging this result into \eqref{eq:bke}, we get the following:
 $${}^i\frac{dH^o}{dt}={}^b\frac{d}{dt}\left(I_x\omega_x\hat{b}_1+I_y\omega_y\hat{b}_2+I_z\omega_z\hat{b}_3\right)+{}^e\vec{\omega}^b\times \left(I_x\omega_x\hat{b}_1+I_y\omega_y\hat{b}_2+I_z\omega_z\hat{b}_3\right)$$
 Where ${}^e\vec{\omega}^b$ is $\omega_x\hat{b}_1+\omega_y\hat{b}_2+\omega_z\hat{b}_3$. The algebraic manipulation and vector math here is left as an exercise for the reader. Collecting the final terms, our final expression is:
 $${}^iH^o=\left[I_x\dot{\omega}_x+\left(I_z-I_y\right)\right]\hat{b}_1+\left[I_y\dot{\omega}_y+\left(I_x-I_z\right)\right]\hat{b}_2+\left[I_z\dot{\omega}_z+\left(I_y-I_x\right)\right]\hat{b}_3$$
-Equating this with the moments in the body frame that were found in \ref{sec:moments} as ${}^bM^o=M_x\hat{b}_1+M_y\hat{b}_2+M_z\hat{b}_3$, we arrive at the final form of our equations for Euler rotations\footnote{Very observant readers may notice that this form of the equation is technically slightly incorrect, since our center of rotation, $O$, will change throughout the flight as the center of mass changes position. Thus, we will have some small effects that are not accounted for in this equation. For our purposes, these are ignored for simplicity. However, a more general approach that implements this may be used in the future if slosh modelling is implemented.}:
+Equating this with the moments in the body frame that were found in Section \ref{sec:moments} as ${}^bM^o=M_x\hat{b}_1+M_y\hat{b}_2+M_z\hat{b}_3$, we arrive at the final form of our equations for Euler rotations\footnote{Very observant readers may notice that this form of the equation is technically slightly incorrect, since our center of rotation, $O$, will change throughout the flight as the center of mass changes position. Thus, we will have some small effects that are not accounted for in this equation. For our purposes, these are ignored for simplicity. However, a more general approach that implements this may be used in the future if slosh modelling is implemented.}:
 \begin{gather}\label{eq: moment equations}
 \color{blue}\boxed{\color{black}\begin{array}{ll}
      M_x=I_x\dot{\omega}_x+\left(I_z-I_y\right)\omega_y\omega_z
@@ -953,7 +967,7 @@ We can rearrange this to a form that is more useful for us (although somewhat le
     \dot{\omega}_y=\frac{M_y-\left(I_x-I_z\right)\omega_z\omega_x}{I_y}\\
     \dot{\omega}_z=\frac{M_z-\left(I_y-I_x\right)\omega_y\omega_x}{I_z}
 \end{gather}
-These sets of equations are especially powerful because they allows us to numerically integrate the angular velocity. Our moments can be found using Newtonian dynamics and the \glspl{pmoi} are quantities that are easily found using the integrals described above in section \ref{moment of inertia}. We will use these angular velocity derivatives extensively in Volume II to describe the time rate of change of the attitude of the rocket.
+These sets of equations are especially powerful because they allows us to numerically integrate the angular velocity. Our moments can be found using Newtonian dynamics and the \glspl{pmoi} are quantities that are easily found using the integrals described above in Section \ref{moment of inertia}. We will use these angular velocity derivatives extensively in Volume II to describe the time rate of change of the attitude of the rocket.
 
 \section{Key Ideas}
 \begin{enumerate}
@@ -975,7 +989,7 @@ We assume that most readers are broadly familiar with the topics discussed in AA
 \begin{enumerate}
     \item On a nice Wednesday evening during one of your strolls through campus, you are kidnapped by a business major, who will only let you free if you can fix the vibration of the squeaky door at their frat house.
 
-You can consider the door hinge as a mass-spring system constrained to motion along the $\hat{x}$-direction. The spring has an equilibrium length of $L_0$ and a spring constant of $k=5$ N/m with a mass of 1 kg. At time $t_0$, an instantaneous impulse of 10 $\mathrm{N}\cdot \mathrm{s}$ is applied to the hinge in the $-\hat{x}$-direction by a misguided ping-pong ball hitting the door. This is shown diagrammatically in figure \ref{fig:mass spring}. Assume that the system is at rest in the equilibrium position at $t_0$.
+You can consider the door hinge as a mass-spring system constrained to motion along the $\hat{x}$-direction. The spring has an equilibrium length of $L_0$ and a spring constant of $k=5$ N/m with a mass of 1 kg. At time $t_0$, an instantaneous impulse of 10 $\mathrm{N}\cdot \mathrm{s}$ is applied to the hinge in the $-\hat{x}$-direction by a misguided ping-pong ball hitting the door. This is shown diagrammatically in Figure \ref{fig:mass spring}. Assume that the system is at rest in the equilibrium position at $t_0$.
 \begin{figure}[ht]
     \centering
     
@@ -1072,7 +1086,7 @@ You can consider the door hinge as a mass-spring system constrained to motion al
 \begin{enumerate}
     \item Consider the system to be frictionless. Derive the \glspl{eom} for the system in both of the component directions.
     \item Find the analytical solution of the system from the \gls{eom} you derived. Graph the solution.
-    \item Numerically integrate the \glspl{eom} ascertain the position and velocity as a function of time. Graph the solution. How does it compare to the analytical solution? You may want to refer to chapter \ref{sec:numerical integration schemes} for other numerical integration methods.
+    \item Numerically integrate the \glspl{eom} ascertain the position and velocity as a function of time. Graph the solution. How does it compare to the analytical solution? You may want to refer to Chapter \ref{sec:numerical integration schemes} for other numerical integration methods.
     \item Consider the system with some frictional force that is proportional to the velocity, with a proportionality constant of $c=1\mathrm{\frac{kg}{s}}$. This frictional force opposes the motion of the system. Repeat step c with this new system. How does the friction change the system?
 \end{enumerate}
     \item After your escape from the frat house, you run into your friend, Buckminster, who is a big fan of circular-shaped objects. He asks you if you can model the orbit of a satellite to see if it looks anything like his geodesic domes. Not wanting to let him down, you write a MATLAB script to do so. You can assume the earth has a radius $R_\oplus=$6380 km and $\mu_\oplus=3.986\cdot10^5\, \frac{\mathrm{km^3}}{\mathrm{s^2}}$.
@@ -1187,14 +1201,14 @@ To grasp energy methods, it is best to have an intuition for Newtonian dynamics 
 
 There are two main types of energy mechanics, referred to as Hamiltonian and Lagrangian Mechanics. In this chapter, we will mostly focus on the Lagrangian version of these mechanics. Hamiltonian mechanics are arguably more fundamental, but will only be briefly discussed.
 
-\newglossaryentry{symplectic}
+\newglossaryentry{symplectic int}
 {
-    name=symplectic,
-    first = {\textit{symplectic}},
+    name=symplectic integrator,
+    first = {\textit{symplectic integrator}},
     description={A class of numerical integration schemes that are energy preserving because they preserve certain geometric properties of a differential equation}
 }
 
-Although the Hamiltonian and Lagrangian are not directly used in the case of our 6-\gls{dof}, they are fundamental to other areas of mechanics and make derivations far simpler in many cases. The Hamiltonian and Lagrangian descriptions of mechanics are more often taught to physics students rather than engineers, but we feel that they deserve inclusion among the topics presented here. When we discuss numerical integration, we can use \gls{symplectic} integrators when our problem has a Hamiltonian description. This will be further discussed in section \ref{sec:other numerical ints}. You may find that certain \gls{eom} derivations, such as the spinning top and problems in orbital mechanics are more easily accomplished with energy methods.
+Although the Hamiltonian and Lagrangian are not directly used in the case of our 6-\gls{dof}, they are fundamental to other areas of mechanics and make derivations far simpler in many cases. The Hamiltonian and Lagrangian descriptions of mechanics are more often taught to physics students rather than engineers, but we feel that they deserve inclusion among the topics presented here. When we discuss numerical integration, we can use \glspl{symplectic int} when our problem has a Hamiltonian description. This will be further discussed in Section \ref{sec:other numerical ints}. You may find that certain \gls{eom} derivations, such as the spinning top and problems in orbital mechanics are more easily accomplished with energy methods.
 
 Another reason to motivate these systems is that these energy methods are rotationally invariant because energy methods can employ a generalized coordinate system. These generalized coordinates are very powerful and allow us to describe a huge variety of systems. We will see this later in some examples.
 
@@ -1212,8 +1226,6 @@ A brief overview of the differences between the two schemes of \gls{eom} derivat
 \section{Calculus of Variations}
 
 The calculus of variations underpins the ideas of Lagrangian and Hamiltonian mechanics, so it is important to understand the principles behind it before moving on to the actual mechanics. In analogy to how single variable calculus is fundamental to Newtonian mechanics, the calculus of variations is fundamental to energy mechanics.
-
-The following section borrows heavily from the derivations of Chapter 6 of  \cite{thornton_classical_nodate} and Chapter 5 of  \cite{noauthor_variational_2017}. A good video overview of this topic to prime the reader can be found at \cite{veritasium_closest_2024}.
 
 \newglossaryentry{geodesic}
 {
@@ -1363,7 +1375,7 @@ So, for systems that are non-conservative, it is best to stick with the Newtonia
 
 With that noted, let us use the \gls{Lagrangian} in a few examples to see how it can turn some complex Newtonian systems into fairly trivial problems.
 \subsection{Mass-Spring System}
-As a very basic first system, we will consider a mass spring system as shown in \ref{fig:mass spring lagrange}. We consider the length $x$ to be referenced from the rest length of the spring.
+As a very basic first system, we will consider a mass spring system as shown in Figure \ref{fig:mass spring lagrange}. We consider the length $x$ to be referenced from the rest length of the spring.
 \begin{figure}[ht]
 
 \centering
@@ -1662,7 +1674,7 @@ Stated another way, the \gls{Lagrangian} is a function of the generalized positi
 Next we will show a problem where the rotational invariance and generalized coordinates proves especially useful in simplifying our derivation:
 \subsection{Pendulum EOM Derivation}
 \subsubsection{Problem Set-Up}
-Suppose we have a pendulum of length L. The mass is rigidly attached to the pendulum. A reference frame $a$ that moves with the pendulum is shown in \ref{fig:Pendulum}. The inertial frame is also shown. The pendulum moves in only the $xy$ plane.
+Suppose we have a pendulum of length L. The mass is rigidly attached to the pendulum. A reference frame $a$ that moves with the pendulum is shown in Figure \ref{fig:Pendulum}. The inertial frame is also shown. The pendulum moves in only the $xy$ plane.
 \begin{figure}[ht]
 
 \centering
@@ -1775,31 +1787,33 @@ We notice that with the \gls{Lagrangian} approach, we did not need to have an un
 \section{Generalized Forces}
 
 \section{Hamiltonian Mechanics}
-After the formulation of \gls{Lagrangian} Mechanics, another formulation was created by Hamilton later on. The Hamiltonian formulation, like the \gls{Lagrangian}, does not introduce any new concepts, because it is simply an alternate approach to dynamics. However, like the \gls{Lagrangian}, it makes some types of problems more simple. We present the Hamiltonian here briefly for its use case in \textit{symplectic integrators}.
+After the formulation of \gls{Lagrangian} Mechanics, another formulation was created by Hamilton later on. The Hamiltonian formulation, like the \gls{Lagrangian}, does not introduce any new concepts, because it is simply an alternate approach to dynamics. However, like the \gls{Lagrangian}, it makes some types of problems more simple. We present the Hamiltonian here briefly for its use case in \glspl{symplectic int}.
 \subsection{Derivation of the Hamiltonian}
 The exact derivation of the Hamiltonian using Legendre transforms is beyond the scope of our present discussion, so we will mostly discuss the consequences of this derivation. 
 
 The Hamiltonian method replaces the generalized velocities with \textit{generalized momenta}. The generalized momenta are a function of $q,\dot{q},$ and $t$. We express the generalized momenta as $p$. $p$ is defined to be:
-$$p(q,\dot{q},t)\equiv\frac{\partial L}{\partial \dot{q}_i}$$
+$$p(q,\dot{q},t)\equiv\dfrac{\partial L}{\partial \dot{q}_i}$$
 Thus, we express our Hamiltonian, $\mathcal{H}$, in terms of the generalized positions, generalized momenta, and time. This looks like:
 $$\mathcal{H}=\mathcal{H}(q_j,p_j,t)$$
 In a conservative system, we can also write: $$\mathcal{H}=T+U$$
-
 Using relations with the \gls{Lagrangian}, we can write two first order differential equations for the \gls{eom} with the Hamiltonian.
 
-
-
-
-
-This can also be shown via the principles of energy conservation.
-
-
-
+\begin{gather}
+\color{blue}\boxed{
+\begin{array}{r}\color{black}
+     \dot{q}_k=\dfrac{\partial \mathcal{H}}{\partial p_k}\\
+     \color{black}
+  -\dot{p}_k=\dfrac{\partial \mathcal{H}}{\partial q_k}
+\end{array}
+}\\
+\color{blue}\mathrm{Hamiltonian \ EOM's}
+\end{gather}
+This is all we will note about Hamiltonian Mechanics for now. We will note here that these are more useful in the case of numerical integration because these are first order differential equations, as opposed to the second order differential equations of Lagrangian Mechanics.
 \section{Lagrangian Derivation of Rigid Body Dynamics}
 
-In section \ref{Euler Rotation Equations}, we explored the Newtonian method of deriving the Euler rotation equations using the \gls{bke}. Here, we present an alternative derivation that utilizes the \gls{Lagrangian} approach and is ultimately a more fundemental and simple derivation.
+In Section \ref{Euler Rotation Equations}, we explored the Newtonian method of deriving the Euler rotation equations using the \gls{bke}. Here, we present an alternative derivation that utilizes the \gls{Lagrangian} approach and is ultimately a more fundemental and simple derivation.
 
-We showed earlier in \ref{sec: rigid body constraints} that we can describe a rigid body system with 6 generalized parameters, three of which are angles.
+We showed earlier in Section \ref{sec: rigid body constraints} that we can describe a rigid body system with 6 generalized parameters, three of which are angles.
 \subsection{Torque Free Equations}
 In the case of no applied torque, the derivations of Euler's Equations become surprisingly simple. We can assume that the change in height of the rigid body is irrelevant for pure rotation, so the \gls{Lagrangian} is simply the kinetic energy of the object. We can suppose that we are also in a coordinate system where the translational kinetic energy is 0. This gives:
 \begin{equation}\label{eq:rigid body KE}
@@ -1837,11 +1851,14 @@ Some simplification yields:
 $$\left(I_1-I_2\right)\omega_1\omega_2=I_3\dot{\omega_3}$$
 We can perform the analogous analysis for the other axes, yielding the full set of torque free rigid body equations:
 \begin{gather}
-\boxed{
+\color{blue}\boxed{
 \begin{array}{ll}
+\color{black}
 \left(I_2-I_3\right)\omega_2\omega_3=I_1\dot{\omega_1}
-     &\\\left(I_3-I_1\right)\omega_1\omega_3=I_2\dot{\omega_2}
-     &\\\left(I_1-I_2\right)\omega_1\omega_2=I_3\dot{\omega_3}
+     &\\
+     \color{black}\left(I_3-I_1\right)\omega_1\omega_3=I_2\dot{\omega_2}
+     &\\
+     \color{black}\left(I_1-I_2\right)\omega_1\omega_2=I_3\dot{\omega_3}
 \end{array}}\\
 \color{blue}
 \mathrm{Torque-Free \ Rotations}
@@ -1855,6 +1872,9 @@ We can perform the analogous analysis for the other axes, yielding the full set 
     \item %add Hamiltonian v. Lagrangian
 \end{enumerate}
 \section{Further Reading}
+The following section borrows heavily from the derivations of Chapter 6 and 7 of  \cite{thornton_classical_nodate} and Chapter 5 of  \cite{noauthor_variational_2017}. A good video overview of this topic can be found at \cite{veritasium_closest_2024}.
+
+There are an abundance of sources for classical mechanics. We can personally recommend the video series at \cite{ross_lagranges_nodate}, which covers this material in a manner more suitable to engineering contexts.
 
 \section{Practice Problems}
 \begin{enumerate}
@@ -1870,8 +1890,8 @@ Find a suitable set of generalized coordinates to describe this system. Write ou
     \item Use the Euler-Lagrange equation to solve for the form of this curve (You may find the integral form useful!). Plot the result.
 \end{enumerate}
 
-\item You have a pendulum attached to a cart that can move back and forth along the $\hat{x}$-axis. 
-\item Double pendulum \gls{eom}
+\item You have a pendulum attached to a cart that can move back and forth along the $\hat{x}$-axis. Derive the \gls{eom} of the system using energy methods.
+\item You have a double pendulum with two rigid arms, both of length $l$, which are free to rotate in the $xy$-plane. Find the \gls{eom} for the system.
 
 \end{enumerate}
 \chapter{Computational Attitude Dynamics}\label{sec:attitude dynamics}
@@ -1898,7 +1918,7 @@ First and most important, we use the 3-2-1 rotation sequence to determine Euler 
 
 To start, we want a way to easily convert any arbitrary vector from being described with one reference frame to another. We do this through the use of the Direction Cosine Matrix, or DCM. This allows us to take this matrix and multiply it with our vector in the inertial frame and obtain an identical vector in the body frame.
 
-In MATLAB, there exists a function - "angle2dcm" - that creates this for us! By inputting the scalar values of our Euler angles (in radians!) as well as the chosen rotation sequence, MATLAB creates the DCM as an output, allowing us to multiply this matrix with our inertial vector we want to express in the body frame. Note the function allows an input of any number of rotations to find DCM's for. This is a fun little aspect of the function; however, it is irrelevant for our use as we input the new Euler angles every time-step during our "ode45" integration scheme.
+In MATLAB, there exists a function - "angle2dcm" - that creates this for us! By inputting the scalar values of our Euler angles (in radians!) as well as the chosen rotation sequence, MATLAB creates the DCM as an output, allowing us to multiply this matrix with our inertial vector we want to express in the body frame. Note the function allows an input of any number of rotations to find DCM's for. This is a fun little aspect of the function; however, it is irrelevant for our use as we input the new Euler angles every time-step during our "ode45" integration scheme. One additional thing to consider: the "angle2dcm" function returns the DCM as a transform from the inertial to the body frame. If we were to transform a vector from the body to inertial frame, we would need to take the transpose of the given matrix.
 
 \subsection{Relating Euler Rates with Angular Velocity}
 
@@ -1918,15 +1938,24 @@ One thing you might recall from reading Volume II is that integrating the angula
 \end{bmatrix}}\\\color{blue}\mathrm{The\ ''B''\ Matrix\ for\ 3-2-1\ Rotations}
 \end{gather}
 
-\subsection{Euler Angle MATLAB Function Example}
+\subsection{Euler Angle MATLAB Function Example}\label{sec:EulerDynamicsMATLABExample}
 
-Putting it all together, we're going to write a simple code using Euler angles to practice using MATLAB's built in functions. Say we have a very important vector we want to express in the body frame: gravity. If our rocket weighs 100 Newtons, and we know this appears in vector notation as: $-100\hat{x}$. Consider a moment in time, when  - using the 3-2-1 rotation sequence - our vehicle is at a roll angle of 2.71 radians and a yaw and pitch angles of 0.2 radians, where we want to convert our gravity vector from the inertial frame to the body frame. In addition, with knowledge that the angular velocity at that instant is $\begin{bmatrix}
+Putting it all together, we're going to write a simple code using Euler angles to practice using MATLAB's built in functions. Say we have a very important vector we want to express in the body frame and another important vector we want to express in the inertial frame: gravity and thrust respectively. If our rocket weighs 100 Newtons and outupts a thrust of 1000 Newtons, we know this appears in vector notation as: $-100\hat{x}$ and $-1000\hat{X}$. Consider a moment in time, when - using the 3-2-1 rotation sequence - our vehicle is at a roll angle of 2.71 radians and a yaw and pitch angles of 0.2 radians, where we want to convert our gravity vector from the inertial frame to the body frame. In addition, with knowledge that the angular velocity at that instant is $\begin{bmatrix}
     2.5&0.1&0.1
 \end{bmatrix}^T$, we can also find the Euler rate of the system. The following code listing quickly runs through the process, with sufficient commentary within the script explaining every action taken.
 
 \lstset{style=mystyle}
 
 \lstinputlisting[language=Matlab, caption=Euler Angle Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyEuler.m}\label{Euler Dynamics Listing}
+
+Our results come out to be the following, with the gravity force expressed in the body frame and thrust expressed in the inertial frame as:
+\begin{equation}
+    ^b\vec{F}_{g}=\begin{bmatrix}
+        -96.0530\\-26.1902\\9.3748
+    \end{bmatrix};\ ^i\vec{F}_{T}=\begin{bmatrix}
+        -960.5305\\-194.7092\\198.6693
+    \end{bmatrix}
+\end{equation}
 
 At this point, we would use our numerical integration scheme to approximate the next timestep's Euler angles using the Euler rates we just found. We won't do that here, but you can see the implementation in the 6DoF itself or the Dzhanibekov example!
 
@@ -1959,7 +1988,7 @@ To match industry/academia standards, our 6DoF model uses \glspl{quaternion}. Th
 
 We're going to combine a few initial steps of the code surrounding \gls{quaternion} attitude dynamics. To start, we want to convert from Euler angles to \glspl{quaternion}s, as Euler angles are more intuitive to define and initialize the simulation. MATLAB's function "eul2quat" does just that. By inputting the Euler angles in the appropriate sequence, along with the chosen rotation sequence (match the Euler angles with the order), the function returns the corresponding quaternion vector. 
 
-Having initialized our quaternion vector, we can now use another MATLAB script to construct our DCM. The function "quat2dcm" takes the quaternion as an input, and returns the DCM at that instant. Incredibly simple and incredibly useful. 
+Having initialized our quaternion vector, we can now use another MATLAB script to construct our DCM. The function "quat2dcm" takes the quaternion as an input, and returns the DCM at that instant. Incredibly simple and incredibly useful; however, we must once again consider that this DCM converts only from the inertial frame to the body frame. Meaning just as we had done with Euler angles, it is necessary to take the transpose (inverse) of the matrix if we want to transform from the body to the inertial frame.
 
 
 \subsection{Quaternion Rates}\label{sec: quaternion rates}
@@ -1980,13 +2009,21 @@ Just as we had done for Euler angles with Euler rates, we want to find a vector 
 
 Let's take the exact same example as before. We have the force of gravity acting down equal to $-100\hat{x}$. We have a roll angle of 2.71 radians, yaw and pitch angles of 0.2 radians. We finally have an instantaneous angular velocity of $\begin{bmatrix}
     2.5&0.1&0.1
-\end{bmatrix}^T$. Wanting to obtain the gravity vector expressed in the body frame instead of the inertial frame, this time we're going to use quaternions to do so. In addition, we're now going to find the quaternion rate at the given moment. The listing below does this, and is sufficiently explained in the comments between operations. Note: you should see numerous similarities, with some sections of the code identical to the previous. The output of the same final gravity vector gives confidence that we've implemented MATLAB's functions correctly.
+\end{bmatrix}^T$. Wanting to obtain the gravity vector expressed in the body frame instead of the inertial frame, this time we're going to use quaternions to do so. In addition, we're now going to find the quaternion rate at the given moment. The listing below does this, and is sufficiently explained in the comments between operations. Note: you should see numerous similarities, with some sections of the code identical to the previous. 
 
 \lstset{style=mystyle}
 
 \lstinputlisting[language=Matlab, caption=Quaternion Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyQuat.m}\label{Quat Dynamics Listing}
 
-Once agian, at this point, we would use our numerical integration scheme to approximate the next timestep's quaternion using the quaternion rates we just found. We won't do that here, but you can see the implementation in the 6DoF itself or the Dzhanibekov example! A quick note about this script in relation to the other: if you run both you can see the gravity vector in the body frame is identical for both. This proves our implementation of our attitude dynamics is correct!
+Taking a look at the outputs this generates, we see our results come out to be the following, with the gravity force expressed in the body frame and thrust expressed in the inertial frame as:
+\begin{equation}
+    ^b\vec{F}_{g}=\begin{bmatrix}
+        -96.0530\\-26.1902\\9.3748
+    \end{bmatrix};\ ^i\vec{F}_{T}=\begin{bmatrix}
+        -960.5305\\-194.7092\\198.6693
+    \end{bmatrix}
+\end{equation}
+A quick note about this script in relation to the other: the results shown above and the results shown in Section \ref{sec:EulerDynamicsMATLABExample} are identical. This gives confidence that we've implemented MATLAB's functions correctly. And once agian, at this point, we would use our numerical integration scheme to approximate the next timestep's quaternion using the quaternion rates we just found. We won't do that here, but as a reminder, you can see the implementation in the 6DoF itself or the Dzhanibekov example! 
 
 \section{3D Rotation Example: Dzhanibekov effect}\label{sec:Dzhan}
 
@@ -2110,7 +2147,7 @@ Our attitude dynamics are fairly simple since there are no moments acting on the
     \dot{\omega}_y=\frac{\left(I_z-I_x\right)\omega_z\omega_x}{I_y}\\
     \dot{\omega}_z=\frac{\left(I_x-I_y\right)\omega_y\omega_x}{I_z}
 \end{gather}
-To find our \gls{quaternion} rates, we simply use the same methods as in section \ref{sec: quaternion rates}. This gives us:
+To find our \gls{quaternion} rates, we simply use the same methods as in Section \ref{sec: quaternion rates}. This gives us:
 \begin{gather}
 {\color{black}\dot{\textbf{q}}=\frac{1}{2}\begin{bmatrix}
         0&-\omega_x&-\omega_y&-\omega_z\\
@@ -2151,7 +2188,7 @@ Some other horseshit
 
 
 \begin{enumerate}
-    \item Your friend Jimothy, impressed by your MATLAB skills, has challenged you to model a spinning top. The top is axially symmetric about its $\hat{X}$-axis and has an initial spin rate of 1200 rpm and has an initial angle to the vertical of $20\degree$. The top spins down at a rate governed by an exponential decay of form $\omega(t)=\omega_0e^{\frac{1}{10}\ln(2)t}$ such that the spin rate is halved every 10 seconds. Gravity acts on the top in the negative $\hat{x}$-direction. The top has a mass of 20 grams. Relevant details are given in figure \ref{fig:Spinning Top}.
+    \item Your friend Jimothy, impressed by your MATLAB skills, has challenged you to model a spinning top. The top is axially symmetric about its $\hat{X}$-axis and has an initial spin rate of 1200 rpm and has an initial angle to the vertical of $20\degree$. The top spins down at a rate governed by an exponential decay of form $\omega(t)=\omega_0e^{\frac{1}{10}\ln(2)t}$ such that the spin rate is halved every 10 seconds. Gravity acts on the top in the negative $\hat{x}$-direction. The top has a mass of 20 grams. Relevant details are given in Figure \ref{fig:Spinning Top}.
 Define any additional quantities that you deem necessary to solve the problem.
 
 \begin{figure}[ht]
@@ -2418,13 +2455,17 @@ It is worth noting that other computational models exist. RasAero does have shor
 
 \section{Further Reading}
 
+There are many good resources for aerodynamics modeling. The first among these, which serves as a good introduction to the topic of fluid dynamics, is \cite{anderson_fundamentals_2017}.
+
+For more complex studies of aerodynamics, we recommend Modern Compressible Flow by Anderson.
+
 \section{Practice Problems}
 \begin{enumerate}
-    \item You are flying home one day in your P-51 Mustang At cruise, your aircraft is 10,000 ft above sea level.
+    \item You are flying home one day in your P-51 Mustang. At cruise, your aircraft is 10,000 ft above sea level.
 \begin{enumerate}
     \item What is the density of air at this altitude?
     \item Your wings provide a $C_L$ of 0.3 at cruising speed. Your plane has a mass of 4,000 kg and a planform area of $21.8 \mathrm{\ m}^2$. Find the speed necessary to maintain level light at this altitude.
-    \item Your airplane is equipped with  unguided HVAR rockets. As a daring pilot, you want to model the aerodynamics of this rocket so you can launch it at your friends house with astounding accuracy (\textit{that} will teach them to never steal your mini corn dogs).
+    \item Your airplane is equipped with  unguided HVAR rockets. As a daring pilot, you want to model the aerodynamics of this rocket so you can launch it at your friend's house with astounding accuracy (\textit{that} will teach them to never steal your mini corn dogs).
     
     Using your best engineering judgment of the nose cone shape and any other parameters you cannot find, model the HVAR rocket in RasAero.
     \item As it turns out, shooting rockets at Canadian civilians is illegal (I know, right?). The Royal Canadian Air Force F/A-18's are on your tail now and you will be shot down in 15 minutes unless you can make it to US airspace. You are 160 km from the airspace boundary. You push your throttles to full to book it back home. 
@@ -2438,7 +2479,6 @@ It is worth noting that other computational models exist. RasAero does have shor
 \begin{chapquote}{Wolfgang Pauli}
     ''The best that most of us can hope to achieve in physics is simply to misunderstand at a deeper level.''
 \end{chapquote}
-For more information and derivations on the following section, refer to \cite{trench_31_2020}. This source includes some more information than included here and some useful examples.
 
 In our exploration of numerical integration schemes, it will be useful to have a good understanding of ordinary differential equations. We highly recommend \cite{dawkins_differential_2023} for reviewing differential equations.
 
@@ -2470,7 +2510,7 @@ We represent this Euler integration scheme graphically with a simple example. Su
     \label{fig:Euler}
 \end{figure}
 
-As can be seen from the \ref{fig:Euler}, large timesteps quickly lead to error in the solution. For a strictly convex curve, our Euler approximation will always give us an under-approximation of the solution. In some cases, however, our solution may diverge so greatly that it becomes unstable and values tend toward infinity.\footnote{This is especially true for periodic functions. When working with periodic functions, make sure to sample well below the Nyquist limit.}
+As can be seen from Figure \ref{fig:Euler}, large timesteps quickly lead to error in the solution. For a strictly convex curve, our Euler approximation will always give us an under-approximation of the solution. In some cases, however, our solution may diverge so greatly that it becomes unstable and values tend toward infinity.\footnote{This is especially true for periodic functions. When working with periodic functions, make sure to sample well below the Nyquist limit.}
  
 % In Table 2 below, we describe the benefits and drawbacks of Euler integration.
 
@@ -2590,7 +2630,7 @@ end
 \end{lstlisting}\label{code:rk2}
 %% add more on making functions and rk2.
 
-\section{RK4 Integration}
+\section{RK4 Integration}\label{sec: rk4}
 RK4 integration is the last major integration scheme that we will explore. RK4 integration is often the best balance between the precision of the algorithm and the speed of computation. 
 
 To explain the RK4, we will go back to the RK2 and explain it in a slightly different way that will shed light on what we are doing with RK4. In RK2, we described taking the average slope of the function. We can also imagine taking the Taylor expansion of our function:
@@ -2653,21 +2693,21 @@ The benefit of adding these in as a function pass through instead of being compu
 \subsection{More on Error}
 We briefly discuss the error of the integration schemes in each of the previous sections. However, it is useful to see examples of these to solidify understanding. 
 
-Using the same example differential equation from \ref{sec:errors in the euler method} as $\frac{dy}{dt}=2t$, we can show the approximation for Explicit Euler, RK2, and RK4. This is shown in \ref{fig:Numerical Comparison}.
+Using the same example differential equation from Section \ref{sec:errors in the euler method} as $\frac{dy}{dt}=2t$, we can show the approximation for Explicit Euler, RK2, and RK4. This is shown in Figure \ref{fig:Numerical Comparison}.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\linewidth]{6DoF Explanation Scripts/Numerical Integrator Comparison Figure.png}
     \caption{Comparison of Numerical Integration Schemes for $y'=2t$}
     \label{fig:Numerical Comparison}
 \end{figure}
-The code that runs this example is shown in \ref{code:Numerical Error $y'=2t$} in the Appendix. This code is a good example for understanding the syntax for using the integration code snippets in \ref{code:rk2} and \ref{code:rk4}.
+The code that runs this example is shown in Listing \ref{code:Numerical Error $y'=2t$} in the Appendix. This code is a good example for understanding the syntax for using the integration code snippets in Listing \ref{code:rk2} and Listing \ref{code:rk4}.
 
 As we can see from this example, even with a fairly large timestep of $\Delta t=0.5s$, the RK4 perfectly matches the true curve. For this curve, there are no terms of higher order than quadratic, so the RK4 will perfectly match the solution curve.
 
 The difference in these numerical integration schemes will become more apparent when modeling the behavior of different differential equation systems. Systems containing higher order terms will be better modeled by the higher order integration schemes, unsurprisingly. The true use of these methods is when analytical solutions to the differential equations are hard or impossible to obtain. That being said, we still want to know characteristics of our system so we can appropriately select integration parameters.
 
 \subsection{Sampling and Stiffness}\label{sampling and stiffness}
- To begin our discussion of sampling and stiffness, we can take the differential equation $\frac{dy}{dt}=\cos(4\pi t)$with the initial condition of $y(0)=0$. This function is periodic in nature, so it will be good for our demonstration here. In this first example, we will keep the same timestep of $\Delta t=0.5s$. As is seen in \ref{fig:Numerical Int Periodic}, this timestep is the same as the period of the sinusoidal solution of this differential equation. When this is the case, we can see that the solutions diverge from the original periodic function greatly for all of the integration schemes (aside from the RK2, although this is only the case when the period is exactly the same as the timestep). This occurs because we are not sampling the function at a high enough frequency to capture the nature of the periodic function.
+ To begin our discussion of sampling and stiffness, we can take the differential equation $\frac{dy}{dt}=\cos(4\pi t)$with the initial condition of $y(0)=0$. This function is periodic in nature, so it will be good for our demonstration here. In this first example, we will keep the same timestep of $\Delta t=0.5s$. As is seen in Figure \ref{fig:Numerical Int Periodic}, this timestep is the same as the period of the sinusoidal solution of this differential equation. When this is the case, we can see that the solutions diverge from the original periodic function greatly for all of the integration schemes (aside from the RK2, although this is only the case when the period is exactly the same as the timestep). This occurs because we are not sampling the function at a high enough frequency to capture the nature of the periodic function.
 
 \begin{figure} [ht]
     \centering
@@ -2675,7 +2715,7 @@ The difference in these numerical integration schemes will become more apparent 
     \caption{Numerical Integration of periodic function}
     \label{fig:Numerical Int Periodic}
 \end{figure}
-So, what timestep is required to accurately model a periodic function? For our example, we will use RK4 since we have shown it to be the most accurate of the integration schemes. We choose to do this to highlight effects aside from error in the numerical approximation. We can vary the timestep for this same periodic function and see what the response looks like. This is shown in \ref{fig:Nyquist}.
+So, what timestep is required to accurately model a periodic function? For our example, we will use RK4 since we have shown it to be the most accurate of the integration schemes. We choose to do this to highlight effects aside from error in the numerical approximation. We can vary the timestep for this same periodic function and see what the response looks like. This is shown in Figure \ref{fig:Nyquist}.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.9\linewidth]{6DoF Explanation Scripts/Numerical Integrator Nyquist 2.png}
@@ -2724,7 +2764,7 @@ It is best practice to try and decouple the simulation of high-frequency vibrati
 \section{Other Integration Schemes}
 While "ode45" works very well for most use cases with numerical integration, there are cases where other integration schemes should be considered. We will mainly discuss the implementations that exist in MATLAB. More information about such systems can be found at \cite{mathworks_choose_2024} and \cite{mathworks_summary_2024}.
 
-We previously discuss the concept of \gls{stiff} systems in \ref{sampling and stiffness}. 
+We previously discuss the concept of \gls{stiff} systems in Section \ref{sampling and stiffness}. 
 
 For systems that have moderate stiffness, we can use "ode23" instead of the more typical "ode45" in MATLAB. Using a lower order integration leads to more course results, but it also allows very stiff parts of the system to be computed faster.
 
@@ -2743,44 +2783,58 @@ MATLAB is generally quite computationally efficient at computing arrays and matr
 
 It is best practice to only import what you need for a function or subroutine. For example, if you have wind data for all of the months out of the year, it is desirable to cull that down to the specific month before running the simulation.
 
-Additionally, it is also beneficial for any imported data or long matrices to be passed into a function rather than called inside a function. \textbf{This is especially important inside the numerical integration scheme! }Running readmatrix inside of ode45 or whichever other numerical integration scheme you are using can slow down code upwards of 500\% depending on the length of the matrices being read.
+Additionally, it is also beneficial for any imported data or long matrices to be passed into a function rather than called inside a function. \textbf{This is especially important inside the numerical integration scheme! }Running "readmatrix" inside of ode45 or whichever other numerical integration scheme you are using can slow down code upwards of 500\% depending on the length of the matrices being read.
 
-Instead, it is best to pass these arrays into the function. Performing readmatrix can be slow because it must check if the values are numeric and organize them into tables. By passing only MATLAB arrays, computations are much faster.
+Instead, it is best to pass these arrays into the function. Performing "readmatrix" can be slow because it must check if the values are numeric and organize them into tables. By passing only MATLAB arrays, computations are much faster.
 \subsection{Flame Graphs for Optimization}
-One important method of optimization is the MATLAB profiler. The primary capability of the profiler is the flame graph. An example of the flame graph is shown below in Figure 15.
+One important method of optimization is the MATLAB profiler. The primary capability of the profiler is the flame graph. An example of the flame graph is shown in Figure \ref{fig:flame1}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{Images/FlameGraph1.png}
+    \caption{Flame Graph Showing Runtime of Individual Code Elements in MATLAB}
+    \label{fig:flame1}
+\end{figure}
 
 The flame graph gives a visual representation of how long the code spends on each function. Functions in blue are those defined by the user. Those in grey are built in MATLAB functions.
 
-%% Figure here
-Poorly optimized code will spend a long time running an excessive number of operations. In some cases, this is unavoidable. For example, ode45, which runs the RK4 integration scheme we discussed in section 5.3, must run for every time step and is likely to comprise a large part of simulation time.
+Poorly optimized code will spend a long time running an excessive number of operations. In some cases, this is unavoidable. For example, ode45, which runs the RK4 integration scheme we discussed in Section \ref{sec: rk4}, must run for every time step and is likely to comprise a large part of simulation time.
 
-However, other operations, such as "atmosisa", should not comprise a large portion of simulation time. As seen in Figure 15, calling the atmosisa function on every loop takes about 40\% of the total time spent in ‘RK4Integrator’ function. By instead creating a table of the atmosisa data before running the simulation, we can reduce the runtime quite drastically. Implementing this simple change, we can see the reduction in simulation time as shown in Figure 16.
+However, other operations, such as "atmosisa", should not comprise a large portion of simulation time. As seen in Figure 15, calling the atmosisa function on every loop takes about 40\% of the total time spent in ‘RK4Integrator’ function. By instead creating a table of the atmosisa data before running the simulation, we can reduce the runtime quite drastically. Implementing this simple change, we can see the reduction in simulation time as shown in Figure \ref{fig:flame2}
 
-% figure here
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{Images/FlameGraph2.png}
+    \caption{Flame Graph After Optimizations}
+    \label{fig:flame2}
+\end{figure}
 
 \section{Key Ideas}
-
-\section{Notes and Further Reading}
-
-\section{Practice Problems}
-
 \begin{enumerate}
-    \item Orbital systems are often numerically integrated when multiple bodies are present. Because these systems are often highly sensitive, they are often integrated with higher order integration schemes. 
+    \item Numerical Integration schemes of higher order can better approximate systems. Generally, a higher order will require more up front computation but will be more accurate and will take fewer steps to achieve a given accuracy
+    \item When numerically integrating functions with high frequencies or rapid changes, we need to be mindful of stiffness of the system and ensure to sample at at least the bandwidth of the signal.
+    \item Keep in mind what you need to calculate inside the integrator and what should be passed through. Calculations inside the integral are very time expensive!
 \end{enumerate}
 
+\section{Notes and Further Reading}
+For more information and derivations on this section, refer to \cite{trench_31_2020}. This source includes some more information than included here and some useful examples.
+
+The MATLAB documentation for numerical integration schemes is quite good. For non-"ode45" integration, we recoommend the following two documentation sites: \cite{mathworks_choose_2024} and \cite{mathworks_summary_2024}. Other documentation exists within MATLAB for other functions.
+%\section{Practice Problems}
+
 \chapter{The 6-DoF}
-In this section we will combine everything from the previous sections and explain how our 6-\gls{dof} model works. We will follow a similar set up to \ref{sec:Dzhan}  here, describing the elements of the model in detail and then attaching relevant code either in-line or in the appendix.
+In this section we will combine everything from the previous sections and explain how our 6-\gls{dof} model works. We will follow a similar set up to Section \ref{sec:Dzhan}  here, describing the elements of the model in detail and then attaching relevant code either in-line or in the appendix.
 
-Our definitions of our frames follow from those discussed in Section\ref{sec:Frame of Reference}. For the earth-centered inertial frame, we follow the conventions discussed in Figure\ref{fig:InertialFrame}. Recall that the $\hat{x}$ axis points upward toward the zenith, the $\hat{y}$ axis points east along the surface, and the $\hat{z}$ axis finishes the right-handed coordinate system, pointing north.
+Our definitions of our frames follow from those discussed in Section\ref{sec:Frame of Reference}. For the earth-centered inertial frame, we follow the conventions discussed in Figure \ref{fig:InertialFrame}. Recall that the $\hat{x}$ axis points upward toward the zenith, the $\hat{y}$ axis points east along the surface, and the $\hat{z}$ axis finishes the right-handed coordinate system, pointing north.
 
-For the body frame, we follow the convention in \ref{fig:BodyFrameRocket}. This has $\hat{X}$ pointing through the nose of the rocket and $\hat{Y}$and $\hat{Z}$ along the transverse plane. The directionality of $\hat{Y}$ and $\hat{Z}$ is not particularly important since the rocket is axially symmetric, so we arbitrarily select the $\hat{Y}$ axis to point through one of the fins and choose $\hat{Z}$ to complete the right-handed frame.
+For the body frame, we follow the convention in Figure \ref{fig:BodyFrameRocket}. This has $\hat{X}$ pointing through the nose of the rocket and $\hat{Y}$and $\hat{Z}$ along the transverse plane. The directionality of $\hat{Y}$ and $\hat{Z}$ is not particularly important since the rocket is axially symmetric, so we arbitrarily select the $\hat{Y}$ axis to point through one of the fins and choose $\hat{Z}$ to complete the right-handed frame.
 
 For our \gls{Euler angles}, we use a 3-2-1 rotation sequence. We define the zero angles to be when the body frame and the earth-centered inertial frame are coincident.
 
 We note here that this is the section where we have the most room for improvement. We hope that you can translate your knowledge into better features for the 6-\gls{dof} as we note some of the simplifications we make in this section.
 
 \section{State Vector}
-Our \gls{state vector} is very similar to that shown in the \ref{sec:Dzhan} section, but it bears repeating here because there are some important differences. Another thing to note is that some of the values of the \gls{state vector} are altered for Monte Carlo simulations. These possible changes, when applicable, are discussed.
+Our \gls{state vector} is very similar to that shown in Section\ref{sec:Dzhan} section, but it bears repeating here because there are some important differences. Another thing to note is that some of the values of the \gls{state vector} are altered for Monte Carlo simulations. These possible changes, when applicable, are discussed.
 
 We define our original position at the origin, giving us a position vector. It is also possible to define our initial position in another coordinate system, such as (lat, long, elevation). Generally it is good practice to set the origin to zero and add any offsets later to keep floating point errors in numerical integration small:
 $$\vec{r}_0=\begin{bmatrix}
@@ -2820,9 +2874,9 @@ $$\vec{X}_0=\begin{bmatrix}
     \vec{r}_0\\\vec{v}_0\\\vec{\omega}_0\\\vec{q}_0
 \end{bmatrix}$$
 \section{Forces and Moments in the 6-DoF}
-The forces and moments on our rocket are what separate this case from the more simple case of the Dzhanibekov effect in \ref{sec:Dzhan}. We have discussed most of these forces in \ref{fig:3 DoF Forces}, and in the \ref{sec: aerodynamics}, but the exact implementation into the 6-DoF model bears repeating, specifically relating to frame conversion.
+The forces and moments on our rocket are what separate this case from the more simple case of the Dzhanibekov effect in Section \ref{sec:Dzhan}. We have discussed most of these forces in Figure \ref{fig:3 DoF Forces}, and in Section \ref{sec: aerodynamics}, but the exact implementation into the 6-DoF model bears repeating, specifically relating to frame conversion.
 \subsection{Forces}\label{6DoF Forces}
-We define 4 main forces that act on the vehicle, those being the 4 forces described in section \ref{sec: 3DoF Case}. We will start with the most simple, which is gravity.
+We define 4 main forces that act on the vehicle, those being the 4 forces described in Section \ref{sec: 3DoF Case}. We will start with the most simple, which is gravity.
 \subsubsection{Gravity}
 Because we define the $\hat{x}$ direction as the zenith direction in the inertial earth frame, we define gravity as:
 \begin{equation}
@@ -2838,11 +2892,11 @@ Thrust is also fairly simple to model. If we consider the thrust to be coinciden
 \end{equation}
 Where $\dot{m}$ is the mass flow rate of the engine, $V_e$ is the exit velocity of the engine, $P_e$ is the exit pressure of the engine, $P_{atm}$ is the atmospheric pressure, and $A_e$ is the area of the nozzle exit. For a given propulsion system, these parameters are usually specified or can be easily derived, although we will not do so here. See \cite{noauthor_chemical_nodate} or the propulsion team for more details.
 
-Here, we introduce the use of the rotation matrix to convert between different frames. MATLAB allows for the creation of a rotation matrix with the input of a \gls{quaternion} using the "quat2dcm" function. Using this, we can perform frame conversion to and from the body and earth frame. We show this below in \ref{code:RotationMatrix}:
+Here, we introduce the use of the rotation matrix to convert between different frames. MATLAB allows for the creation of a rotation matrix with the input of a \gls{quaternion} using the "quat2dcm" function. Using this, we can perform frame conversion to and from the body and earth frame. We show this below in Listing \ref{code:RotationMatrix}:
 \lstinputlisting[style=Matlab-editor, caption = Rotation Matrix]{6DoF Explanation Scripts/RotationMatrix.m}\label{code:RotationMatrix}
 Using this code, we can convert the thrust from the body frame into the earth frame through the function call "RotationMatrix(thrustForceBody, quat, 1)". The input of 1 in this function means that the vector is transformed from the body frame into the earth frame. In our case, this means that we multiply by the transpose of the rotation matrix in the MATLAB notation convention.
 \subsubsection{Lift and Drag}
-Our other two forces follow in a similar manner. The quantities of lift and drag are heavily discussed in \ref{sec: aerodynamics}, so we will keep them succinct here. The directions of lift and drag in the earth frame are described by \eqref{eq:Lift} and \eqref{eq:drag}. To convert these forces into the body frame, we use the function call "RotationMatrix(force, quat, 0)". The specification of "0" in the function converts a force in the earth frame into one in the body frame. We need the body frame force for computing the moments in the body frame, as discussed in \ref{sec:rotations in the body frame}.
+Our other two forces follow in a similar manner. The quantities of lift and drag are heavily discussed in Section \ref{sec: aerodynamics}, so we will keep them succinct here. The directions of lift and drag in the earth frame are described by \eqref{eq:Lift} and \eqref{eq:drag}. To convert these forces into the body frame, we use the function call "RotationMatrix(force, quat, 0)". The specification of "0" in the function converts a force in the earth frame into one in the body frame. We need the body frame force for computing the moments in the body frame, as discussed in Section \ref{sec:rotations in the body frame}.
 \subsubsection{Parachute Forces}
 The other force that sometimes acts on our rocket is a parachute force. This acts as another body with drag that is activated in the post-apogee regime. This drag has the same form as the aerodynamic drag, $\frac{1}{2}\rho_{\infty} V_{\infty}^2SC_D$ with the drag acting opposite the freestream velocity. In code, this looks like:
 \begin{lstlisting}[style=Matlab-editor]
@@ -2855,7 +2909,7 @@ The parachute dynamics can be far more complicated that this, but currently we d
 
 Currently, there are no other forces that act in our 6DoF model. Internal forces and vibrations are not currently modeled, as we assume a completely rigid vehicle.
 \subsection{Moments}
-The modeling of moments in the 6-\gls{dof} is fairly straightforward. In the previous section \ref{6DoF Forces}, we converted each of our forces into the body frame. Here, we will use these forces in the body frame to describe the moments acting on our vehicle. 
+The modeling of moments in the 6-\gls{dof} is fairly straightforward. In the previous Section \ref{6DoF Forces}, we converted each of our forces into the body frame. Here, we will use these forces in the body frame to describe the moments acting on our vehicle. 
 
 The moment arm of the aerodynamic forces is equivalent to the distance from the center of mass to the center of pressure. 
 \begin{equation}
@@ -2876,7 +2930,7 @@ Where $\vec{R}$ is the resultant aerodynamic force (the combination of both lift
 \subsection{Attitude Dynamics}
 These moments are used to find angular acceleration, $\vec{\alpha}$ using the Euler rigid body equations described in \eqref{eq: moment eq 2}. 
 
-Lastly, the quaternion rates are described in the same as in the \ref{sec:Dzhan} section.
+Lastly, the quaternion rates are described in the same as in Section \ref{sec:Dzhan}.
 \begin{equation}
     \dot{\textbf{q}}=\frac{1}{2}\begin{bmatrix}
         0&-\omega_x&-\omega_y&-\omega_z\\
@@ -2896,11 +2950,22 @@ We take this integrated state vector along with the initial conditions and integ
 
 The full code can be found at: %google drive or something else
 \section{Validation of 6-DoF}
-The validation of our 6-\gls{dof} model is achieved through modeling other rocket systems that have flown to check the validity of our model and modeling other physical phenomema. Validation can range from very simple to far more complex depending on the system that is being validated. For us, validation falls under two main categories:
+The validation of our 6-\gls{dof} model is achieved through modeling other rocket systems that have flown to check the validity of our model and modeling other physical phenomena. Validation can range from very simple to far more complex depending on the system that is being validated. For us, validation falls under two main categories:
 \begin{enumerate}
-    \item Subcomponent validation - validation of parts of the 6-\gls{dof} by modeling certain types of systems or doing hand calculations to verify correct behavior
+    \item Sub-component validation - validation of parts of the 6-\gls{dof} by modeling certain types of systems or doing hand calculations to verify correct behavior
     \item Full model validation - validation of the whole 6-\gls{dof} by modeling a different rocket system and comparing 6-\gls{dof} outputs to real outputs.
 \end{enumerate}
+
+Sub-component validation may look like the Dzhanibekov modeling in Section \ref{sec:Dzhan}, where we test the attitude dynamics.
+
+Full model validation is usually more complex. One such example is our validation of our model against the V-2 rocket launch on March 7, 1949. This comparison is shown in Figure \ref{fig:V2 sim}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.75\linewidth]{Images/V2 Combined.png}
+    \caption{Comparison of Real V-2 Rocket Launch Data against 6-DoF Modeling}
+    \label{fig:V2 sim}
+\end{figure}
 
 
 \section{Data Visualization}
@@ -2919,8 +2984,11 @@ If you want to have these changes to figures universally applied in MATLAB, you 
 \\
 "C:\Users\YourName\OneDrive\Documents\MATLAB"
 
-The code in \ref{code:startup} is the default plotting used in this document, which should be a good baseline for professional plots.
+The code in Listing \ref{code:startup} is the d efault plotting used in this document, which should be a good baseline for professional plots.
 \lstinputlisting[style=Matlab-editor, caption = Startup File for Plotting]{startup.m}\label{code:startup}
+
+And with that, we have completed the first Volume of the Flighy Dynamics Bible. Additional information and code can be found in the Appendix. If you have any questions, concerns, or suggestions, feel free to reach out to Hudson Reynolds on Slack or via email at Hudsonj.reynolds@gmail.com
+
 
 \chapter{Appendix}
 
@@ -3006,7 +3074,13 @@ We also have a script to display the results of this in a nice animation:
 
 \lstinputlisting[style=Matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
 \subsection{6-DoF Code}
-The code for the 6-\gls{dof} can be found at \cite{} or accessed via GitHub with the following QR code:
+The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_2025} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this pdf document:
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/adobe-express-qr-code(1).png}
+    \label{fig:qr code}
+\end{figure}
 
 \setglossarystyle{altlist}
 \printglossary[title=Special Terms, toctitle = Special Terms]
