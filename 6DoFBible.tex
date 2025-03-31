@@ -520,7 +520,7 @@ A frame of reference is an \gls{orthonormal} set within three-dimensional space.
 {
     name=inertial frame,
     first = {\textit{inertial frame}},
-    description={A reference frame that is static and experiences no accelerations. We use the Earth's surface as the reference frame for our rocket.}
+    description={A reference frame that is static and experiences no accelerations. We use the Earth's surface as the reference frame for our rocket}
 }
 
 The first and most important frame of reference is the \gls{inertial frame}. Typically denoted by $e$ or $i$, or in our case $(\hat{x},\hat{y},\hat{z})$, this motionless frame is the one that allows for the use of Newton’s second law in the first place, as the frame itself has ''zero'' translational and rotational movement.\footnote{An \gls{inertial frame} can have some constant velocity and still be inertial. Of course, the earth has some velocity around the sun and with respect to the distant stars which we can approximate as constant for our time scales and thus ignore.} We say “zero” as this motion must be negligible in relation to the vehicle of interest. For example, this specific 6-\gls{dof} sets the \gls{inertial frame} to be anchored within the Earth on the launch pad. And while we are well aware the Earth is moving and rotating through space at a non-zero rate, this motion is negligible relative to the motion of our vehicle which remains close to Earth within the atmosphere for a short period of time. Therefore, we can assume that the Earth acts appropriately as an \gls{inertial frame} of reference, and Newton’s second law is valid for this frame. 
@@ -1393,7 +1393,7 @@ The quantity $T-U$, the kinetic energy minus the potential energy, is a quantity
 {
     name=principle of least action,
     first = {\textit{principle of least action}},
-    description={A form of Hamilton's Principle that states that the action of a system should be minimized in a physical mechanical system.},
+    description={A form of Hamilton's Principle that states that the action of a system should be minimized in a physical mechanical system},
     see={action}
 }
 
@@ -1410,7 +1410,7 @@ $$\delta S=0$$
     name=Euler-Lagrange Equation,
     first = {\textit{Euler-Lagrange Equation}},
     description={The fundemental equations describing the solutions that give the extrema of the action in a Lagrangian system},
-    see={action, Lagrangian}
+    see={action}
 }
 
 Expressed using Euler's differential equation, \eqref{eq: Euler's Diff eq}, we get the \glspl{euler lagrange}:
@@ -2820,7 +2820,7 @@ So, what timestep is required to accurately model a periodic function? For our e
 {
     name=beat frequency,
     first = {\textit{beat frequency}},
-    description={A beat frequency is the result of constructive and destructive interference between two waves of a similar frequency. The similarity of the frequencies creates variations in the amplitude of the resultant wave.}
+    description={A beat frequency is the result of constructive and destructive interference between two waves of a similar frequency. The similarity of the frequencies creates variations in the amplitude of the resultant wave}
 }
 
 In this figure, we note several important things. When our timestep is slightly less than the period of the function, we infer a lower frequency. This is seen when we use a timestep of $\Delta t=0.4s$. We can intuitively explain this as a \gls{beat freq}. We know that the solution curve has a frequency of 2 Hz, and a wave with a period of $0.4 s$ would have a frequency of 2.5 Hz. Thus, a \gls{beat freq} of 0.5 Hz would be produced. This is exactly what is seen, as the resultant solution appears as a sine wave with a frequency of 0.5 Hz (2 second period). 
@@ -3177,7 +3177,7 @@ We also have a script to display the results of this in a nice animation:
 
 \lstinputlisting[style=Matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
 \subsection{6-DoF Code}
-The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_2025} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this pdf document:
+The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_2025} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this pdf and .tex document:
 
 \begin{figure}[ht]
     \centering
