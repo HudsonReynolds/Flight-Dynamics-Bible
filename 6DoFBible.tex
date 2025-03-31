@@ -580,7 +580,7 @@ The second most important frame of reference is the \gls{body frame}. Typically 
 \begin{figure}[H]
 \centering
     
-\includegraphics[width=\linewidth]{Images/Typical Body Frame.png}
+\includegraphics[width=\linewidth]{Images/TypicalBodyFrame.png}
     \caption{Typical Body Frame Orientation}
     \label{fig:BodyFrameTypical}
 \end{figure}
@@ -589,35 +589,7 @@ For our current model, the body frame of our 6-\gls{dof} has its origin in the n
 
 \begin{figure}[H]
 \centering
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
-
-\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
-%uncomment if require: \path (0,408); %set diagram left start at 0, and has height of 408
-
-%Shape: Can [id:dp7760621042562805] 
-\draw   (351,111) -- (351,268) .. controls (351,276.28) and (337.57,283) .. (321,283) .. controls (304.43,283) and (291,276.28) .. (291,268) -- (291,111) .. controls (291,102.72) and (304.43,96) .. (321,96) .. controls (337.57,96) and (351,102.72) .. (351,111) .. controls (351,119.28) and (337.57,126) .. (321,126) .. controls (304.43,126) and (291,119.28) .. (291,111) ;
-%Shape: Axis 2D [id:dp16563267347652144] 
-\draw  (310,183.2) -- (410,183.2)(320,50) -- (320,198) (403,178.2) -- (410,183.2) -- (403,188.2) (315,57) -- (320,50) -- (325,57)  ;
-%Straight Lines [id:da8489216589462083] 
-\draw    (328.8,173) -- (270.21,250.41) ;
-\draw [shift={(269,252)}, rotate = 307.12] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-
-% Text Node
-\draw (304,3.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{X} /\hat{b}_{1}$};
-% Text Node
-\draw (238,248.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{Y} /\hat{b}_{2}$};
-% Text Node
-\draw (414,167.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{Z} ,\hat{b}_{3}$};
-% Text Node
-\draw (297,222) node [anchor=north west][inner sep=0.75pt]   [align=left] {Rocket};
-% Text Node
-\draw (292,29.4) node [anchor=north west][inner sep=0.75pt]    {$\phi -axis$};
-% Text Node
-\draw (229,273.4) node [anchor=north west][inner sep=0.75pt]    {$\theta -axis$};
-% Text Node
-\draw (406,192.4) node [anchor=north west][inner sep=0.75pt]    {$\psi -axis$};
-
-\end{tikzpicture}
+\includegraphics[width=\linewidth]{Images/RocketBodyFrame.png}
     \caption{Body Frame Convention of our Rocket}
     \label{fig:BodyFrameRocket}
 \end{figure}
@@ -1582,10 +1554,11 @@ For each particle, we need 3 values to define the position, so we need $3N$ gene
 {
     name=holonomic constraint,
     first = {\textit{holonomic constraint}},
-    description={A constraint on a lan}
+    description={A constraint on a Lagrangian system which is a function of only the position of the particles},
+    see={Lagrangian}
 }
 
-However, we often have constraints that reduce this number. Often, we see a problem that is planar or where the particles are connected in a rigid body. These constraints will reduce the number of generalized coordinates needed. Here, we are only considering constraints on the positions of particles. Constraints on the positions of particles are known as \textit{holonomic constraints}. 
+However, we often have constraints that reduce this number. Often, we see a problem that is planar or where the particles are connected in a rigid body. These constraints will reduce the number of generalized coordinates needed. Here, we are only considering constraints on the positions of particles. Constraints on the positions of particles are known as \glspl{holonomic const}. 
 
 A holonomic constraint relates generalized coordinates to each other. In the commonly used notation, the holonomic constraint is expressed in terms of the $q_j$'s as:
 $$\Phi_k\left(q_j,t\right)=0, \ k=1\cdots K$$
@@ -1726,18 +1699,34 @@ In the general case of $N$ particles composing a rigid body, we have $3N$-\gls{d
 So, we have 3 constraint equations in a system with 9 particles. This gives a total of $3N-3=6$-\gls{dof}. When any additional particles are added, they must be fully constrained in all 3 translational degrees of freedom by constraints between $r_1$,$r_2$, and $r_3$. So, we always have constraints of the form $3N-3(N-2)$ for a rigid body. This is why we always see a rigid body displaying 6-\gls{dof}. We can then, of course, parametrize this in general coordinates with the cartesian coordinates and 3 angles.
 
 \subsubsection{Minimal Set of Constraints}
-So far, we have only discussed holonomic constraints, those that are related to position or on the generalized parameters, and possibly have some relation in time. When a system is a \textit{holonomic system}, that is, purely defined by holonomic constraints, it is always possible to find a set of $\mathcal{M}$ generalized parameters to describe the particle motion. In other words, the minimum number of parameters is equivalent to the number of degrees of freedom in the system.
+
+\newglossaryentry{holonomic sys}
+{
+    name=holonomic system,
+    first = {\textit{holonomic system}},
+    description={A system that is entirely composed of holonomic constraints},
+    see={holonomic const}
+}
+So far, we have only discussed holonomic constraints, those that are related to position or on the generalized parameters, and possibly have some relation in time. When a system is a \gls{holonomic sys}, that is, purely defined by \glspl{holonomic const}, it is always possible to find a set of $\mathcal{M}$ generalized parameters to describe the particle motion. In other words, the minimum number of parameters is equivalent to the number of degrees of freedom in the system.
 
 That said, we often choose to use more parameters, particularly in the case of rotations. As we will see in Volume II, we often find it more useful to use a non-minimal set of constraints to encode rotations for reasons to avoid singularities in the solution.
 
 It is also common to see a non-minimal set of constraints used when the minimal set is cumbersome and does not give an intuitive feel to the problem.
 \subsubsection{Non-Holonomic Constraints}
-The other class of constraints are those constraints that are not merely a function of the generalized coordinates. These constraints, called \textit{non-holonomic constraints}, define the set of all constraints that depend on more than just the position of particles. This is a huge class of constraints so we will not cover every type. These are also less important to our derivations so we will only briefly discuss them.
+
+\newglossaryentry{non holo const}
+{
+    name=non-holonomic constraint,
+    first = {\textit{non-holonomic constraint}},
+    description={A constraint that depends on more than the position of the particles in the system},
+    see={holonomic const}
+}
+The other class of constraints are those constraints that are not merely a function of the generalized coordinates. These constraints, called \glspl{non holo const}, define the set of all constraints that depend on more than just the position of particles. This is a huge class of constraints so we will not cover every type. These are also less important to our derivations so we will only briefly discuss them.
 
 \newglossaryentry{gen vel}
 {
     name=generalized velocity,
-    first = {\textit{generalized velocities}},
+    first = {\textit{generalized velocity}},
     plural = {generalized velocities},
     firstplural = {\textit{generalized velocities}},
     description={A free direction of movement for a vehicle. These can be translational or rotational directions}
@@ -1878,6 +1867,13 @@ We notice that with the \gls{Lagrangian} approach, we did not need to have an un
 After the formulation of \gls{Lagrangian} Mechanics, another formulation was created by Hamilton later on. The Hamiltonian formulation, like the \gls{Lagrangian}, does not introduce any new concepts, because it is simply an alternate approach to dynamics. However, like the \gls{Lagrangian}, it makes some types of problems more simple. We present the Hamiltonian here briefly for its use case in \glspl{symplectic int}.
 \subsection{Derivation of the Hamiltonian}
 The exact derivation of the Hamiltonian using Legendre transforms is beyond the scope of our present discussion, so we will mostly discuss the consequences of this derivation. 
+
+\newglossaryentry{gen momenta}
+{
+    name=generalized momenta,
+    first = {\textit{action}},
+    description={The time integral of energy is known as the action, which is often denoted $S$}
+}
 
 The Hamiltonian method replaces the generalized velocities with \textit{generalized momenta}. The generalized momenta are a function of $q,\dot{q},$ and $t$. We express the generalized momenta as $p$. $p$ is defined to be:
 $$p(q,\dot{q},t)\equiv\dfrac{\partial L}{\partial \dot{q}_i}$$
