@@ -1,4 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PSP FLIGHT DYNAMICS:
 %
 % Title: MainRK4
@@ -13,7 +12,6 @@
 %
 % Outputs:
 % Graph and value outputs. See subfunctions for specific outputs
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% KNOWN ISSUES:
 % post apogee attitude dynamics are not fully finished, attitude in this
@@ -27,18 +25,17 @@
 
 %% Initialization:
 % clear the console and figures before running the code:
-clear
-clc
-close all
+clear;clc;close all
 
 %% Simulation Settings:
 
 % endCondition
+% possible:
 % set to 'apogee' for apogee
 % set to 'burnout' for burnout
 % set to 'full' for full simulation w/ recovery
 % set to '#.#' for a custom run time (numeric inputs only)
-endCondition = 'apogee';
+endCondition = 'full';
 
 %turn outputs on and off
 outputs = 'on';
@@ -50,9 +47,12 @@ rotationVis = 'off';
 month = 'Mar';
 
 % turn wind on and off
-windOnOff = 'off';
+windOnOff = 'on';
 
 % CMS or Rocket 4, more options possible in future
+% possible:
+% CMS
+% R4
 rocket = 'CMS';
 
 % create a time array to span the simulation time. Use 500s or more
@@ -88,9 +88,11 @@ Init = [pos;vel;omega;quatVector];
 %import aerodynamics data
 
 if strcmpi(rocket, 'CMS') == 1
-rasData = readmatrix("Inputs/RasAeroDataCulled.CSV");
-elseif
-    
+    rasData = readmatrix("Inputs/RasAeroDataCulled.CSV");
+elseif strcmpi(rocket, 'R4') == 1
+    rasData = readmatrix("RASAero\Final_with_pumps.CSV");
+else
+end
 
 %import wind data
 windData = readmatrix("Inputs/WindData.xlsx");
@@ -108,13 +110,13 @@ opt = odeset('Events', @(tspan, Init) stoppingCondition(tspan, Init, endConditio
 
 %% RK4:
 tic;
-[timeArray, out] = ode45(@(time,input) RK4Integrator(time,input,rasData,atmosphere,totCoM,totMass,MoI,windDataInput,windOnOff,1), tspan, Init, opt);
+[timeArray, out] = ode45(@(time,input) RK4Integrator(time,input,rasData,atmosphere,totCoM,totMass,MoI,windDataInput,windOnOff, rocket, 1), tspan, Init, opt);
 toc;
 
 %% Outputs:
 % output additional arrays from the integrator
 for k = 1:numel(timeArray)
-    [~, machArray(k,1), AoArray(k,1), accel(k,:)] = RK4Integrator(timeArray(k), out(k,:), rasData,atmosphere,totCoM, totMass, MoI, windDataInput, windOnOff);
+    [~, machArray(k,1), AoArray(k,1), accel(k,:)] = RK4Integrator(timeArray(k), out(k,:), rasData,atmosphere,totCoM, totMass, MoI, windDataInput, windOnOff, rocket);
 end
 
 if strcmpi('on', outputs) == 1
@@ -170,7 +172,7 @@ if strcmpi('on', outputs) == 1
 
     colorlist = ["#ff595e", "#ff924c", "#ffbe0b", "#8ac926", "#1982c4", "#6a4c93", "#06402B"];
     
-    figure(1)
+    %figure(1)
     % Earth Frame XYZ position:
     
     hfig = figure;  % save the figure handle in a variable
