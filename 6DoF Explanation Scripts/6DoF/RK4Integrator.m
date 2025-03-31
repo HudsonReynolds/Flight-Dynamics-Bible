@@ -300,6 +300,4 @@ quatRates = 0.5 * B * quat;
 
 out = [vel;accel;alpha;quatRates];
 
-
-
 end
