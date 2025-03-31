@@ -29,6 +29,14 @@
 \usepackage{csquotes}
 \usepackage{biblatex}
 \addbibresource{references.bib}
+
+% If you want to break on URL numbers
+\setcounter{biburlnumpenalty}{9500}
+% If you want to break on URL lower case letters
+\setcounter{biburllcpenalty}{9500}
+% If you want to break on URL UPPER CASE letters
+\setcounter{biburlucpenalty}{9500}
+
 \usepackage{float}
 \usepackage{gensymb}
 \usepackage{amsfonts}
@@ -36,6 +44,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Source: http://en.wikibooks.org/wiki/LaTeX/Hyperlinks %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage[english]{babel}
@@ -497,11 +506,28 @@ We also note the use of the "heaviside" function. This is functionally identical
 \section{Frame of Reference}\label{sec:Frame of Reference}
 Before attempting to describe movement in multiple dimensions, we should first discuss how we can describe important quantities through different lenses. Later, it will become apparent that a vector or problem is easier described or completed through one lens than another. We call these different lenses reference frames.
 
-A frame of reference is an \textit{orthonormal} set within three-dimensional space. The orthonormal nature of the basis vectors that create every frame of reference allows for any other vector in 3-dimensional space to be described as a linear combination of those three basis vectors (hence why we call it a basis for 3-space). This tool becomes incredibly useful within the study of Newtonian and Attitude Dynamics, as every arbitrary vector can be broken down into three set ''scalar'' directions. Naturally, the question arises of how we determine which set directions to utilize, and so we will be discussing a few frames of reference critical to the creation of a 6-\gls{dof} and Aerospace engineering as a whole.
-\subsection{The Inertial Frame}
-The first and most important frame of reference is the \textit{inertial frame}. Typically denoted by $e$ or $i$, or in our case $(\hat{x},\hat{y},\hat{z})$, this motionless frame is the one that allows for the use of Newton’s second law in the first place, as the frame itself has ''zero'' translational and rotational movement.\footnote{An inertial frame can have some constant velocity and still be inertial. Of course, the earth has some velocity around the sun and with respect to the distant stars which we can approximate as constant for our time scales and thus ignore.} We say “zero” as this motion must be negligible in relation to the vehicle of interest. For example, this specific 6-\gls{dof} sets the inertial frame to be anchored within the Earth on the launch pad. And while we are well aware the Earth is moving and rotating through space at a non-zero rate, this motion is negligible relative to the motion of our vehicle which remains close to Earth within the atmosphere for a short period of time. Therefore, we can assume that the Earth acts appropriately as an inertial frame of reference, and Newton’s second law is valid for this frame. 
+\newglossaryentry{orthonormal}
+{
+    name=orthonormal,
+    first = {\textit{orthonormal}},
+    description={A set of basis vectors that are mutually orthogonal to each other in a vector space and have unit length. We mostly refer to orthonormal vectors in $\mathbb{R}^3$ space}
+}
 
-Returning to the specific example of a 6-\gls{dof}, the directions you set your basis vectors to point in are mostly left to the coder’s discretion. If your chosen directions retain the orthonormal nature of a frame of reference, as well as obeying \textit{the right-hand rule}, the choice is all yours. Within the example we are following, our inertial frame’s origin is anchored within the launch pad as previously stated. The first inertial basis vector points up perpendicular to the Earth’s surface, the second inertial basis vector points due East, while the third inertial basis vector follows the right-hand rule and points due North. An image for quick reference is provided in Figure \ref{fig:InertialFrame}:
+A frame of reference is an \gls{orthonormal} set within three-dimensional space. The \gls{orthonormal} nature of the basis vectors that create every frame of reference allows for any other vector in 3-dimensional space to be described as a linear combination of those three basis vectors (hence why we call it a basis for 3-space). This tool becomes incredibly useful within the study of Newtonian and Attitude Dynamics, as every arbitrary vector can be broken down into three set ''scalar'' directions. Naturally, the question arises of how we determine which set directions to utilize, and so we will be discussing a few frames of reference critical to the creation of a 6-\gls{dof} and Aerospace engineering as a whole.
+\subsection{The Inertial Frame}
+
+\newglossaryentry{inertial frame}
+{
+    name=inertial frame,
+    first = {\textit{inertial frame}},
+    description={A reference frame that is static and experiences no accelerations. We use the Earth's surface as the reference frame for our rocket.}
+}
+
+The first and most important frame of reference is the \gls{inertial frame}. Typically denoted by $e$ or $i$, or in our case $(\hat{x},\hat{y},\hat{z})$, this motionless frame is the one that allows for the use of Newton’s second law in the first place, as the frame itself has ''zero'' translational and rotational movement.\footnote{An inertial frame can have some constant velocity and still be inertial. Of course, the earth has some velocity around the sun and with respect to the distant stars which we can approximate as constant for our time scales and thus ignore.} We say “zero” as this motion must be negligible in relation to the vehicle of interest. For example, this specific 6-\gls{dof} sets the inertial frame to be anchored within the Earth on the launch pad. And while we are well aware the Earth is moving and rotating through space at a non-zero rate, this motion is negligible relative to the motion of our vehicle which remains close to Earth within the atmosphere for a short period of time. Therefore, we can assume that the Earth acts appropriately as an inertial frame of reference, and Newton’s second law is valid for this frame. 
+
+\newacronym{rhr}{RHR}{right hand rule}
+
+Returning to the specific example of a 6-\gls{dof}, the directions you set your basis vectors to point in are mostly left to the coder’s discretion. If your chosen directions retain the orthonormal nature of a frame of reference, as well as obeying the \gls{rhr}, the choice is all yours. Within the example we are following, our inertial frame’s origin is anchored within the launch pad as previously stated. The first inertial basis vector points up perpendicular to the Earth’s surface, the second inertial basis vector points due East, while the third inertial basis vector follows the right-hand rule and points due North. An image for quick reference is provided in Figure \ref{fig:InertialFrame}:
 
 \begin{figure}[H]
 \centering
@@ -539,7 +565,15 @@ Returning to the specific example of a 6-\gls{dof}, the directions you set your 
 \end{figure}
 
 \subsection{The Body Frame}
-The second most important frame of reference is the \textit{body frame}. Typically denoted by $b$, or in our case $(\hat{X},\hat{Y},\hat{Z})$, this frame of reference is always anchored at some point in the vehicle and allows us to describe the \gls{state vector} in relation to the vehicle itself. This frame is moving and rotating with respect to the inertial frame. For every body frame you create – from a frame for the entire vehicle to a frame for a small electronic part – you want simplicity. This means that in aerospace, it is often the case for a general body frame to have a basis vector pointing along the longitudinal axis of the vehicle, as well as one out a wing. A generic image of such a convention is provided in Figure\ref{fig:BodyFrameTypical} In addition, it means at a zero angle of rotation, every basis vector of the body frame is parallel to the corresponding basis vector in the inertial frame. This is imperative to rotational dynamics, as the offset of each basis vector in the body frame will correspond to the pitch, yaw, and roll of the vehicle. But more on that in Volume II.
+
+\newglossaryentry{body frame}
+{
+    name=body frame,
+    first = {\textit{body frame}},
+    description={A reference frame that is fixed to the body of an object and follows the translations and rotations of the vehicle}
+}
+
+The second most important frame of reference is the \gls{body frame}. Typically denoted by $b$, or in our case $(\hat{X},\hat{Y},\hat{Z})$, this frame of reference is always anchored at some point in the vehicle and allows us to describe the \gls{state vector} in relation to the vehicle itself. This frame is moving and rotating with respect to the inertial frame. For every body frame you create – from a frame for the entire vehicle to a frame for a small electronic part – you want simplicity. This means that in aerospace, it is often the case for a general \gls{body frame} to have a basis vector pointing along the longitudinal axis of the vehicle, as well as one out a wing. A generic image of such a convention is provided in Figure\ref{fig:BodyFrameTypical} In addition, it means at a zero angle of rotation, every basis vector of the body frame is parallel to the corresponding basis vector in the inertial frame. This is imperative to rotational dynamics, as the offset of each basis vector in the \gls{body frame} will correspond to the pitch, yaw, and roll of the vehicle. But more on that in Volume II.
 
 % Either change or give credit to MATLAB ig
 
@@ -589,7 +623,15 @@ For our current model, the body frame of our 6-\gls{dof} has its origin in the n
 \end{figure}
 
 \subsection{The Wind Frame}
-The last and by far least important frame of reference is the \textit{wind frame.} This frame of reference, like the body frame, is always anchored at some point in the vehicle. Also like the body frame, it moves and rotates with the vehicle and allows for a new way of describing the \gls{state vector}. Unlike the body frame, the most important definition is not along the longitudinal axis of the vehicle. As indicated by its name, the necessary orientation of a basis vector points in the direction of the free stream velocity. Relating this to the body frame, this translates to an offset from the body frame by the \gls{angle of attack} and sideslip. This frame is often useful for aircraft, but we do not use it explicitly in our 6-\gls{dof}. The wind frame itself is in fact skipped over during wind calculations, as the \gls{angle of attack} and imparted forces/moments are calculated directly onto the body frame. So as this isn’t as useful as the other two reference frames, we won’t elaborate on this frame any further, and it won’t be shown as much in our example 6-\gls{dof}.
+
+\newglossaryentry{wind frame}
+{
+    name=wind frame,
+    first = {\textit{wind frame}},
+    description={A reference frame in reference to the direction of freestream velocity, denoted $V_{\infty}$}
+}
+
+The last and by far least important frame of reference is the \gls{wind frame}. This frame of reference, like the body frame, is always anchored at some point in the vehicle. Also like the body frame, it moves and rotates with the vehicle and allows for a new way of describing the \gls{state vector}. Unlike the body frame, the most important definition is not along the longitudinal axis of the vehicle. As indicated by its name, the necessary orientation of a basis vector points in the direction of the free stream velocity. Relating this to the body frame, this translates to an offset from the body frame by the \gls{angle of attack} and sideslip. This frame is often useful for aircraft, but we do not use it explicitly in our 6-\gls{dof}. The wind frame itself is in fact skipped over during wind calculations, as the \gls{angle of attack} and imparted forces/moments are calculated directly onto the body frame. So as this isn’t as useful as the other two reference frames, we won’t elaborate on this frame any further, and it won’t be shown as much in our example 6-\gls{dof}.
 
 \section{The 3-DoF Case}\label{sec: 3DoF Case}
 \subsection{Vectors in the 3-DoF Case}
@@ -823,10 +865,10 @@ We also define a new vector, $\vec{F}_R$, the resultant aerodynamic vector, whic
 \begin{gather}
     \color{blue}\boxed{\color{black}\vec{M}^{cg}=\vec{r}_{ma}\times \vec{F}_R}
 \end{gather}
-\newacronym{rhr}{RHR}{right hand rule}
+
 We note that the direction of this moment is in the $-\hat{z}$ direction from the \gls{rhr}. If we assume that our forces are planar, this moment will generate a rotation about a single axis. This makes our model into a 3-\gls{dof}.
 
-One thing to note is that some quantities are more easily defined with respect to vectors that are defined with respect to the vehicle (which we will call the \textit{body frame}), such as the vector $\hat{X}$. As seen in Equation \eqref{eq:alpha} and \eqref{eq:Lift}, we often want to use these vectors in the body frame for computation. As such, we will need a method in which we can convert between the body and inertial frames. This conversion between frames is explored in Section \ref{sec:Frame of Reference}. We should also note that our moments will be in this body frame as well, which turns out to be especially useful in Section \ref{Euler Rotation Equations}.
+One thing to note is that some quantities are more easily defined with respect to vectors that are defined with respect to the vehicle (which we will call the \gls{body frame}), such as the vector $\hat{X}$. As seen in Equation \eqref{eq:alpha} and \eqref{eq:Lift}, we often want to use these vectors in the body frame for computation. As such, we will need a method in which we can convert between the body and inertial frames. This conversion between frames is explored in Section \ref{sec:Frame of Reference}. We should also note that our moments will be in this body frame as well, which turns out to be especially useful in Section \ref{Euler Rotation Equations}.
 
 The last thing that we note in this section is that our forces are moments are coupled. This means that the aerodynamic forces are a function of the orientation of the vehicle, so the moments and forces must be solved as a system.
 \subsection{State Vector}
@@ -930,13 +972,21 @@ In the simplification using the principle axes, we often refer to the terms $I_{
 \subsection{Parallel Axis Theorem}
 Similar to the way in which we described the moment of inertia of a particle to be $mr^2$, we can describe the change in moment of inertia of a body due to the offset of its axis.
 
-We accomplish this with the \textit{parallel axis theorem}, which relates the moment and products of inertia through different rotation points. To use parallel axis theorem, we simply take the known moment of inertia and add $mr^2$ along that component direction. This looks like:
+\newglossaryentry{par axis thm}
+{
+    name=parallel axis theorem,
+    first = {\textit{parallel axis theorem}},
+    description={A theorem relating the moment of inertia and product of inertia about different rotation points},
+    see={moi}
+}
+
+We accomplish this with the \gls{par axis thm}, which relates the moment and products of inertia through different rotation points. To use parallel axis theorem, we simply take the known moment of inertia and add $mr^2$ along that component direction. This looks like:
 $$I_{x'x'}=I_{xx}+m\left(y^2+z^2\right)$$
 This is similarly computed for the other axes, with the $r$ always being the axis that is not the one we are computing the moment of inertia of. We can think of this intuitively because we are translating the center along the two axes perpendicular to the one describing the moment of inertia.
 
 We also must do the same for the products of inertia. We note that even if we select body axes with no products of inertia, we may still have them in the translated center!
 
-The parallel axis for the products of inertia is given as:
+The \gls{par axis thm} for the products of inertia is given as:
 $$I_{x'y'}=I_{xy}-mxy$$
 This is similarly computed for the other axes.
 \subsection{Rotations in the Body Frame}\label{sec:rotations in the body frame}
@@ -1356,20 +1406,51 @@ The quantity $T-U$, the kinetic energy minus the potential energy, is a quantity
     L\equiv T-U
 \end{equation}
 
-The time integral of the \gls{Lagrangian} is the \textit{action}, denoted $S$. This is often why Hamilton's Principle is also called the \textit{Principle of Least Action}. 
+\newglossaryentry{action}
+{
+    name=action,
+    first = {\textit{action}},
+    description={The time integral of energy is known as the action, which is often denoted $S$}
+}
+
+\newglossaryentry{princ of least action}
+{
+    name=principle of least action,
+    first = {\textit{principle of least action}},
+    description={A form of Hamilton's Principle that states that the action of a system should be minimized in a physical mechanical system.},
+    see={action}
+}
+
+The time integral of the \gls{Lagrangian} is the \gls{action}, denoted $S$. This is often why Hamilton's Principle is also called the \gls{princ of least action}. 
 
 \begin{equation}
     S=\int_{t_1}^{t_2}{L}{dt}
 \end{equation}
 So, our action takes the form of the \gls{functional} from the calculus of variations. From Hamilton's principle, this \gls{functional}, the action, must be minimized. So, we often see the compact form of Hamilton's Principle as:
 $$\delta S=0$$
-Expressed using Euler's differential equation, \eqref{eq: Euler's Diff eq}, we get the \textit{Euler-Lagrange Equations}:
+
+\newglossaryentry{euler lagrange}
+{
+    name=Euler-Lagrange Equation,
+    first = {\textit{Euler-Lagrange Equation}},
+    description={The fundemental equations describing the solutions that give the extrema of the action in a Lagrangian system},
+    see={action, Lagrangian}
+}
+
+Expressed using Euler's differential equation, \eqref{eq: Euler's Diff eq}, we get the \glspl{euler lagrange}:
 \begin{gather}\label{eq: Euler-Lagrange}
     \color{blue}\boxed{\color{black}\frac{\partial L}{\partial x_i}-\frac{d}{dt}\frac{\partial L}{\partial \dot{x}_i}=0}\\ \mathrm{\color{blue}Euler-Lagrange \ Equations}
 \end{gather}
 Before we look into some examples of how to utilize these equations in practice, we should consider in what situations these will be better than the Newtonian methods.
 
-We note that in this chapter, we will only consider potential functions which are \textit{conservative}, or path independent. This does mean that frictional forces and aerodynamics are not modeled with the \gls{Lagrangian} we describe here (although they can be with the utilization of Rayleigh's dissipation function and other techniques, such as those discussed in \cite{rabei_hamiltonian_2004}). This is the reason we do not directly use these equations in the 6-DoF.\footnote{However, much of the rotational dynamics we describe can be represented equivalently using the \gls{Lagrangian} approach, so we do use these equations in a roundabout manner.}
+\newglossaryentry{conservative}
+{
+    name=conservative,
+    first = {\textit{conservative}},
+    description={A system or potential which is independent of the path. A closed integral in a conservative field is 0}
+}
+
+We note that in this chapter, we will only consider potential functions which are \gls{conservative}, or path independent. This does mean that frictional forces and aerodynamics are not modeled with the \gls{Lagrangian} we describe here (although they can be with the utilization of Rayleigh's dissipation function and other techniques, such as those discussed in \cite{rabei_hamiltonian_2004}). This is the reason we do not directly use these equations in the 6-DoF.\footnote{However, much of the rotational dynamics we describe can be represented equivalently using the \gls{Lagrangian} approach, so we do use these equations in a roundabout manner.}
 
 So, for systems that are non-conservative, it is best to stick with the Newtonian method of mechanics, as we do for our 6-DoF. However, for those that are frictionless, the methods described here will work well. While it may seem that frictionless systems are very idealistic, we do see systems that can be approximated as frictionless quite often! Orbits, of course, are one case where this is especially true. For many other systems, such as a spinning top or other rotating bodies, we can often ignore the small amount of friction and arrive at analytical solutions without much hassle using the \gls{Lagrangian}. These methods also become extraordinarily important for our derivations of rotational equations.
 
@@ -2334,7 +2415,7 @@ $$\Pi_1=f\left(\Pi_2, \Pi_3,\cdots \Pi_{N-K}\right)$$
 and so on for the other $\Pi$ groups.
 \end{corollary}
 For more information on \gls{buck pi}, refer to 
-\cite{noauthor_httpsengineeringpurdueeduwassgrenteachingme30800notesandreadingdimensionalanalysis_buckinghampi_methodofrepeatingvariables_readingpdf_nodate}
+\cite{wassgren_buckingham_2021}
 
 Using our system from before, let us use \gls{buck pi} to write the non-dimensional groups for our aerodynamic system. We start by writing the dimensions for each of the variables we enumerated:
 
@@ -2481,6 +2562,8 @@ For more complex studies of aerodynamics, we recommend Modern Compressible Flow 
 \end{chapquote}
 
 In our exploration of numerical integration schemes, it will be useful to have a good understanding of ordinary differential equations. We highly recommend \cite{dawkins_differential_2023} for reviewing differential equations.
+
+We note that this section does not include practice problems since most of the other practice problems include numerical integration as part of the process.
 
 \section{Euler Integration}\label{sec:euler integration}
 We have previously discussed the simplest integration scheme, the explicit Euler method, which we used in Section \ref{sec: Numerical Integration in the 1DoF}. Understanding the Euler method is key to understanding and using more complex integration schemes, so we recommend writing a few of your own Euler integration scripts in MATLAB or a coding language of your choice to really solidify your knowledge before moving on to more complex integration schemes. 
