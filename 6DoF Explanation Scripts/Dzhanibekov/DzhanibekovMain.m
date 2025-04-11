@@ -32,12 +32,12 @@ tspan = 0:dt:time;
 pos = [0;0;0];
 % velocity (xdot,ydot,zdot)
 vel = [0;0;0];
-% initial angle(x angle, y angle, z angle)
+% initial angle(z angle, y angle, x angle)
 angleVector = [0;0;0];
 % initial rotation rate(x rate, y rate, z rate)
 omega = [0.05;0.05;pi];
 %initalize the quaternion based on the euler angle input:
-quatVector = eul2quat(angleVector.', "XYZ").';
+quatVector = eul2quat(angleVector.', "ZYX").';
 % initial state vector
 Init = [pos;vel;omega;quatVector];
 
