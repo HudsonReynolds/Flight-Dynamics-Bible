@@ -171,8 +171,6 @@
 %\frontmatter
 \maketitle
 %% Things to do:
-% clean up glossaries section
-% possibly add notation used. Beginning maybe? Wertz does this and it works well
 % more figures would be nice
 % add more proofs for relevant sections
 % finish the 6-DoF Section, add code and attach code in google drive as well
@@ -520,7 +518,7 @@ A frame of reference is an \gls{orthonormal} set within three-dimensional space.
 {
     name=inertial frame,
     first = {\textit{inertial frame}},
-    description={A reference frame that is static and experiences no accelerations. We use the Earth's surface as the reference frame for our rocket.}
+    description={A reference frame that is static and experiences no accelerations. We use the Earth's surface as the reference frame for our rocket}
 }
 
 The first and most important frame of reference is the \gls{inertial frame}. Typically denoted by $e$ or $i$, or in our case $(\hat{x},\hat{y},\hat{z})$, this motionless frame is the one that allows for the use of Newton’s second law in the first place, as the frame itself has ''zero'' translational and rotational movement.\footnote{An \gls{inertial frame} can have some constant velocity and still be inertial. Of course, the earth has some velocity around the sun and with respect to the distant stars which we can approximate as constant for our time scales and thus ignore.} We say “zero” as this motion must be negligible in relation to the vehicle of interest. For example, this specific 6-\gls{dof} sets the \gls{inertial frame} to be anchored within the Earth on the launch pad. And while we are well aware the Earth is moving and rotating through space at a non-zero rate, this motion is negligible relative to the motion of our vehicle which remains close to Earth within the atmosphere for a short period of time. Therefore, we can assume that the Earth acts appropriately as an \gls{inertial frame} of reference, and Newton’s second law is valid for this frame. 
@@ -1393,7 +1391,7 @@ The quantity $T-U$, the kinetic energy minus the potential energy, is a quantity
 {
     name=principle of least action,
     first = {\textit{principle of least action}},
-    description={A form of Hamilton's Principle that states that the action of a system should be minimized in a physical mechanical system.},
+    description={A form of Hamilton's Principle that states that the action of a system should be minimized in a physical mechanical system},
     see={action}
 }
 
@@ -1410,7 +1408,7 @@ $$\delta S=0$$
     name=Euler-Lagrange Equation,
     first = {\textit{Euler-Lagrange Equation}},
     description={The fundemental equations describing the solutions that give the extrema of the action in a Lagrangian system},
-    see={action, Lagrangian}
+    see={action}
 }
 
 Expressed using Euler's differential equation, \eqref{eq: Euler's Diff eq}, we get the \glspl{euler lagrange}:
@@ -1942,11 +1940,11 @@ We can perform the analogous analysis for the other axes, yielding the full set 
 \color{blue}\boxed{
 \begin{array}{ll}
 \color{black}
-\left(I_2-I_3\right)\omega_2\omega_3=I_1\dot{\omega_1}
+\left(I_y-I_z\right)\omega_y\omega_z=I_x\dot{\omega_x}
      &\\
-     \color{black}\left(I_3-I_1\right)\omega_1\omega_3=I_2\dot{\omega_2}
+     \color{black}\left(I_z-I_x\right)\omega_x\omega_z=I_y\dot{\omega_y}
      &\\
-     \color{black}\left(I_1-I_2\right)\omega_1\omega_2=I_3\dot{\omega_3}
+     \color{black}\left(I_x-I_y\right)\omega_x\omega_y=I_z\dot{\omega_z}
 \end{array}}\\
 \color{blue}
 \mathrm{Torque-Free \ Rotations}
@@ -2006,7 +2004,7 @@ First and most important, we use the 3-2-1 rotation sequence to determine \gls{E
 
 To start, we want a way to easily convert any arbitrary vector from being described with one reference frame to another. We do this through the use of the Direction Cosine Matrix, or DCM. This allows us to take this matrix and multiply it with our vector in the \gls{inertial frame} and obtain an identical vector in the \gls{body frame}.
 
-In MATLAB, there exists a function - "angle2dcm" - that creates this for us! By inputting the scalar values of our \gls{Euler angles} (in radians!) as well as the chosen rotation sequence, MATLAB creates the DCM as an output, allowing us to multiply this matrix with our inertial vector we want to express in the \gls{body frame}. Note the function allows an input of any number of rotations to find DCM's for. This is a fun little aspect of the function; however, it is irrelevant for our use as we input the new \gls{Euler angles} every time-step during our "ode45" integration scheme. One additional thing to consider: the "angle2dcm" function returns the DCM as a transform from the inertial to the \gls{body frame}. If we were to transform a vector from the body to \gls{inertial frame}, we would need to take the transpose of the given matrix.
+In MATLAB, there exists a function - "angle2dcm" - that creates this for us! By inputting the scalar values of our \gls{Euler angles} (in radians!) as well as the chosen rotation sequence, MATLAB creates the DCM as an output, allowing us to multiply this matrix with our inertial vector we want to express in the \gls{body frame}. Note the function allows an input of any number of rotations to find DCM's for. This is a fun little aspect of the function; however, it is irrelevant for our use as we input the new \gls{Euler angles} every time-step during our "ode45" integration scheme. One additional thing to consider: the "angle2dcm" function returns the DCM as a transform from the inertial to the \gls{body frame}. If we were to transform a vector from the body to \gls{inertial frame}, we would need to take the transpose of the given matrix. Further reading on this function can be seen at \cite{}
 
 \subsection{Relating Euler Rates with Angular Velocity}
 
@@ -2258,14 +2256,7 @@ Our initialization of the \gls{state vector} and all of the basic setup in conta
     \item No matter which style of describing rotations we choose - \gls{Euler angles} or \glspl{quaternion} - they both result in identical answers.
 \end{enumerate}
 \section{Further Reading}
-
-Volume II
-
-Wertz
-
-That one website
-
-Some other horseshit
+Volume II of this text contains most of the information pertaining to attitude dynamics. For reference until Volume II is released, we find the website \cite{narayan_how_2017} especially useful for understanding quaternions.
 
 \section{Practice Problems}
 
@@ -2820,7 +2811,7 @@ So, what timestep is required to accurately model a periodic function? For our e
 {
     name=beat frequency,
     first = {\textit{beat frequency}},
-    description={A beat frequency is the result of constructive and destructive interference between two waves of a similar frequency. The similarity of the frequencies creates variations in the amplitude of the resultant wave.}
+    description={A beat frequency is the result of constructive and destructive interference between two waves of a similar frequency. The similarity of the frequencies creates variations in the amplitude of the resultant wave}
 }
 
 In this figure, we note several important things. When our timestep is slightly less than the period of the function, we infer a lower frequency. This is seen when we use a timestep of $\Delta t=0.4s$. We can intuitively explain this as a \gls{beat freq}. We know that the solution curve has a frequency of 2 Hz, and a wave with a period of $0.4 s$ would have a frequency of 2.5 Hz. Thus, a \gls{beat freq} of 0.5 Hz would be produced. This is exactly what is seen, as the resultant solution appears as a sine wave with a frequency of 0.5 Hz (2 second period). 
@@ -2866,6 +2857,15 @@ On the converse side, for systems that require very high precision, such as orbi
 In addition to these \gls{numerical int} schemes, there are a variety of integration schemes that use energy conservation as the basis of their integration schemes. These types of integrators are called \gls{symplectic int}. These types of integrators directly solve Hamilton's equations for a Hamiltonian system. The form of these equations is discussed briefly in Section \ref{sec:hamiltonian}.
 
 Because the Hamiltonian equations are first order already, they are ready for numerical integration without the need for order reduction.
+
+A similar operation can be done to reduce the \gls{Lagrangian} to two first order equations, in a system known as a variational integrator.
+
+MATLAB has no built in functions for variational or \glspl{symplectic int}, so we do not discuss them further here for now.
+
+\subsubsection{Use Case of Symplectic Integrators}
+Although MATLAB does not have built-in functions for these integrators, scripts to do so can be written or found online.
+
+The best use case for these algorithms is for systems with a Hamiltonian or Lagrangian description that need to be integrated over a long time span. Because these integrators conserve energy, they will better preserve the characteristics of these systems over long times as compared to RK integrators.
 
 \section{Numerical Integration Code Optimization}\label{sec: code optimization}
 \subsection{Monte Carlo Simulation}
@@ -3040,9 +3040,9 @@ So, taking all of these together, we have the derivative of our \gls{state vecto
     \end{bmatrix}
 \end{equation}
 \subsection{6-DoF Code}
-We take this integrated \gls{state vector} along with the initial conditions and integrate them using "ode45". The two most important scripts in this process are the "MainRK4.m" and "RK4Integrator.m" MATLAB scripts. Because these MATLAB scripts are quite long, we have chosen not to include them in the appendix. Instead, a link to the GitHub is given where the scripts can be found is .
+We take this integrated \gls{state vector} along with the initial conditions and integrate them using "ode45". The two most important scripts in this process are the "MainRK4.m" and "RK4Integrator.m" MATLAB scripts. Because these MATLAB scripts are quite long, we have chosen not to include them in the appendix. Instead, a link to the GitHub is given where the scripts can be found.
 
-The full code can be found at: %google drive or something else
+The full code can be found at: \cite{reynolds_hudsonreynoldsflight-dynamics-bible_2025} or in the appendix in \ref{sec:6DoF Code}.
 \section{Validation of 6-DoF}
 The validation of our 6-\gls{dof} model is achieved through modeling other rocket systems that have flown to check the validity of our model and modeling other physical phenomena. Validation can range from very simple to far more complex depending on the system that is being validated. For us, validation falls under two main categories:
 \begin{enumerate}
@@ -3081,7 +3081,7 @@ If you want to have these changes to figures universally applied in MATLAB, you 
 The code in Listing \ref{code:startup} is the d efault plotting used in this document, which should be a good baseline for professional plots.
 \lstinputlisting[style=Matlab-editor, caption = Startup File for Plotting]{startup.m}\label{code:startup}
 
-And with that, we have completed the first Volume of the Flighy Dynamics Bible. Additional information and code can be found in the Appendix. If you have any questions, concerns, or suggestions, feel free to reach out to Hudson Reynolds on Slack or via email at Hudsonj.reynolds@gmail.com
+And with that, we have completed the first Volume of the Flight Dynamics Bible. Additional information and code can be found in the Appendix. If you have any questions, concerns, or suggestions, feel free to reach out to Hudson Reynolds on Slack or via email at Hudsonj.reynolds@gmail.com
 
 
 \chapter{Appendix}
@@ -3167,8 +3167,8 @@ We also have a script to display the results of this in a nice animation:
 \lstinputlisting[style=Matlab-editor, caption = Numerical Integration Error Comparison]{6DoF Explanation Scripts/NumericalIntegratorError.m}\label{code:Numerical Error $y'=2t$}
 
 \lstinputlisting[style=Matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
-\subsection{6-DoF Code}
-The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_2025} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this pdf document:
+\subsection{6-DoF Code}\label{sec:6DoF Code}
+The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_2025} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this pdf and .tex document:
 
 \begin{figure}[ht]
     \centering
