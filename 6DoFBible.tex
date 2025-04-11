@@ -1224,7 +1224,7 @@ Energy methods of mechanics employ the concepts of the energy of a system to sol
 
 To grasp energy methods, it is best to have an intuition for Newtonian dynamics first. A thorough reading of Chapter \ref{sec: Newtonian Dynamics} and other sources will help prepare the reader for this section.
 
-There are two main types of energy mechanics, referred to as Hamiltonian and \gls{Lagrangian} Mechanics. In this chapter, we will mostly focus on the \gls{Lagrangian} version of these mechanics. Hamiltonian mechanics are arguably more fundamental, but will only be briefly discussed.
+There are two main types of energy mechanics, referred to as Hamiltonian and \gls{Lagrangian} mechanics. In this chapter, we will mostly focus on the \gls{Lagrangian} version of these mechanics. Hamiltonian mechanics are arguably more fundamental, but will only be briefly discussed.
 
 \newglossaryentry{symplectic int}
 {
@@ -1999,7 +1999,7 @@ Attitude Dynamics is the math describing the orientation of a vehicle in space a
 
 The first method to express the orientation of a vehicle is through the use of \gls{Euler angles}. These form the basis for our understanding of attitude, being the more intuitive method. As stated previously, the theory and derivations for everything you will use here is included in Volume II, which by now, we hope you've already seen! If you haven't, don't worry, we will provide some basic definitions here to give you the bare bones of what is needed in the function calls to help you and your code be successful.
 
-First and most important, we use the 3-2-1 rotation sequence to determine \gls{Euler angles}. This means we have an angle $\phi$ to describe the rotation about the $x$-axis, an angle $\theta$ to describe the rotation about the $y$-axis, and an angle $\psi$ to describe the rotation about the $z$-axis. The order in which we complete these rotations is Z-Y-X, or $\psi$-$\theta$-$\phi$. 
+First and most important, we use the intrinsic 3-2-1 rotation sequence to determine \gls{Euler angles}. This means we have an angle $\phi$ to describe the rotation about the $x$-axis, an angle $\theta$ to describe the rotation about the $y$-axis, and an angle $\psi$ to describe the rotation about the $z$-axis. The order in which we complete these rotations is Z-Y-X, or $\psi$-$\theta$-$\phi$. 
 
 \subsection{The Direction Cosine Matrix}\label{sec:TheDCM}
 
@@ -2008,7 +2008,7 @@ To start, we want a way to easily convert any arbitrary vector from being descri
     ^b\vec{r}=A_{3,2,1}\ ^i\vec{r}
 \end{equation}
 
-In MATLAB, there exists a function - "angle2dcm" - that creates this for us!\footnote{Note there exists another similar function - eul2rotm - that also creates a DCM; however, this function converts a vector from the body frame to the inertial frame.} By inputting the scalar values of our \gls{Euler angles} (in radians!) as well as the chosen rotation sequence, MATLAB creates the DCM as an output, allowing us to pre-multiply this matrix with our inertial vector we want to express in the \gls{body frame}. Note the function allows an input of any number of rotations to find DCM's for. This is a fun little aspect of the function; however, it is irrelevant for our use as we input the new \gls{Euler angles} every time-step during our "ode45" integration scheme. One additional thing to consider: the "angle2dcm" function returns the DCM as a transform from the inertial to the \gls{body frame}. If we were to transform a vector from the body to \gls{inertial frame}, we would need to take the transpose of the given matrix. Further reading on this function can be seen in Mathwork's own documentation in Source \cite{noauthor_eul2quat_nodate}.
+In MATLAB, there exists a function - "angle2dcm" - that creates this for us!\footnote{Note there exists another similar function - eul2rotm - that also creates a DCM; however, this function converts a vector from the body frame to the inertial frame.} By inputting the scalar values of our \gls{Euler angles} (in radians!) as well as the chosen rotation sequence, MATLAB creates the DCM as an output, allowing us to pre-multiply this matrix with our inertial vector we want to express in the \gls{body frame}. Note the function allows an input of any number of rotations to find DCM's for. This is a fun little aspect of the function; however, it is irrelevant for our use as we input the new \gls{Euler angles} every time-step during our "ode45" integration scheme. One additional thing to consider: the "angle2dcm" function returns the DCM as a transform from the inertial to the \gls{body frame}. If we were to transform a vector from the body to \gls{inertial frame}, we would need to take the transpose of the given matrix. Further reading on this function can be seen in Mathwork's own documentation in Source \cite{mathworks_eul2quat_nodate}.
 
 \subsection{Relating Euler Rates with Angular Velocity}
 
@@ -2069,9 +2069,9 @@ To match industry/academia standards and improve the robustness of our simulatio
 
 \subsection{Quaternion Rotation Matrix}
 
-We're going to combine a few initial steps of the code surrounding \gls{quaternion} attitude dynamics. To start, we want to convert from \gls{Euler angles} to \glspl{quaternion}, as \gls{Euler angles} are more intuitive to define and initialize in the simulation. MATLAB's function "eul2quat" does just that. By inputting the \gls{Euler angles} in the appropriate sequence, along with the chosen rotation sequence (make sure to match the \gls{Euler angles} with the order), the function returns the corresponding \gls{quaternion} vector. Mathworks documentation for this function can be found in Source \cite{noauthor_eul2quat_nodate}.
+We're going to combine a few initial steps of the code surrounding \gls{quaternion} attitude dynamics. To start, we want to convert from \gls{Euler angles} to \glspl{quaternion}, as \gls{Euler angles} are more intuitive to define and initialize in the simulation. MATLAB's function "eul2quat" does just that. By inputting the \gls{Euler angles} in the appropriate sequence, along with the chosen rotation sequence (make sure to match the \gls{Euler angles} with the order), the function returns the corresponding \gls{quaternion} vector. Mathworks documentation for this function can be found in Source \cite{mathworks_eul2quat_nodate}.
 
-Having initialized our \gls{quaternion} vector, we can now use another MATLAB function to construct our DCM. The function "quat2dcm" takes the \gls{quaternion} as an input, and returns the DCM at that instant. Incredibly simple and incredibly useful; however, we must once again consider that this DCM converts only from the \gls{inertial frame} to the \gls{body frame}. Meaning just as we had done with \gls{Euler angles}, it is necessary to take the transpose (inverse) of the matrix if we want to transform from the body to the \gls{inertial frame}. The Mathworks documentation for the "quat2dcm" function can be found in Source
+Having initialized our \gls{quaternion} vector, we can now use another MATLAB function to construct our DCM. The function "quat2dcm" takes the \gls{quaternion} as an input, and returns the DCM at that instant. Incredibly simple and incredibly useful; however, we must once again consider that this DCM converts only from the \gls{inertial frame} to the \gls{body frame}. Meaning just as we had done with \gls{Euler angles}, it is necessary to take the transpose (inverse) of the matrix if we want to transform from the body to the \gls{inertial frame}. The Mathworks documentation for the "quat2dcm" function can be found in Source \cite{mathworks_quat2dcm_nodate}.
 
 
 \subsection{Quaternion Rates}\label{sec: quaternion rates}
@@ -2412,7 +2412,7 @@ $$\Pi_1=f\left(\Pi_2, \Pi_3,\cdots \Pi_{N-K}\right)$$
 and so on for the other $\Pi$ groups.
 \end{corollary}
 For more information on \gls{buck pi}, refer to 
-\cite{wassgren_buckingham_2021}
+\cite{wassgren_buckingham_nodate}
 
 Using our system from before, let us use \gls{buck pi} to write the non-dimensional groups for our aerodynamic system. We start by writing the dimensions for each of the variables we enumerated:
 
@@ -2546,7 +2546,13 @@ For more complex studies of aerodynamics, we recommend Modern Compressible Flow 
 
 \section{Practice Problems}
 \begin{enumerate}
-    \item You are flying home one day in your P-51 Mustang. At cruise, your aircraft is 10,000 ft above sea level.
+    \item You are flying home one day in your P-51 Mustang (pictured in \ref{} for your viewing pleasure). At cruise, your aircraft is 10,000 ft above sea level.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{}
+    \caption{Caption}
+    \label{fig:enter-label}
+\end{figure}
 \begin{enumerate}
     \item What is the density of air at this altitude?
     \item Your wings provide a $C_L$ of 0.3 at cruising speed. Your plane has a mass of 4,000 kg and a planform area of $21.8 \mathrm{\ m}^2$. Find the speed necessary to maintain level light at this altitude.
@@ -2988,7 +2994,7 @@ Thrust is also fairly simple to model. If we consider the thrust to be coinciden
 \begin{equation}
     F_T=\dot{m}V_e+\left(P_{e}-P_{atm}\right)\cdot A_e
 \end{equation}
-Where $\dot{m}$ is the mass flow rate of the engine, $V_e$ is the exit velocity of the engine, $P_e$ is the exit pressure of the engine, $P_{atm}$ is the atmospheric pressure, and $A_e$ is the area of the nozzle exit. For a given propulsion system, these parameters are usually specified or can be easily derived, although we will not do so here. See \cite{noauthor_chemical_nodate} or the propulsion team for more details.
+Where $\dot{m}$ is the mass flow rate of the engine, $V_e$ is the exit velocity of the engine, $P_e$ is the exit pressure of the engine, $P_{atm}$ is the atmospheric pressure, and $A_e$ is the area of the nozzle exit. For a given propulsion system, these parameters are usually specified or can be easily derived, although we will not do so here. See \cite{dasilva_chemical_2023} or the propulsion team for more details.
 
 Here, we introduce the use of the rotation matrix to convert between different frames. MATLAB allows for the creation of a rotation matrix with the input of a \gls{quaternion} using the "quat2dcm" function. Using this, we can perform frame conversion to and from the body and earth frame. We show this below in Listing \ref{code:RotationMatrix}:
 \lstinputlisting[style=Matlab-editor, caption = Rotation Matrix]{6DoF Explanation Scripts/RotationMatrix.m}\label{code:RotationMatrix}
@@ -3046,7 +3052,7 @@ So, taking all of these together, we have the derivative of our \gls{state vecto
 \subsection{6-DoF Code}
 We take this integrated \gls{state vector} along with the initial conditions and integrate them using "ode45". The two most important scripts in this process are the "MainRK4.m" and "RK4Integrator.m" MATLAB scripts. Because these MATLAB scripts are quite long, we have chosen not to include them in the appendix. Instead, a link to the GitHub is given where the scripts can be found.
 
-The full code can be found at: \cite{reynolds_hudsonreynoldsflight-dynamics-bible_2025} or in the appendix in \ref{sec:6DoF Code}.
+The full code can be found at: \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or in the appendix in \ref{sec:6DoF Code}.
 \section{Validation of 6-DoF}
 The validation of our 6-\gls{dof} model is achieved through modeling other rocket systems that have flown to check the validity of our model and modeling other physical phenomena. Validation can range from very simple to far more complex depending on the system that is being validated. For us, validation falls under two main categories:
 \begin{enumerate}
@@ -3172,7 +3178,7 @@ We also have a script to display the results of this in a nice animation:
 
 \lstinputlisting[style=Matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
 \subsection{6-DoF Code}\label{sec:6DoF Code}
-The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_2025} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this pdf and .tex document:
+The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this .pdf and .tex document:
 
 \begin{figure}[ht]
     \centering
