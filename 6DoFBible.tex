@@ -583,7 +583,7 @@ The second most important frame of reference is the \gls{body frame}. Typically 
     \label{fig:BodyFrameTypical}
 \end{figure}
 
-For our current model, the \gls{body frame} of our 6-\gls{dof} has its origin in the nose of the vehicle. It has the first body basis vector, $\hat{X}$, pointing up along the longitudinal axis of the rocket following standard convention. The second basis vector, $\hat{Y}$, points right due East when on the launch pad, and the third, $\hat{Z}$, points due North on the launch pad. We use the cardinal directions of the launchpad as not only are there no conventional wings on the rocket, but it allows \gls{body frame} to be defined parallel to the corresponding \gls{inertial frame} basis vectors. Note that they won’t remain pointing in these directions as the rocket moves through space, and they may not even begin parallel to the inertial axis to begin with if the rocket launches from a tilt.
+For our current model, the \gls{body frame} of our 6-\gls{dof} has its origin in the nose of the vehicle. It has the first body basis vector, $\hat{X}$, pointing up along the longitudinal axis of the rocket following standard convention. The second basis vector, $\hat{Y}$, points right due East when on the launch pad, and the third, $\hat{Z}$, points due North on the launch pad. We use the cardinal directions of the launchpad as not only are there no conventional wings on the rocket, but it allows the \gls{body frame} to be defined parallel to the corresponding \gls{inertial frame} basis vectors. Note that they won’t remain pointing in these directions as the rocket moves through space, and they may not even begin parallel to the inertial axis to begin with if the rocket launches from a tilt.
 
 \begin{figure}[H]
 \centering
@@ -598,9 +598,10 @@ For our current model, the \gls{body frame} of our 6-\gls{dof} has its origin in
 {
     name=wind frame,
     first = {\textit{wind frame}},
-    description={A reference frame in reference to the direction of freestream velocity, denoted $V_{\infty}$}
-},
-see = {freestream}
+    description={A reference frame in reference to the direction of freestream velocity, denoted $V_{\infty}$},
+    see = {freestream}
+}
+
 
 \newglossaryentry{angle of attack}
 {
@@ -1985,7 +1986,7 @@ Find a suitable set of generalized coordinates to describe this system. Write ou
 ''Quaternions came from Hamilton after his really good work had been done; and, though beautifully ingenious, have been an unmixed evil to those who have touched them in any way, including Clerk Maxwell.''
 \end{chapquote}
 
-Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. In fact, we have dedicated the entirety of Volume II to the theory behind attitude determination and dynamics. Derivations for everything from simple, two-dimensional problems and single-axis rotations to \glspl{quaternion} are included in that book. Following the core purpose of this volume, we will only be describing implementation of attitude dynamics using MATLAB functions. However, we highly recommend you break here to read the entirety of Volume II in order to gain a more definitive understanding what and more importantly why everything is happening with the code in this section.
+Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. In fact, we have dedicated the entirety of Volume II to the theory behind attitude determination and dynamics. Derivations for everything from simple, two-dimensional problems and single-axis rotations to \glspl{quaternion} are included in that book. Following the core purpose of this volume, we will only be describing implementation of attitude dynamics using MATLAB functions. However, we highly recommend you break here to read the entirety of Volume II in order to gain a more definitive understanding of what and more importantly why everything is happening with the code in this section.
 
 
 \section{Euler Angles}\label{sec:Euler Angles}
@@ -1996,15 +1997,18 @@ Attitude Dynamics is the math describing the orientation of a vehicle in space a
     description={A group of three scalar values used to describe the orientation of a body in space}
 }
 
-The first method to express the orientation of a vehicle is through the use of \gls{Euler angles}. These form the basis for our understanding of attitude, being the more intuitive method. As stated previously, the theory and derivations for everything you will use here is included in Volume II, which by now, we hope you've already seen! If you haven't, shame on you, but don't worry, we'll provide some basic definitions here to give you the bare bones of what is needed in the function calls.
+The first method to express the orientation of a vehicle is through the use of \gls{Euler angles}. These form the basis for our understanding of attitude, being the more intuitive method. As stated previously, the theory and derivations for everything you will use here is included in Volume II, which by now, we hope you've already seen! If you haven't, don't worry, we will provide some basic definitions here to give you the bare bones of what is needed in the function calls to help you and your code be successful.
 
-First and most important, we use the 3-2-1 rotation sequence to determine \gls{Euler angles}. This means we have an angle $\phi$ to describe the rotation about the $x$-axis, an angle $\theta$ to describe the rotation about the $y$-axis, and an angle $\psi$ to describe the rotation about the $z$-axis. The order we do these rotations in is Z-Y-X, or $\psi$-$\theta$-$\phi$. 
+First and most important, we use the 3-2-1 rotation sequence to determine \gls{Euler angles}. This means we have an angle $\phi$ to describe the rotation about the $x$-axis, an angle $\theta$ to describe the rotation about the $y$-axis, and an angle $\psi$ to describe the rotation about the $z$-axis. The order in which we complete these rotations is Z-Y-X, or $\psi$-$\theta$-$\phi$. 
 
 \subsection{The Direction Cosine Matrix}\label{sec:TheDCM}
 
-To start, we want a way to easily convert any arbitrary vector from being described with one reference frame to another. We do this through the use of the Direction Cosine Matrix, or DCM. This allows us to take this matrix and multiply it with our vector in the \gls{inertial frame} and obtain an identical vector in the \gls{body frame}.
+To start, we want a way to easily convert any arbitrary vector from being described using one reference frame to another. We do this through the use of the Direction Cosine Matrix, or DCM. This allows us to take this matrix and multiply it with our vector in the \gls{inertial frame} and obtain an identical vector expressed using the \gls{body frame} as shown:
+\begin{equation}
+    ^b\vec{r}=A_{3,2,1}\ ^i\vec{r}
+\end{equation}
 
-In MATLAB, there exists a function - "angle2dcm" - that creates this for us! By inputting the scalar values of our \gls{Euler angles} (in radians!) as well as the chosen rotation sequence, MATLAB creates the DCM as an output, allowing us to multiply this matrix with our inertial vector we want to express in the \gls{body frame}. Note the function allows an input of any number of rotations to find DCM's for. This is a fun little aspect of the function; however, it is irrelevant for our use as we input the new \gls{Euler angles} every time-step during our "ode45" integration scheme. One additional thing to consider: the "angle2dcm" function returns the DCM as a transform from the inertial to the \gls{body frame}. If we were to transform a vector from the body to \gls{inertial frame}, we would need to take the transpose of the given matrix. Further reading on this function can be seen at \cite{}
+In MATLAB, there exists a function - "angle2dcm" - that creates this for us!\footnote{Note there exists another similar function - eul2rotm - that also creates a DCM; however, this function converts a vector from the body frame to the inertial frame.} By inputting the scalar values of our \gls{Euler angles} (in radians!) as well as the chosen rotation sequence, MATLAB creates the DCM as an output, allowing us to pre-multiply this matrix with our inertial vector we want to express in the \gls{body frame}. Note the function allows an input of any number of rotations to find DCM's for. This is a fun little aspect of the function; however, it is irrelevant for our use as we input the new \gls{Euler angles} every time-step during our "ode45" integration scheme. One additional thing to consider: the "angle2dcm" function returns the DCM as a transform from the inertial to the \gls{body frame}. If we were to transform a vector from the body to \gls{inertial frame}, we would need to take the transpose of the given matrix. Further reading on this function can be seen in Mathwork's own documentation in Source \cite{noauthor_eul2quat_nodate}.
 
 \subsection{Relating Euler Rates with Angular Velocity}
 
@@ -2015,7 +2019,7 @@ In MATLAB, there exists a function - "angle2dcm" - that creates this for us! By 
     description={A way to describe rotational rates with orientation for 3-dimensional rotations, they are denoted by the dot of the corresponding Euler angle: ($\dot{\psi},\dot{\theta},\dot{\phi}$)}
 }
 
-One thing you might recall from reading Volume II is that integrating the angular velocities in a 3-dimensional case DOES NOT return the \gls{Euler angles}. This job is left to \gls{Euler rates}, something else we would like to include in our code. All you brilliant readers will also recall the existence of what we affectionately call the ''B'' matrix that allows us to use \gls{Euler angles} to express a relation between \gls{Euler rates} and angular velocities. Unfortunately, there doesn't exist a MATLAB function that can calculate the ''B'' matrix, leaving us to our own devices to construct one from scratch. Luckily, we already did the heavy lifting, meaning we can copy the matrix derived in Volume II straight into our MATLAB script. That matrix is as follows, for quick reference:
+One thing you might recall if you have read Volume II is that integrating the angular velocities in a 3-dimensional case DOES NOT return the \gls{Euler angles}. Giving a quick reason as to why: angular velocity is expressed exclusively with respect to the body frame, while our Euler angles are defined about their corresponding intermediate frame in the rotation sequence. Meaning, this job is left to \gls{Euler rates}, something else we need to include in the code. All you brilliant readers will also recall the existence of what we affectionately call the ''B'' matrix that allows us to use \gls{Euler angles} to express a relation between \gls{Euler rates} and angular velocities. Unfortunately, there doesn't exist a MATLAB function that can calculate the ''B'' matrix, leaving us to our own devices to construct one from scratch. Luckily, we already did the heavy lifting, meaning we can copy the matrix derived in Volume II straight into our MATLAB script. That matrix is as follows, for quick reference:
 \begin{gather}
     \color{blue}\boxed{\color{black}B=\begin{bmatrix}
     1&tan(\theta)sin(\phi)&tan(\theta)cos(\phi)\\
@@ -2026,7 +2030,7 @@ One thing you might recall from reading Volume II is that integrating the angula
 
 \subsection{Euler Angle MATLAB Function Example}\label{sec:EulerDynamicsMATLABExample}
 
-Putting it all together, we're going to write a simple code using \gls{Euler angles} to practice using MATLAB's built in functions. Say we have a very important vector we want to express in the \gls{body frame} and another important vector we want to express in the \gls{inertial frame}: gravity and thrust respectively. If our rocket weighs 100 Newtons and outupts a thrust of 1000 Newtons, we know this appears in vector notation as: $-100\hat{x}$ and $-1000\hat{X}$. Consider a moment in time, when - using the 3-2-1 rotation sequence - our vehicle is at a roll angle of 2.71 radians and a yaw and pitch angles of 0.2 radians, where we want to convert our gravity vector from the \gls{inertial frame} to the \gls{body frame}. In addition, with knowledge that the angular velocity at that instant is $\begin{bmatrix}
+Putting it all together, we're going to write a simple code using \gls{Euler angles} to practice using MATLAB's built in functions. Say we have a very important vector we want to express in the \gls{body frame} and another important vector we want to express in the \gls{inertial frame}: gravity and thrust respectively. If our rocket weighs 100 Newtons and outputs a thrust of 1000 Newtons, we know this appears in vector notation as: $-100\hat{x}$ and $-1000\hat{X}$ respectively. Consider a moment in time, when - using the 3-2-1 rotation sequence - our vehicle is at a roll angle of 2.71 radians and a yaw and pitch angles of 0.2 radians, where we want to convert our gravity vector from the \gls{inertial frame} to the \gls{body frame}. In addition, with knowledge that the angular velocity at that instant is $\begin{bmatrix}
     2.5&0.1&0.1
 \end{bmatrix}^T$, we can also find the \gls{Euler rates} of the system. The following code listing quickly runs through the process, with sufficient commentary within the script explaining every \gls{action} taken.
 
@@ -2043,7 +2047,7 @@ Our results come out to be the following, with the gravity force expressed in th
     \end{bmatrix}
 \end{equation}
 
-At this point, we would use our \gls{numerical int} scheme to approximate the next timestep's \gls{Euler angles} using the \gls{Euler rates} we just found. We won't do that here, but you can see the implementation in the 6DoF itself or the Dzhanibekov example!
+At this point, we would use our \gls{numerical int} scheme to approximate the next timestep's \gls{Euler angles} using the \gls{Euler rates} we just found. We won't do that here, but you can see a similar implementation in the 6DoF itself or the Dzhanibekov example!
 
 
 \section{Quaternions}\label{sec:quaternions}
@@ -2061,13 +2065,13 @@ At this point, we would use our \gls{numerical int} scheme to approximate the ne
     description={A matrix which obeys the property that every $a_{ij}=-a_{ji}$. This can be interpreted to mean every term across the diagonal is equal in magnitude, but opposite in sign. Sometimes called an anti-symmetric matrix or anti-metric matrix}
 }
 
-To match industry/academia standards, our 6DoF model uses \glspl{quaternion}. The use of hyper-imaginary numbers allows us to avoid losing a degree of freedom at a specific orientation in our rocket (called gimbal lock), making the simulation more robust. Just as with \gls{Euler angles}, MATLAB has an extensive suite of functions that make the implementation of \glspl{quaternion} just as easy. 
+To match industry/academia standards and improve the robustness of our simulation, our 6DoF model uses \glspl{quaternion}. The use of hyper-imaginary numbers allows us to avoid losing a degree of freedom at a specific orientation in our rocket (called gimbal lock), which is what makes the simulation more robust. Just as with \gls{Euler angles}, MATLAB has an extensive suite of functions that make the implementation of \glspl{quaternion} just as easy. 
 
 \subsection{Quaternion Rotation Matrix}
 
-We're going to combine a few initial steps of the code surrounding \gls{quaternion} attitude dynamics. To start, we want to convert from \gls{Euler angles} to \glspl{quaternion}, as \gls{Euler angles} are more intuitive to define and initialize the simulation. MATLAB's function "eul2quat" does just that. By inputting the \gls{Euler angles} in the appropriate sequence, along with the chosen rotation sequence (match the \gls{Euler angles} with the order), the function returns the corresponding \gls{quaternion} vector. 
+We're going to combine a few initial steps of the code surrounding \gls{quaternion} attitude dynamics. To start, we want to convert from \gls{Euler angles} to \glspl{quaternion}, as \gls{Euler angles} are more intuitive to define and initialize in the simulation. MATLAB's function "eul2quat" does just that. By inputting the \gls{Euler angles} in the appropriate sequence, along with the chosen rotation sequence (make sure to match the \gls{Euler angles} with the order), the function returns the corresponding \gls{quaternion} vector. Mathworks documentation for this function can be found in Source \cite{noauthor_eul2quat_nodate}.
 
-Having initialized our \gls{quaternion} vector, we can now use another MATLAB script to construct our DCM. The function "quat2dcm" takes the \gls{quaternion} as an input, and returns the DCM at that instant. Incredibly simple and incredibly useful; however, we must once again consider that this DCM converts only from the \gls{inertial frame} to the \gls{body frame}. Meaning just as we had done with \gls{Euler angles}, it is necessary to take the transpose (inverse) of the matrix if we want to transform from the body to the \gls{inertial frame}.
+Having initialized our \gls{quaternion} vector, we can now use another MATLAB function to construct our DCM. The function "quat2dcm" takes the \gls{quaternion} as an input, and returns the DCM at that instant. Incredibly simple and incredibly useful; however, we must once again consider that this DCM converts only from the \gls{inertial frame} to the \gls{body frame}. Meaning just as we had done with \gls{Euler angles}, it is necessary to take the transpose (inverse) of the matrix if we want to transform from the body to the \gls{inertial frame}. The Mathworks documentation for the "quat2dcm" function can be found in Source
 
 
 \subsection{Quaternion Rates}\label{sec: quaternion rates}
@@ -2200,7 +2204,7 @@ $$\begin{bmatrix}
 \begin{bmatrix}
     0\\0\\0
 \end{bmatrix}$$
-Using the command "eul2quat" with a specification of "XYZ" for the frame, the initial \gls{quaternion} vector is given as:
+Using the command "eul2quat" with a specification of "ZYX" for the frame, the initial \gls{quaternion} vector is given as:
 $$\vec{q}_0=\begin{bmatrix}
     1\\0\\0\\0
 \end{bmatrix}$$
@@ -2250,10 +2254,10 @@ Our initialization of the \gls{state vector} and all of the basic setup in conta
 \section{Key Ideas}
 \begin{enumerate}
     \item Read Volume II to learn more about the theory behind MATLAB's functions
-    \item Rotations can be encoded in a variety of ways, but the most useful and compact encoding of rotations involves the use of complex numbers.
+    \item Rotations can be encoded in a variety of ways, but the most useful, compact, and robust method of encoding rotations involves the use of complex numbers.
     \item The use of MATLAB's built in suite of functions is incredibly useful in the implementation of attitude dynamics in 6DoF modeling, and rotational simulations in general.
     \item Be sure to keep your chosen rotation sequence straight when utilizing MATLAB's functions, and be sure to have a thorough understanding of how these functions work!
-    \item No matter which style of describing rotations we choose - \gls{Euler angles} or \glspl{quaternion} - they both result in identical answers.
+    \item No matter which style of describing rotations we choose - \gls{Euler angles} or \glspl{quaternion} - they both result in identical answers barring any singularities generated with the former.
 \end{enumerate}
 \section{Further Reading}
 Volume II of this text contains most of the information pertaining to attitude dynamics. For reference until Volume II is released, we find the website \cite{narayan_how_2017} especially useful for understanding quaternions.
