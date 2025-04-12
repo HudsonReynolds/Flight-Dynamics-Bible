@@ -1,14 +1,14 @@
 % Title: GravityToBodyEuler
 % Author: Preston Wright
-% Example converting a gravity force from the inertial to body frame and thrust force from body to inertail frame using Euler angles
+% Example converting a gravity force from the inertial to body frame and thrust force from body to inertial frame using Euler angles
 
-% Start with your initializations. Every angle should be in radians, and our force is in Newtons
-phi = 2.71;
-theta = 0.2;
-psi = 0.2;
-gravityInertial = [-100;0;0];
-thrustBody = [-1000;0;0];
-omega = [2.5;0.1;0.1];
+% Start with your initializations. Every angle should be in radians, and our forces are in Newtons
+phi = 2.71;                     % x-axis angle [rad]
+theta = 0.2;                    % y-axis angle [rad]
+psi = 0.2;                      % z-axis angle [rad]
+gravityInertial = [-100;0;0];   % inertailly expressed gravity force [N]
+thrustBody = [-1000;0;0];       % body expressed thrust force [N]
+omega = [2.5;0.1;0.1];          % angular velocity [rad/s]
 bMatrix = [1, tan(theta)*sin(phi), tan(theta)*cos(phi); ...
            0,       cos(phi),         -sin(phi); ...
            0, sin(phi)/cos(theta), cos(phi)/cos(theta)];
@@ -20,5 +20,5 @@ DCM = angle2dcm(psi,theta,phi,"ZYX");
 gravityBody = DCM*gravityInertial;
 thrustInertial = (DCM')*thrustBody;
 
-% We now want to multiply our b matrix by the angular velocity vector to get the Euler rate
+% We now want to multiply our b matrix by the angular velocity vector to get the Euler rates
 eulerRate = bMatrix*omega;
