@@ -17,6 +17,9 @@ bMatrixQuat = [0, -omega(1), -omega(2), -omega(3); ...
 % Before moving on to calculating our rotation matrix, we want to convert the Euler angles to quaternions like so (remember our rotation order!):
 quat = eul2quat([psi,theta,phi],"ZYX");
 
+% Here we will also get into the habit of normalizing any quaternions we compute, as normalized quaternions (versors) are the only way to express quaternion encoded rotations
+quat = quat/norm(quat);
+
 % We can now call the funciton to find our rotation matrix
 quatDCM = quat2dcm(quat);
 
@@ -24,7 +27,7 @@ quatDCM = quat2dcm(quat);
 gravityBodyQuat = quatDCM*gravityInertial;
 thrustInertialQuat = (quatDCM')*thrustBody;
 
-% To prepare for matrix multiplication in the following step, we need to transpose the given quat vector to make it a column vector
+% To prepare for matrix multiplication in the following step, we need to transpose the given quaternion vector to make it a column vector
 quat = quat';
 
 % Calculating our quaternion rate using the known formula appears as follows:
