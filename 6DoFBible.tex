@@ -29,6 +29,7 @@
 \usepackage{csquotes}
 \usepackage{biblatex}
 \addbibresource{references.bib}
+\usepackage{endnotes}
 
 % If you want to break on URL numbers
 \setcounter{biburlnumpenalty}{9500}
@@ -40,6 +41,35 @@
 \usepackage{float}
 \usepackage{gensymb}
 \usepackage{amsfonts}
+
+\def\exampletext{Example} % If English
+
+\NewDocumentEnvironment{testexample}{ O{} }
+{
+\colorlet{colexam}{red!55!black} % Global example color
+\newtcolorbox[use counter=testexample]{testexamplebox}{%
+    % Example Frame Start
+    empty,% Empty previously set parameters
+    title={\exampletext: #1},% use \thetcbcounter to access the testexample counter text
+    % Attaching a box requires an overlay
+    attach boxed title to top left,
+       % Ensures proper line breaking in longer titles
+       minipage boxed title,
+    % (boxed title style requires an overlay)
+    boxed title style={empty,size=minimal,toprule=0pt,top=4pt,left=3mm,overlay={}},
+    coltitle=colexam,fonttitle=\bfseries,
+    before=\par\medskip\noindent,parbox=false,boxsep=0pt,left=3mm,right=0mm,top=2pt,breakable,pad at break=0mm,
+       before upper=\csname @totalleftmargin\endcsname0pt, % Use instead of parbox=true. This ensures parskip is inherited by box.
+    % Handles box when it exists on one page only
+    overlay unbroken={\draw[colexam,line width=.5pt] ([xshift=-0pt]title.north west) -- ([xshift=-0pt]frame.south west); },
+    % Handles multipage box: first page
+    overlay first={\draw[colexam,line width=.5pt] ([xshift=-0pt]title.north west) -- ([xshift=-0pt]frame.south west); },
+    % Handles multipage box: middle page
+    overlay middle={\draw[colexam,line width=.5pt] ([xshift=-0pt]frame.north west) -- ([xshift=-0pt]frame.south west); },
+    % Handles multipage box: last page
+    overlay last={\draw[colexam,line width=.5pt] ([xshift=-0pt]frame.north west) -- ([xshift=-0pt]frame.south west); },%
+    }
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Source: http://en.wikibooks.org/wiki/LaTeX/Hyperlinks %
@@ -145,6 +175,9 @@
   {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
 \makeatother
 
+%% environment for examples:
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First page of book which contains 'stuff' like: %
@@ -200,19 +233,19 @@
 \chapter*{Preface}\label{sec:preface}
 Preston and I began working on the Flight Dynamics sub-team in the fall of 2023. From May 2024 to January 2025, we focused our efforts on creating a 6-\gls{dof} model from scratch. During this time, we learned a lot about the mathematics and physics involved in creating such a model. We were often faced with frustration with different conventions and poor explanations of certain topics, all of which were exacerbated by the difficulty of what we were learning. This made much of the material intractable. In this document, we hope to provide detailed explanations of all the necessary concepts in one place to make this journey easier for those who may need it in the future. 
 
-Furthermore, we hope that this document can be used by those outside the realm of flight dynamics to better understand the methodologies and inner workings of a 6-\gls{dof} model. Often, we have seen that a 6-\gls{dof} model is treated as a ‘black box’, where inputs go in and outputs come out. We hope that this document can provide a level of understanding adequate to allow greater collaboration between those working within and outside of flight dynamics.
+Furthermore, we hope that this document can be used by those outside the realm of flight dynamics to better understand the methodologies and inner workings of a 6-\gls{dof} model. Often, we have seen that a 6-\gls{dof} model is treated as a ‘black box’, where inputs go in and outputs come out. We hope that this document can provide a level of understanding adequate enough to allow greater collaboration between those working within and outside of flight dynamics.
 
-In this document, we will be using excerpts of MATLAB script in some examples (code less than a page is included inline, and longer code is in the appendix) but our hope is that our explanations are thorough enough to facilitate the creation of a 6-\gls{dof} in any coding language. MATLAB facilitates the use of quite short code because of the number of built-in functions, but we include derivations for most of these equations or sources describing these derivations.
+In this document, we will be using excerpts of MATLAB script in some examples (code less than a page is included inline and longer code is in the Appendix) but our hope is that our explanations are thorough enough to facilitate the creation of a 6-\gls{dof} in any coding language. MATLAB facilitates the use of quite short code because of the number of built-in functions, but we include derivations for most of these equations or sources describing these derivations.
 
 To use this document to its fullest extent, we recommend that you write scripts as you learn and use this document for reference and as a guide as you build or improve your own models. Doing the practice problems in each chapter will also greatly aid in your understanding.
 
-In this first volume, we cover primarily the translational dynamics and basics of rotational dynamics needed to set up a 6-\gls{dof} model. We mainly focus on the implementation of these equations in MATLAB and best practices. The methods of deriving equations of motions are also heavily discussed for their importance. These are, in our opinion, the fundamental things that need to be understood before working on other aspects of a flight dynamics model. As such, these subjects comprise a large majority of both the effort and the length of the first volume.
+In this first volume, we cover primarily the translational dynamics and the basics of rotational dynamics needed to set up a 6-\gls{dof} model. We mainly focus on the implementation of these equations in MATLAB and best practices. The methods of deriving equations of motion are also heavily discussed for their importance. These are, in our opinion, the fundamental things that need to be understood before working on other aspects of a flight dynamics model. As such, these subjects comprise the large majority of both the effort and the length of the first volume.
 
 Because of the depth of the subjects described here, we have decided to cover most of attitude dynamics in a separate volume. In this volume, we mostly describe how attitude dynamics can be implemented in MATLAB. Volume II contains most of the theory about attitude dynamics. This second volume is especially useful for the mathematically inclined reader or those who want to implement attitude dynamics math in another programming language.
 
 As a note, while our work on flight dynamics has mainly focused on modeling rockets, we hope that this document can be used more widely for a variety of 3-DoF and 6-DoF models. As such, we have attempted to include content that is useful for other systems, such as aircraft modeling and orbital dynamics, insofar as we have experience in these areas. That being said, to limit the scope of this document, we have decided to explore these concepts in the context of rocket modeling, and hope that our explanations provide enough clarity for the intrepid reader to explore modeling in other domains.
 
-Some other areas are also covered in this document but are curtailed because Preston and I do not have the experience to give full authority on these subjects. However, as we learn more, this document is growing every day. In future editions, we hope to expand and add some of these other sections, especially those related to aerodynamics and control theory, to better serve those in the future who may hope to recreate the work we have done here.
+Some other areas are also covered in this document but are curtailed because Preston and I do not have the experience to give full authority on these subjects. However, as we learn more, this document is growing every day. In future volumes, we hope to expand and add some of these other sections, especially those related to aerodynamics, energy methods, and control theory, to better serve those in the future who may hope to recreate the work we have done here.
 
 \section*{Acknowledgments}
 \begin{itemize}
@@ -357,7 +390,7 @@ Each of the previously mentioned sections will be discussed in more detail throu
 \begin{chapquote}{Isaac Newton}
 ''I can calculate the motion of heavenly bodies, but not the madness of people.''
 \end{chapquote}
-The first step when approaching any physics problem of this type is to consider the Newtonian dynamics of the system. In our case, we define Newtonian dynamics as the translational dynamics of the system as well as the moments acting on the system. This differs from particle dynamics because we are considering a rigid body which can exhibit rotation. The exploration of this rotation will be explored in much more detail in Section \ref{sec:energy methods}, Section \ref{sec:attitude dynamics}, and Volume II. 
+The first step when approaching any physics problem of this type is to consider the Newtonian dynamics of the system. In our case, we define Newtonian dynamics as the translational dynamics of the system as well as the moments acting on the system. This differs from particle dynamics because we are considering a rigid body which can exhibit rotation. The exploration of this rotation will be explored in much more detail in Chapter \ref{sec:energy methods}, Chapter \ref{sec:attitude dynamics}, and Volume II. 
 \section{The 1-DoF Case}\label{sec: The 1DoF Case}
 To begin our exploration of Newtonian dynamics, we will return to the example of the 1-\gls{dof} which we mentioned earlier. Our goal with this is to use a simple example that you are familiar with from high school physics and bring it up to speed with the terminology and techniques we will use for more complex analysis.
 
@@ -411,7 +444,7 @@ In Figure \ref{fig: 1DoF forces} below, we show an example of a very simple 1-\g
 
 In Figure \ref{fig: 1DoF forces}, a total of three forces are shown, all of which act along the $\hat{y}$-direction. The colinearity of all these forces is what makes this a 1-\gls{dof} model. The three forces shown are the thrust force, the drag force, and the gravity force.
 
-Following what you may do in an introductory physics class, we will describe each of these forces via their functional form. These are described in Table \ref{force table}
+Following what you may do in an introductory physics class, we will describe each of these forces via their functional form. These are described in Table \ref{force table}:
 $$
 \begin{array}{cc}\label{force table}
     \mathrm{\textbf{Force}}&\mathrm{\textbf{Functional Form}}\\
@@ -443,7 +476,7 @@ $$
     }
 The notation here is important to understand. In future AAE classes at Purdue, this is likely the notation that you will see. Terms with the subscript $\infty$ denote \gls{freestream} quantities, those that are freely flowing far away from the body of interest. Also of note is the unit step function, $u(t-t_b)$, which is a function which has value zero until reaching time $t_b$, where it thereafter equals one. The quantity  $\rho$ refers to the density of the fluid, and $S$ to the \gls{ref area}. The \gls{drag coeff} is $C_D$, a term which encapsulates the very complex nature of the fluid flow around an object. Calculating the value of $C_D$ will be explored more deeply in later sections of this document. For now, we may assume a constant value.
 
-It is helpful to think about these quantities as vectors, because we can add them together to achieve a resultant.\footnote{More formally, we define this as a linear space, where multiplicative and additive properties are preserved. This formal definition allows us to apply this to any arbitrarily number of dimensions. } In the 1-dimensional case this is quite trivial since all vectors along the $\hat{y}$ unit vector, but this will become increasingly important as we move to higher dimensions.
+It is helpful to think about these quantities as vectors, because we can add them together to achieve a resultant.\footnote{More formally, we define this as a linear space, where multiplicative and additive properties are preserved. This formal definition allows us to apply this to any arbitrarily number of dimensions.} In the 1-dimensional case this is quite trivial since all vectors lie along the $\hat{y}$ unit vector, but this will become increasingly important as we move to higher dimensions.
 
 \subsection{Numerical Integration in the 1-DoF}\label{sec: Numerical Integration in the 1DoF}
 \newacronym{eom}{EOM}{Equation of Motion}
@@ -491,7 +524,7 @@ Now, we will apply Euler’s method to solve the problem. We will use the follow
 
 We follow the same process for the integration of acceleration to find the velocity. Of note, we will use the previous value of $\vec{v}$ in the computation of the new acceleration. Note that a more formal definition of Euler’s method is given in Section \ref{sec:euler integration}.
 
-We also show this example in MATLAB Script \ref{Script 1} below. Note that $\frac{1}{2}\rho_{\infty}SC_D$ is called $k$ in the script for simplicity. This simplification assumes that $\rho_{\infty}$ and the $C_D$ are constant, which we will later see is a quite poor assumption but is okay for a first approximation.
+We also show this Euler Integrator example in MATLAB Script \ref{Script 1} below. Note that $\frac{1}{2}\rho_{\infty}SC_D$ is called $k$ in the script for simplicity. This simplification assumes that $\rho_{\infty}$ and the $C_D$ are constant, which we will later see is a quite poor assumption but is okay for a first approximation.
 
 \lstset{style=mystyle}
 
@@ -511,7 +544,7 @@ Before attempting to describe movement in multiple dimensions, we should first d
     description={A set of basis vectors that are mutually orthogonal to each other in a vector space and have unit length. We mostly refer to orthonormal vectors in $\mathbb{R}^3$ space}
 }
 
-A frame of reference is an \gls{orthonormal} set within three-dimensional space. The \gls{orthonormal} nature of the basis vectors that create every frame of reference allows for any other vector in 3-dimensional space to be described as a linear combination of those three basis vectors (hence why we call it a basis for 3-space). This tool becomes incredibly useful within the study of Newtonian and Attitude Dynamics, as every arbitrary vector can be broken down into three set ''scalar'' directions. Naturally, the question arises of how we determine which set directions to utilize, and so we will be discussing a few frames of reference critical to the creation of a 6-\gls{dof} and Aerospace engineering as a whole.
+A frame of reference is an \gls{orthonormal} set within three-dimensional space. The \gls{orthonormal} nature of the basis vectors that create every frame of reference allows for any other vector in 3-dimensional space to be described as a linear combination of those three basis vectors (hence why we call it a basis for 3-space). This tool becomes incredibly useful within the study of Newtonian and Attitude Dynamics, as every arbitrary vector can be broken down into three set ''scalar'' directions. Naturally, the question arises of how we determine which set directions to utilize, and so we will be discussing a few frames of reference critical to the creation of a 6-\gls{dof} and aerospace engineering as a whole.
 \subsection{The Inertial Frame}
 
 \newglossaryentry{inertial frame}
@@ -521,7 +554,7 @@ A frame of reference is an \gls{orthonormal} set within three-dimensional space.
     description={A reference frame that is static and experiences no accelerations. We use the Earth's surface as the reference frame for our rocket}
 }
 
-The first and most important frame of reference is the \gls{inertial frame}. Typically denoted by $e$ or $i$, or in our case $(\hat{x},\hat{y},\hat{z})$, this motionless frame is the one that allows for the use of Newton’s second law in the first place, as the frame itself has ''zero'' translational and rotational movement.\footnote{An \gls{inertial frame} can have some constant velocity and still be inertial. Of course, the earth has some velocity around the sun and with respect to the distant stars which we can approximate as constant for our time scales and thus ignore.} We say “zero” as this motion must be negligible in relation to the vehicle of interest. For example, this specific 6-\gls{dof} sets the \gls{inertial frame} to be anchored within the Earth on the launch pad. And while we are well aware the Earth is moving and rotating through space at a non-zero rate, this motion is negligible relative to the motion of our vehicle which remains close to Earth within the atmosphere for a short period of time. Therefore, we can assume that the Earth acts appropriately as an \gls{inertial frame} of reference, and Newton’s second law is valid for this frame. 
+The first and most important frame of reference is the \gls{inertial frame}. Typically denoted by $e$ or $i$, or in our case $(\hat{x},\hat{y},\hat{z})$, this motionless frame is the one that allows for the use of Newton’s second law in the first place, as the frame itself has ''zero'' translational and rotational movement.\footnote{An \gls{inertial frame} can have some constant velocity and still be inertial. Of course, the earth has some velocity around the sun and with respect to the distant stars which we can approximate as constant for our time scales and thus ignore.} We say “zero” as this motion must be negligible in relation to the vehicle of interest. For example, our specific 6-\gls{dof} sets the \gls{inertial frame} to be anchored within the Earth on the launch pad. And while we are well aware the Earth is moving and rotating through space at a non-zero rate, this motion is negligible relative to the motion of our vehicle which remains close to Earth within the atmosphere for a short period of time. Therefore, we can assume that the Earth acts appropriately as an \gls{inertial frame} of reference, and Newton’s second law is valid for this frame. 
 
 \newacronym{rhr}{RHR}{right hand rule}
 
@@ -702,7 +735,7 @@ We present below a modified version of the 1-\gls{dof} below in full 3D in Figur
 % Text Node
 \draw (371,250.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{D}$};
 % Text Node
-\draw (301,30.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{T}$};
+\draw (301,25) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{T}$};
 % Text Node
 \draw (351,142.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{L}$};
 % Text Node
@@ -726,7 +759,7 @@ To do this, we use the fact that the dot product is related to the cosine of the
 
 The next new quantity is $\vec{F}_L$, the force of lift. The force of lift is always perpendicular in direction to $\vec{V}_{\infty}$. Knowing this, we can find the direction of the force of lift as:
 \begin{equation}\label{eq:Lift}
-    \hat{L}=\frac{(\hat{V}_{\infty} \times \hat{X}) \times \hat{V}_{\infty}}{||(\hat{V}_{\infty} \times \hat{X}) \times \hat{V}_{\infty}||}
+    \hat{L}=\frac{(\vec{V}_{\infty} \times \hat{X}) \times \vec{V}_{\infty}}{||(\vec{V}_{\infty} \times \hat{X}) \times \vec{V}_{\infty}||}
 \end{equation}
 Here, the cross product is used because it generates a vector orthogonal to the two input vectors. This is exactly the property that we need when defining lift.
 
@@ -1008,7 +1041,8 @@ These sets of equations are especially powerful because they allows us to numeri
 \section{Further Reading}
 \newacronym{bke}{BKE}{Basic Kinematic Equation}
 
-We assume that most readers are broadly familiar with the topics discussed in AAE 203. Understanding the application of the \gls{bke} (otherwise known as derivative transport theorem) is fundamental to the understanding of dynamics. More information about basic dynamics in general can be found in \cite{kasdin_engineering_2011}. For Newtonian dynamics, refer to Chapter 1 and 2. Euler rotation equations are discussed in Chapter 4. This book uses different notation but can help solidify this knowledge.
+We assume that most readers are broadly familiar with the topics discussed in AAE 203. Understanding the application of the \gls{bke} (otherwise known as derivative transport theorem) is fundamental to the understanding of dynamics. More information about basic dynamics in general can be found in \cite{kasdin_engineering_2011}. For Newtonian dynamics, refer to Chapter 1 and 2. Euler rotation equations are discussed in Chapter 4. This book uses different notation (notably, $\vec{r}^{\ op}$ is normally denoted as $\vec{r}_{p/o}$) but can help solidify this knowledge.
+
 
 \section{Practice Problems}
 \begin{enumerate}
@@ -1572,6 +1606,8 @@ The number of \glspl{holonomic const}, $K$, will change the number of generalize
 \color{blue}\boxed{\color{black}\mathcal{M}=3N-K}\color{black}
 \end{gather}
 The quantity $\mathcal{M}$ is the number of \gls{dof}. However, this is the number of \gls{dof} for the whole system, which is why it can exceed 6 in some cases!
+
+
 \subsubsection{Constraint Example}
 Suppose we have a single particle that is constrained to motion along a path in the $xy$-plane. This path is given by $y=g(x)$. 
 \begin{figure}[ht]
@@ -1752,7 +1788,7 @@ Stated another way, the \gls{Lagrangian} is a function of the generalized positi
 \mathrm{\color{blue}Generalized \ Euler-Lagrange \ Equations}
 \end{gather}
 Next we will show a problem where the rotational invariance and generalized coordinates proves especially useful in simplifying our derivation:
-\subsection{Pendulum EOM Derivation}
+\subsection{Pendulum EOM Example}
 \subsubsection{Problem Set-Up}
 Suppose we have a pendulum of length L. The mass is rigidly attached to the pendulum. A reference frame $a$ that moves with the pendulum is shown in Figure \ref{fig:Pendulum}. The \gls{inertial frame} is also shown. The pendulum moves in only the $xy$ plane.
 \begin{figure}[ht]
@@ -1977,8 +2013,43 @@ Find a suitable set of generalized coordinates to describe this system. Write ou
     \item Use the Euler-Lagrange equation to solve for the form of this curve (You may find the integral form useful!). Plot the result.
 \end{enumerate}
 
-\item You have a pendulum attached to a cart that can move back and forth along the $\hat{x}$-axis. Derive the \gls{eom} of the system using energy methods.
-\item You have a double pendulum with two rigid arms, both of length $l$, which are free to rotate in the $xy$-plane. Find the \gls{eom} for the system.
+\item  Th\'eoden, king of the Rohirrim, is riding his armies north through the Emyn Muil. His horse, Snowmane, trips on a small rock and Th\'eoden begins to lose his balance.
+
+You can model Th\'eoden as a mass on the end of a massless rod and his horse as a cart constrained to motion along the $\hat{x}$-axis. The angle of Th\'eoden from the vertical is denoted as $\theta$. Derive the \gls{eom} of the system using energy methods. The set-up is shown in Figure \ref{fig:Inverted Pendulum}.
+\begin{figure}[ht]
+    \centering
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Shape: Rectangle [id:dp1823165404229382] 
+\draw   (270,160) -- (380,160) -- (380,210) -- (270,210) -- cycle ;
+%Straight Lines [id:da7877170508964265] 
+\draw    (365,85) -- (327.12,179.71) ;
+\draw [shift={(325,185)}, rotate = 111.8] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]      (0, 0) circle [x radius= 6.7, y radius= 6.7]   ;
+\draw [shift={(365,85)}, rotate = 111.8] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]      (0, 0) circle [x radius= 6.7, y radius= 6.7]   ;
+%Straight Lines [id:da5998055377665403] 
+\draw    (365,185) -- (422,185) ;
+\draw [shift={(425,185)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ;
+%Shape: Arc [id:dp2580429075144265] 
+\draw  [draw opacity=0] (325,120) .. controls (325,120) and (325,120) .. (325,120) .. controls (325,120) and (325,120) .. (325,120) .. controls (333.21,120) and (341.07,121.52) .. (348.3,124.3) -- (325,185) -- cycle ; \draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (325,120) .. controls (325,120) and (325,120) .. (325,120) .. controls (325,120) and (325,120) .. (325,120) .. controls (332.18,120) and (339.1,121.17) .. (345.56,123.32) ; \draw [shift={(348.3,124.3)}, rotate = 195.83] [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ; \draw [shift={(325,120)}, rotate = 180] [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][line width=0.75]    (0,5.59) -- (0,-5.59)   ;
+
+% Text Node
+\draw (428,175.4) node [anchor=north west][inner sep=0.75pt]    {$\dot{x}$};
+% Text Node
+\draw (332,97.4) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ]  {$\theta $};
+
+
+\end{tikzpicture}
+
+    \caption{Inverted Pendulum Set-Up}
+    \label{fig:Inverted Pendulum}
+\end{figure}
+\item After his daring stunt with the rock, Th\'eoden runs into Frodo, who is carrying the Phial of Galadriel, which holds the light of E\"arendil's star, which has some of the primordial light from the two trees of Valinor.
+
+The Phial is hanging from a chain. The dynamics of the system can be modelled as a double pendulum with two rigid arms, both of length $L$, which are free to rotate in the $xy$-plane. Find the \gls{eom} for the system.
 
 \end{enumerate}
 \chapter{Computational Attitude Dynamics}\label{sec:attitude dynamics}
@@ -1986,7 +2057,7 @@ Find a suitable set of generalized coordinates to describe this system. Write ou
 ''Quaternions came from Hamilton after his really good work had been done; and, though beautifully ingenious, have been an unmixed evil to those who have touched them in any way, including Clerk Maxwell.''
 \end{chapquote}
 
-Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. In fact, we have dedicated the entirety of Volume II to the theory behind attitude determination and dynamics. Derivations for everything from simple, two-dimensional problems and single-axis rotations to \glspl{quaternion} are included in that book. Following the core purpose of this volume, we will only be describing implementation of attitude dynamics using MATLAB functions. However, we highly recommend you break here to read the entirety of Volume II in order to gain a more definitive understanding of what and more importantly why everything is happening with the code in this section.
+Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. In fact, we have dedicated the entirety of Volume II to the theory behind attitude determination and dynamics. Derivations for everything from simple, two-dimensional problems and single-axis rotations to \glspl{quaternion} are included in that book. Following the core purpose of this volume, we will only be describing implementation of attitude dynamics using MATLAB functions. However, the entirety of Volume II contains the theory necessary to gain a more definitive understanding of what, and more importantly why, everything is happening with the code in this section.\footnote{Volume II is yet to be released, and is currently scheduled to do so late Summer 2025.}
 
 
 \section{Euler Angles}\label{sec:Euler Angles}
@@ -1997,9 +2068,9 @@ Attitude Dynamics is the math describing the orientation of a vehicle in space a
     description={A group of three scalar values used to describe the orientation of a body in space}
 }
 
-The first method to express the orientation of a vehicle is through the use of \gls{Euler angles}. These form the basis for our understanding of attitude, being the more intuitive method. As stated previously, the theory and derivations for everything you will use here is included in Volume II, which by now, we hope you've already seen! If you haven't, don't worry, we will provide some basic definitions here to give you the bare bones of what is needed in the function calls to help you and your code be successful.
+The first method to express the orientation of a vehicle in space is through the use of \gls{Euler angles}. These form the basis for our understanding of attitude determination, being the more intuitive method. As stated previously, the theory and derivations for everything you will use here is included in Volume II! If you haven't read this yet, don't worry, we will provide some basic definitions here to give you the bare bones of what is needed in the function calls to help you and your code be successful.
 
-First and most important, we use the intrinsic 3-2-1 rotation sequence to determine \gls{Euler angles}. This means we have an angle $\phi$ to describe the rotation about the $x$-axis, an angle $\theta$ to describe the rotation about the $y$-axis, and an angle $\psi$ to describe the rotation about the $z$-axis. The order in which we complete these rotations is Z-Y-X, or $\psi$-$\theta$-$\phi$. 
+First and foremost, we use the intrinsic (body-fixed) 3-2-1 rotation sequence to determine \gls{Euler angles}. This means we have an angle $\phi$ to describe the rotation about the $x$-axis, an angle $\theta$ to describe the rotation about the $y$-axis, and an angle $\psi$ to describe the rotation about the $z$-axis. The order in which we complete these rotations is Z-Y-X, or $\psi$-$\theta$-$\phi$.\footnote{These intermediate rotations about the body frame are sequentially and individually applied to our system as we move from frame to frame in our rotation order.} Remembering this rotation sequence is very important, as every function call within your MATLAB script will depend in part on this chosen sequence!
 
 \subsection{The Direction Cosine Matrix}\label{sec:TheDCM}
 
@@ -2008,7 +2079,7 @@ To start, we want a way to easily convert any arbitrary vector from being descri
     ^b\vec{r}=A_{3,2,1}\ ^i\vec{r}
 \end{equation}
 
-In MATLAB, there exists a function - "angle2dcm" - that creates this for us!\footnote{Note there exists another similar function - eul2rotm - that also creates a DCM; however, this function converts a vector from the body frame to the inertial frame.} By inputting the scalar values of our \gls{Euler angles} (in radians!) as well as the chosen rotation sequence, MATLAB creates the DCM as an output, allowing us to pre-multiply this matrix with our inertial vector we want to express in the \gls{body frame}. Note the function allows an input of any number of rotations to find DCM's for. This is a fun little aspect of the function; however, it is irrelevant for our use as we input the new \gls{Euler angles} every time-step during our "ode45" integration scheme. One additional thing to consider: the "angle2dcm" function returns the DCM as a transform from the inertial to the \gls{body frame}. If we were to transform a vector from the body to \gls{inertial frame}, we would need to take the transpose of the given matrix. Further reading on this function can be seen in Mathwork's own documentation in Source \cite{mathworks_eul2quat_nodate}.
+In MATLAB, there exists a function - "angle2dcm" - that creates this for us!\footnote{Note there exists another similar function - eul2rotm - that also creates a DCM; however, this function converts a vector from the body frame to the inertial frame.} By inputting the scalar values of our \gls{Euler angles} (in radians!) as well as the chosen rotation sequence, MATLAB creates the DCM as an output, allowing us to pre-multiply this matrix with our inertial vector we want to express in the \gls{body frame}. Note the function allows an input of any number of rotations to find DCMs for. This is a fun little aspect of the function; however, it is irrelevant for our use as we input our new \gls{Euler angles} every time-step during the "ode45" integration scheme. One additional thing to consider: the "angle2dcm" function returns the DCM as a transform from the \gls{inertial frame} to the \gls{body frame}. If we were to transform a vector from the body to \gls{inertial frame}, we would need to take the inverse - in this case transpose - of the given matrix.\footnote{We are allowed to use the transpose here as the DCM is an orthogonal matrix.} Further reading on this function can be seen in Mathwork's own documentation at Source \cite{mathworks_eul2quat_nodate}.
 
 \subsection{Relating Euler Rates with Angular Velocity}
 
@@ -2019,7 +2090,14 @@ In MATLAB, there exists a function - "angle2dcm" - that creates this for us!\foo
     description={A way to describe rotational rates with orientation for 3-dimensional rotations, they are denoted by the dot of the corresponding Euler angle: ($\dot{\psi},\dot{\theta},\dot{\phi}$)}
 }
 
-One thing you might recall if you have read Volume II is that integrating the angular velocities in a 3-dimensional case DOES NOT return the \gls{Euler angles}. Giving a quick reason as to why: angular velocity is expressed exclusively with respect to the body frame, while our Euler angles are defined about their corresponding intermediate frame in the rotation sequence. Meaning, this job is left to \gls{Euler rates}, something else we need to include in the code. All you brilliant readers will also recall the existence of what we affectionately call the ''B'' matrix that allows us to use \gls{Euler angles} to express a relation between \gls{Euler rates} and angular velocities. Unfortunately, there doesn't exist a MATLAB function that can calculate the ''B'' matrix, leaving us to our own devices to construct one from scratch. Luckily, we already did the heavy lifting, meaning we can copy the matrix derived in Volume II straight into our MATLAB script. That matrix is as follows, for quick reference:
+One thing you might recall if you have read Volume II is that integrating the angular velocities in a 3-dimensional case DOES NOT return the \gls{Euler angles}. Giving a quick reason as to why: angular velocity is expressed exclusively with respect to the body frame, while our Euler angles are defined about their corresponding intermediate frame in the rotation sequence. Meaning this job for integration is left to \gls{Euler rates}, something else we need to include in the code. All you brilliant readers will also recall the existence of what we affectionately call the ''B'' matrix that allows us to use \gls{Euler angles} to express a relation between \gls{Euler rates} and angular velocities. Unfortunately, there doesn't exist a MATLAB function that can calculate the ''B'' matrix, leaving us to our own devices to construct one from scratch. Luckily, we already did the heavy lifting, meaning we can copy the matrix derived in Volume II straight into our MATLAB script. That matrix and equation is as follows, for quick reference:
+\begin{gather}
+    \color{blue}\boxed{\color{black}\begin{bmatrix}
+        \dot{\phi}\\\dot{\theta}\\\dot{\psi}
+    \end{bmatrix}=B\begin{bmatrix}
+        \omega_x\\\omega_y\\\omega_z
+    \end{bmatrix}}\\\color{blue}\mathrm{Relating\ Angular\ Velocity\ to\ Euler\ Rates}
+\end{gather}
 \begin{gather}
     \color{blue}\boxed{\color{black}B=\begin{bmatrix}
     1&tan(\theta)sin(\phi)&tan(\theta)cos(\phi)\\
@@ -2546,20 +2624,20 @@ For more complex studies of aerodynamics, we recommend Modern Compressible Flow 
 
 \section{Practice Problems}
 \begin{enumerate}
-    \item You are flying home one day in your P-51 Mustang (pictured in \ref{} for your viewing pleasure). At cruise, your aircraft is 10,000 ft above sea level.
-\begin{figure}
+    \item You are flying home one day in your P-51 Mustang (pictured in \ref{fig:p51} for your viewing pleasure). At cruise, your aircraft is 10,000 ft above sea level.
+\begin{figure}[ht]
     \centering
-    \includegraphics[width=0.5\linewidth]{}
-    \caption{Caption}
-    \label{fig:enter-label}
+    \includegraphics[width=0.5\linewidth]{Images/P-51-361.jpg}
+    \caption{P-51D-5NA Aircraft}
+    \label{fig:p51}
 \end{figure}
 \begin{enumerate}
     \item What is the density of air at this altitude?
     \item Your wings provide a $C_L$ of 0.3 at cruising speed. Your plane has a mass of 4,000 kg and a planform area of $21.8 \mathrm{\ m}^2$. Find the speed necessary to maintain level light at this altitude.
-    \item Your airplane is equipped with  unguided HVAR rockets. As a daring pilot, you want to model the aerodynamics of this rocket so you can launch it at your friend's house with astounding accuracy (\textit{that} will teach them to never steal your mini corn dogs).
+    \item Your airplane is equipped with  unguided HVAR rockets. As a daring pilot, you want to model the aerodynamics of this rocket so you can launch it at your friend's house with astounding accuracy (\textit{that} will teach them to never steal your mini corn dogs again).
     
     Using your best engineering judgment of the nose cone shape and any other parameters you cannot find, model the HVAR rocket in RasAero.
-    \item As it turns out, shooting rockets at Canadian civilians is illegal (I know, right?). The Royal Canadian Air Force F/A-18's are on your tail now and you will be shot down in 15 minutes unless you can make it to US airspace. You are 160 km from the airspace boundary. You push your throttles to full to book it back home. 
+    \item As it turns out, shooting rockets at Canadian civilians is illegal (I know, right?). The Royal Canadian Air Force F/A-18's are on your tail now and you will be shot down in 15 minutes unless you can make it to US airspace. You are 160 km from the airspace boundary. You push your throttles to max to book it back home. 
 
     At full throttle, your Merlin V12 produces 1676 hp (1250 kw). Your aircraft has a $C_D$ of 0.017. At the same altitude of 10,000 ft, find the maximum flight speed. Will you make it back to American airspace in time?
 
@@ -3075,7 +3153,7 @@ Full model validation is usually more complex. One such example is our validatio
 \section{Data Visualization}
 Here, we will briefly discuss data visualization and best practices for MATLAB. No matter how good your simulation is, you must be able to appropriately share data in a way that is not only easily conveyed to a non-expert audience, but also visually interesting and descriptive.
 
-At the most basic level, your MATLAB plots should have proper formatting. The default MATLAB plot formatting isn't up to snuff with the standards of scientific publications or presentation of your work. Luckily, MATLAB has many tools to improve the presentation of figures.
+At the most basic level, your MATLAB plots should have proper formatting. The default MATLAB plot formatting isn't up to snuff with the standards of scientific publications or presentation of your work professionally. Luckily, MATLAB has many tools to improve the presentation of figures.
 
 MATLAB has the ability for plots to utilize LaTeX formatting for figures. We highly recommend to enable this option for all plots as it allows for much better formatting on figures. This can be done with the following commands:
 \begin{lstlisting}[style=Matlab-editor]
@@ -3083,6 +3161,16 @@ set(groot, 'defaultAxesTickLabelInterpreter','latex');
 set(groot, 'defaultLegendInterpreter','latex');
 set(groot, 'defaultTextInterpreter', 'latex')
 \end{lstlisting}
+
+\subsection{Conventions for Plots}
+There are several conventions for plots which are generally followed in engineering practices. These will change depending on where your figures are to be published, but for our purposes, we use the following conventions:
+\begin{enumerate}
+    \item All plots should have clear axis labels. Units are typically included in brackets as [$m$], in example of a length. Units should be SI base units wherever possible.
+    \item Be knowledgeable of the use of color. Overuse of color may distract the viewer from the information being presented. Additionally, if your content is to be presented to a large audience, be mindful of those with color vision deficiencies. If your content may be printed, plots should be easily readable in black and white. Using different markers and line types is a good strategy.
+    \item Always include a legend when plotting multiple data on a single graph. 
+    \item When the magnitudes of data are vastly different, a logarithmic axis or two y-axes are best practice.
+\end{enumerate}
+
 \subsection{Changing Default MATLAB Plotting}
 If you want to have these changes to figures universally applied in MATLAB, you can create a file in MATLAB called 'startup.m' that is run when MATLAB is opened. This file must exist in the user path for MATLAB. To find the user path for MATLAB, the command "userpath" can be typed into the command line. This will output something like:
 \\
