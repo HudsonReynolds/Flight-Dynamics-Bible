@@ -1,4 +1,4 @@
-function [out, mach, AoA, accel] = DzhanibekovIntegrator(time, input)
+function [out] = DzhanibekovIntegrator(time, input)
 % PSP FLIGHT DYNAMICS:
 %
 % Title: RK4Integrator
@@ -32,24 +32,23 @@ accel = zeros(3,1);
 %% Moments:
 % just putting in values based on a cylinder moment of inertia for now.
 Jxx = 0.09;
-Jyy = 0.02;
-Jzz = 0.02;
+Jyy = 0.01;
+Jzz = 0.03;
 
 J = [Jxx,0,0;0,Jyy,0;0,0,Jzz];
 
 momentVector = zeros(3,1);
 % use euler equations to find the final moments:
 
-momentVector(1) = momentVector(1) - omega(2)*omega(3)*(Jzz-Jyy);
-momentVector(2) = momentVector(2) - omega(1)*omega(3)*(Jxx-Jzz);
-momentVector(3) = momentVector(3) - omega(1)*omega(2)*(Jyy-Jxx);
-
-alpha = inv(J) * momentVector;
-alpha(isnan(alpha)) = 0;
-
 wx = omega(1);
 wy = omega(2);
 wz = omega(3);
+
+alpha(1) = (Jyy-Jzz)/(Jxx)*wy*wz;
+alpha(2)= (Jzz-Jxx)/(Jyy)*wx*wz;
+alpha(3)= (Jxx-Jyy)/(Jzz)*wx*wy;
+
+alpha = alpha';
 
 B = [0, -wx, -wy, -wz;
      wx, 0, wz, -wy;

@@ -62,9 +62,9 @@ for i = 1:5:length(posArray)
         img =  frame2im(frame);
         [img,cmap] = rgb2ind(img,256);
         if i == 1
-            imwrite(img,cmap,'RotationAnimation.gif','gif','LoopCount',Inf,'DelayTime',1/20);
+            imwrite(img,cmap,'RotationAnimation.gif','gif','LoopCount',Inf,'DelayTime',1/24);
         else
-            imwrite(img,cmap,'RotationAnimation.gif','gif','WriteMode','append','DelayTime',1/20);
+            imwrite(img,cmap,'RotationAnimation.gif','gif','WriteMode','append','DelayTime',1/24);
         end
     end
 end

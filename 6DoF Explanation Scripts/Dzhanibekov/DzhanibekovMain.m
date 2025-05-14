@@ -24,7 +24,7 @@ close all
 
 % set the simulation time parameters
 dt = 0.025;
-time = 35.9;
+time = 17.95;
 tspan = 0:dt:time;
 
 % initialize the state vector
@@ -35,7 +35,7 @@ vel = [0;0;0];
 % initial angle(z angle, y angle, x angle)
 angleVector = [0;0;0];
 % initial rotation rate(x rate, y rate, z rate)
-omega = [0.05;0.05;pi];
+omega = [0.02;0.02;pi];
 %initalize the quaternion based on the euler angle input:
 quatVector = eul2quat(angleVector.', "ZYX").';
 % initial state vector
