@@ -20,11 +20,13 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}[theorem]
 \newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
 \usepackage{xfrac}
 \usepackage{enumitem}
 \usepackage{extarrows}
 \usepackage{setspace}
-\usepackage{matlab-prettifier}
+\usepackage[framed,numbered]{matlab-prettifier}
 \usepackage{csquotes}
 \usepackage[style=numeric]{biblatex}
 \addbibresource{references.bib}
@@ -41,27 +43,50 @@
 \usepackage{gensymb}
 \usepackage{amsfonts}
 \usepackage{etoolbox}
+\usepackage{hyperref}
 
+\usepackage[inkscapelatex=false]{svg}
 
 % examples creation:
+
 \usepackage[framemethod=TikZ]{mdframed}
 
 \mdfsetup{skipabove=\topskip,skipbelow=\topskip}
 
-\newcounter{example}[section]
-\newenvironment{example}[1][]{%
-\stepcounter{example}%
-\ifstrempty{#1}%
+% Define example counter that resets with each chapter
 
-{\mdfsetup{%
-frametitle={%
-{\strut \color{cyan}Example \thechapter.\theexample:~#1}}}%
-}%
-\mdfsetup{innertopmargin=10pt,linecolor=cyan!20,%
-linewidth=2pt,topline=false,rightline=false,bottomline=true,
-frametitleaboveskip=\dimexpr-\ht\strutbox\relax,}
-\begin{mdframed}[]\relax%
+\newcounter{example}[chapter]
+\renewcommand{\theexample}{\thechapter.\arabic{example}}
+
+%%  Define the example environment
+\newenvironment{example}[1][]{%
+  \refstepcounter{example}%
+  \ifstrempty{#1}%
+    {\mdfsetup{
+      frametitle={\strut \color{cyan}Example \theexample}}}%
+    {\mdfsetup{
+      frametitle={\strut \color{cyan}Example \theexample:~#1}}}%
+  \mdfsetup{
+    innertopmargin=10pt,
+    linecolor=cyan!20,
+    linewidth=2pt,
+    topline=false,
+    rightline=false,
+    bottomline=true,
+   % frametitleaboveskip=\dimexpr-\ht\strutbox\relax,
+  }%
+  \begin{mdframed}[]\relax%
 }{\end{mdframed}}
+
+
+% autoref names
+\newcommand{\lstnumberautorefname}{Script}
+\renewcommand{\chapterautorefname}{Chapter}
+\renewcommand{\sectionautorefname}{Section}
+\newcommand{\corollaryautorefname}{Corollary}
+\renewcommand{\subsectionautorefname}
+{subsection}
+\newcommand{\exampleautorefname}{Example}
 
 \usepackage[bf,small,hypcap=true]{caption}
 
@@ -69,13 +94,45 @@ frametitleaboveskip=\dimexpr-\ht\strutbox\relax,}
 
 \definecolor{linkgreen}{rgb}{0.117,0.67,0.24}
 \definecolor{refRed}{rgb}{0.443,0.0588,0.0392}
+\definecolor{Maroon}{rgb}{0.749,0.047,0.09}
 
-\usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage[english]{babel}
 \usepackage{fancyhdr}
 \usepackage{mathtools}
 \mathtoolsset{showonlyrefs} 
+
+\newcommand{\eqautoref}[1]{\hyperref[#1]{Equation~\eqref{#1}}}
+
+%% define the exercise environment
+
+\mdfsetup{skipabove=\topskip,skipbelow=\topskip}
+
+% Define exercise counter that resets with each chapter
+
+\newcounter{exercise}[chapter]
+\renewcommand{\theexercise}{\thechapter.\arabic{exercise}}
+
+\newenvironment{exercise}[1][]{%
+  \refstepcounter{exercise}%
+  \ifstrempty{#1}%
+    {\mdfsetup{
+      frametitle={\strut \color{Maroon}Exercise \theexercise}}}%
+    {\mdfsetup{
+      frametitle={\strut \color{Maroon}Exercise \theexercise:~#1}}}%
+  \mdfsetup{
+    innertopmargin=10pt,
+    linecolor=Maroon!20,
+    linewidth=2pt,
+    topline=false,
+    rightline=false,
+    bottomline=true,
+    %frametitleaboveskip=\dimexpr-\ht\strutbox\relax,
+  }%
+  \begin{mdframed}[]\relax%
+}{\end{mdframed}}
+
+
 
 \usepackage{enotez}
 \setenotez{backref=true,totoc=section}
@@ -127,40 +184,49 @@ frametitleaboveskip=\dimexpr-\ht\strutbox\relax,}
    \clearpage
 }
 
-%% CODE STUFF
+
+%% Code Listings
 \usepackage{listings}
 
-\newcommand{\lstnumberautorefname}{Script}
-\renewcommand{\chapterautorefname}{Chapter}
-\renewcommand{\sectionautorefname}{Section}
-\newcommand{\corollaryautorefname}{Corollary}
-\renewcommand{\subsectionautorefname}{subsection}
+\lstset{
+    style=Matlab-editor,
+    basicstyle=\footnotesize\ttfamily,
+    breaklines=true,                  % Optional: breaks long lines
+    showstringspaces=false            % Optional: cleaner string appearance
+}
+
+\lstdefinestyle{Matlab-custom}{
+    style=Matlab-editor,
+    basicstyle=\footnotesize\ttfamily
+}
 
 
+\mlttfamily
+\usepackage[T1]{fontenc}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.95}
 
-\lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},   
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=t,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
-    showstringspaces=false,
-    showtabs=false,                  
-    tabsize=4
-}
+% \lstdefinestyle{mystyle}{
+%     backgroundcolor=\color{backcolour},   
+%     commentstyle=\color{codegreen},
+%     keywordstyle=\color{magenta},
+%     numberstyle=\tiny\color{codegray},
+%     stringstyle=\color{codepurple},
+%     basicstyle=\ttfamily\footnotesize,
+%     breakatwhitespace=false,         
+%     breaklines=true,                 
+%     captionpos=t,                    
+%     keepspaces=true,                 
+%     numbers=left,                    
+%     numbersep=5pt,                  
+%     showspaces=false,                
+%     showstringspaces=false,
+%     showtabs=false,                  
+%     tabsize=4
+% }
 
 \lstMakeShortInline[style=Matlab-editor]"
 
@@ -217,8 +283,6 @@ frametitleaboveskip=\dimexpr-\ht\strutbox\relax,}
 \titlespacing*{\part}{0pt}{100pt}{20pt}
 %
 \titlespacing*{\chapter}{0pt}{0pt}{20pt}
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First page of book which contains 'stuff' like: %
@@ -302,6 +366,19 @@ As a note, while our work on flight dynamics has mainly focused on modeling rock
 
 Some other areas are also covered in this document but are curtailed because Preston and I do not have the experience to give full authority on these subjects. However, as we learn more, this document is growing every day. In future volumes, we hope to expand and add some of these other sections, especially those related to aerodynamics, energy methods, and control theory, to better serve those in the future who may hope to recreate the work we have done here.
 
+\section*{User Guide}\label{sec:User Guide}
+For those readers who want to learn both the theory and the practical implementation of a 6-\gls{dof}, we recommend reading the entirety of Volume I, and supplementing sections of Volume II and III as required.
+
+For those who have requisite knowledge but want information on implementation of 6-\gls{dof} into MATLAB, \autoref{sec:attitude dynamics}, \autoref{sec:computational aero}, \autoref{sec:numerical integration schemes}, and \autoref{sec:MATLAB Practices} are recommended.
+
+For those interested solely in Attitude Dynamics, \autoref{sec:attitude dynamics}, Volume II, and Part I of Volume III (Particularly the Chapter on Lie Theory) are suggested. If the reader's interests are in spacecraft dynamics in general, Part II of Volume III is additionally suggested.
+
+For those interested in control system design and analysis, we recommend \autoref{sec: Newtonian Dynamics}, \autoref{sec:energy methods}, Part V of Volume II, and Volume III (with an emphasis on Part III).
+
+For those interested in holding an integral role on PSP Flight Dynamics team (such as Responsible Engineer / Subject Matter Expert or Team Lead), we suggest thorough reading and understanding of all three Volumes and practical skills in implementation into MATLAB.
+
+With that said, we hope every reader can obtain useful knowledge from these three volumes!
+
 \section*{Acknowledgments}
 \begin{itemize}
 \item We would like give special thanks to Prof. Cunningham and Prof. Frueh for their help in reviewing our 6-\gls{dof} Model. Professor Frueh's notes have been especially helpful in compiling the information present in this document. We would also like to thank everyone who has taken their time to read through this document and help us make corrections and edits.
@@ -370,7 +447,7 @@ Generally, we use the following conventions in our coding practice:
 \end{itemize}
 MATLAB script file headers are of the following format:
 
-\lstinputlisting[style=Matlab-editor, caption = Script Header]{6DoF Explanation Scripts/ScriptHeader.m}
+\lstinputlisting[style=Matlab-custom, caption = Script Header]{6DoF Explanation Scripts/ScriptHeader.m}
 \chapter{Overview}
 
 \pagenumbering{arabic}
@@ -453,7 +530,7 @@ Our definition strays from particle dynamics because we are considering a rigid 
 \section{The 1-DoF Case}\label{sec: The 1DoF Case}
 To begin our exploration of Newtonian dynamics, we will return to the example of the 1-\gls{dof} which we mentioned earlier. Our goal with this is to use a simple example that you are familiar with from high school physics and bring it up to speed with the terminology and techniques we will use for more complex analysis.
 
-In \autoref{fig: 1DoF forces} below, we show an example of a very simple 1-\gls{dof} system free body diagram. We will use this example to explain the process of calculating the Newtonian dynamics in 1-dimension, which we then generalize to the full 3D case. 
+In \autoref{fig: 1DoF forces}, we show an example of a very simple 1-\gls{dof} system free body diagram. We will use this example to explain the process of calculating the Newtonian dynamics in 1-dimension, which we then generalize to the full 3D case. 
 
 \tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
 
@@ -501,17 +578,20 @@ In \autoref{fig: 1DoF forces} below, we show an example of a very simple 1-\gls{
     \label{fig: 1DoF forces}
 \end{figure}
 
-In \autoref{fig: 1DoF forces}, a total of three forces are shown, all of which act along the $\hat{y}$-direction. The colinearity of all these forces is what makes this a 1-\gls{dof} model. The three forces shown are the thrust force, the drag force, and the gravity force.
+A total of three forces are shown, all of which act along the $\hat{y}$-direction. Because all of the forces lie along the same direction, they are collinear, and the dynamics can be described with only one axis. This feature is what makes this a 1-\gls{dof} model. The three forces shown are the thrust force, the drag force, and the gravity force.
 
-Following what you may do in an introductory physics class, we will describe each of these forces via their functional form. These are described in \autoref{force table}:
-$$
-\begin{array}{cc}\label{force table}
+Following what you may do in an introductory physics class, we will describe each of these forces via their functional form. These are described in \eqautoref{force table}:
+
+\begin{equation}\label{force table}
+    \begin{array}{cc}
     \mathrm{\textbf{Force}}&\mathrm{\textbf{Functional Form}}\\
     \vec{F}_g &  -mg\\
      \vec{F}_D& -\frac{1}{2} \rho_{\infty} V^2_{\infty}SC_D\\
      \vec{F}_T & F_T\cdot[1-u(t-t_b)], t\ge0
 \end{array}
-$$
+\end{equation}
+
+
 
 \newglossaryentry{freestream}
 {
@@ -539,14 +619,15 @@ It is helpful to think about these quantities as vectors, because we can add the
 
 \subsection{Numerical Integration in the 1-DoF}\label{sec: Numerical Integration in the 1DoF}
 \newacronym{eom}{EOM}{Equation of Motion}
-Now we will move into something that you may have not seen before. Given all the forces, we normally apply Newton’s 2\textsuperscript{nd} Law, $\sum{\vec{F}}=m\vec{a}$ , to arrive at an expression for the acceleration, known as an \gls{eom}, as shown in \eqref{eq2}. Doing so might look something like this:
+Now we will move into something that you not have seen before. Given all the forces, we apply Newton’s 2\textsuperscript{nd} Law, $\sum{\vec{F}}=m\vec{a}$ , to arrive at an expression for the acceleration, known as an \gls{eom}, as shown in \eqref{eq2}. Doing so might look something like this:
 \begin{gather}
 F_T \cdot [1-u(t-t_b)]-\frac{1}{2}\rho_{\infty}V_{\infty}^2SC_D-mg=m\vec{a}\label{eq1} \\
 \vec{a}=\frac{F_T \cdot [1-u(t-t_b)]-\frac{1}{2}\rho_{\infty}V_{\infty}^2SC_D}{m}-g\label{eq2}
 \end{gather}
  From here, we use integration to find the velocity and then position of the object with time. Formally, we might define this formally as:
- $$\vec{V}=\int{\vec{a}}{dt}$$
-However, you may notice something strange with our equation. In our expression for acceleration, we need to know the velocity. However, we do not know the velocity without integrating the equation first. Since this dependence is non-linear, this becomes even more complicated to solve. This puts us in a chicken v. egg situation, so we must take a different approach to the problem. \endnote{Sometimes systems like this can be solved with traditional ODE methods. The most easy identifier is if the system is linear or not. However, most complex systems like our 6-\gls{dof} have no known analytical solutions. We will focus on numerical integration because it will be more useful in general. }
+ $$\vec{v}=\int{\vec{a}}{dt}$$
+However, you may notice something strange with our equation. In our expression for acceleration, we need to know the velocity to compute the drag. However, we do not know the velocity without integrating the equation first. Since this dependence is non-linear, this becomes even more complicated to solve. In general, there is no known analytical solution to this paradigm!
+We must take a different approach to the problem. \endnote{Sometimes systems like this can be solved with traditional ODE methods. The most easy identifier is if the system is linear or not. However, most complex systems like our 6-\gls{dof} have no known analytical solutions. We will focus on numerical integration because it will be more useful in general. }
 
 \newglossaryentry{numerical int}
 {
@@ -581,13 +662,47 @@ Now, we will apply Euler’s method to solve the problem. We will use the follow
 
 6. Iterate through values of $\Delta t$ until the desired time of simulation is achieved.
 
-We follow the same process for the integration of acceleration to find the velocity. Of note, we will use the previous value of $\vec{v}$ in the computation of the new acceleration. Note that a more formal definition of Euler’s method is given in \autoref{sec:euler integration}.
+\newglossaryentry{difference equation}
+{
+    name=difference equation,
+    first = {\textit{difference equation}},
+    description={A discretized form of a differential equation, with the continuous time properties replaced by discrete time intervals.}
+}
 
-We also show this Euler Integrator example in MATLAB \autoref{Script 1} below. Note that $\frac{1}{2}\rho_{\infty}SC_D$ is called $k$ in the script for simplicity. This simplification assumes that $\rho_{\infty}$ and the $C_D$ are constant, which we will later see is a quite poor assumption but is okay for a first approximation.
+What we have done is formally called writing a \gls{difference equation}.  Now only is this important for numerical integration, but in digital processing, because computers must discretize a signal! We will see these equation again when we study practical control systems in Volume III.
 
-\lstset{style=mystyle}
+We follow the same process to write the \gls{difference equation} for the integration of acceleration to find the velocity. Of note, we will use the previous value of $\vec{v}$ in the computation of the new acceleration. 
+\newpage
+\begin{example}[Discretizing the velocity equation]
+Since the position-velocity relation is quite simple in this situation (it almost always will be) it is helpful to see how we discretize the equation for the velocity-acceleration relationship. We will follow the same steps as before. We will, however, reduce the equation $$\frac{F_T \cdot [1-u(t-t_b)]-\frac{1}{2}\rho_{\infty}V_{\infty}^2SC_D}{m}$$
+to the more compact form $$\frac{F_T -F_D}{m}$$
+We can then start with the same steps as before.
+\begin{enumerate}
+    \item Rewrite in the Liebniz notations: $$\frac{dv}{dt}=\frac{F_T-F_D}{m}-g$$
+    \item Perform separation of variables:
+$$dv=\left(\frac{F_T-F_D}{m}-g\right)dt$$
+We notice that $F_D$ has a dependence on $v$, but there is no way to isolate it to the other side of the equation. We will just leave it as is.
+    \item Next, we discretize the equation:
+    $$\Delta v=\left(\frac{F_T-F_D}{m}-g\right)\Delta t$$
+    \item We expand the $\Delta v$. We leave $\Delta t$ the same since that is our timestep. Generally, we want to write an equation that has $v_{new}$ isolated on the LHS of the equation. Starting with the expansion, we have:$$v_{new}-v_{old}=\left(\frac{F_T-F_D}{m}-g\right)\Delta t$$
+We remember that $F_D$ is a function of $v$. We will show this by writing $F_D=\kappa v^2$. The variable $\kappa$ is used since all other parts of the drag are independent of velocity. Since we don't know $v_{new}$, we have to use $v_{old}$ as the value of $v$ in the drag equation.
 
-\lstinputlisting[language=Matlab, caption=1 DoF]{6DoF Explanation Scripts/OneDofEuler.m}\label{Script 1}
+So, we can do a rearrangement of the equation to arrive at the final form:
+$$v_{new}=\left(\frac{F_T-\kappa {v_{old}}^2}{m}-g\right)\Delta t+v_{old}$$
+Lastly, we define $v_0$ to be 0 for most cases. The iteration through values of $\Delta t$ is the exact same as before. As we can see, the only real difference that is incurred is that we use the value of $v_{old}$ in our drag expression! Otherwise, this integration looks nearly identical to the example with velocity.
+\end{enumerate}
+
+We should note that this method of numerical integration is not used too often in practical applications. However, writing difference equations \textit{is} quite important, so it's still a good skill to have nonetheless.
+
+In future applications of numerical integration, the most important skill to have is to be able to construct the \gls{eom} and to seperate the equation into first order equations.
+\end{example}
+
+If you still feel slightly unsure about some details, note that a more formal definition of Euler’s method is given in \autoref{sec:euler integration}. This may help clear up any confusion here.
+
+We also show this Euler Integrator example in MATLAB \autoref{Script 1} below. Note that $\frac{1}{2}\rho_{\infty}SC_D$ is called $k$ in the script for simplicity. This simplification assumes that $\rho_{\infty}$ and the $C_D$ are constant, which we will later see is a quite poor assumption for rocket modeling but is okay for a first approximation.
+
+\newpage
+\lstinputlisting[style=Matlab-custom,  caption=1 DoF]{6DoF Explanation Scripts/OneDofEuler.m}\label{Script 1}
 
 There are a few important things to note about the MATLAB implementation of the script. Firstly, the only force that is defined outside of the loop is gravity, because the magnitude and direction of this force is independent of the current state of the system. We contrast this with the drag force and the thrust, which must be calculated on every iteration through the algorithm to find an updated value for the force.
 
@@ -809,7 +924,7 @@ We present below a modified version of the 1-\gls{dof} below in full 3D in \auto
     \label{fig:3 DoF Forces}
 \end{figure}
 
-As compared to 1-\gls{dof} case, we have three new quantities that are present. The first of these is $\vec{V}_{\infty}$, the \gls{freestream} airflow vector.\endnote{\gls{freestream} velocity  is drawn in the direction of incoming air by convention. However, for calculations, we will use the convention that $\vec{V}$ is the direction of the velocity of the vehicle (opposite sign to drawing). These statements are identical depending on the reference frame of the observer.} This is represented diagrammatically because it is no longer constrained along the $\hat{y}$ direction. When we have an angle between the nose (the direction through which the thrust force points in \autoref{fig:3 DoF Forces}) and the \gls{freestream} velocity, we refer to this as an \gls{angle of attack}. This \gls{angle of attack} is often denoted with the letter $\alpha$. We will discuss \gls{angle of attack} and its effects more in \autoref{sec: aerodynamics}. For now, we simply need to understand how to calculate $\alpha$ given the vector through the nose and the \gls{freestream} velocity vector.
+As compared to 1-\gls{dof} case, we have three new quantities that are present. The first of these is $\vec{V}_{\infty}$, the \gls{freestream} airflow vector.\endnote{\Gls{freestream} velocity  is drawn in the direction of incoming air by convention. However, for calculations, we will use the convention that $\vec{V}$ is the direction of the velocity of the vehicle (opposite sign to drawing). These statements are identical depending on the reference frame of the observer.} This is represented diagrammatically because it is no longer constrained along the $\hat{y}$ direction. When we have an angle between the nose (the direction through which the thrust force points in \autoref{fig:3 DoF Forces}) and the \gls{freestream} velocity, we refer to this as an \gls{angle of attack}. This \gls{angle of attack} is often denoted with the letter $\alpha$. We will discuss \gls{angle of attack} and its effects more in \autoref{sec: aerodynamics}. For now, we simply need to understand how to calculate $\alpha$ given the vector through the nose and the \gls{freestream} velocity vector.
 
 To do this, we use the fact that the dot product is related to the cosine of the angle between the vectors. Denoting the vector through the nose of the rocket $\hat{X}$, we can find the \gls{angle of attack} as:
 \begin{equation}\label{eq:alpha}
@@ -1090,7 +1205,7 @@ These sets of equations are especially powerful because they allows us to numeri
 We've just laid out a large amount of material, so it is best to show a few examples to get the gist of things.
 
 \begin{example}[Explorer 1 Satellite]
-     NASA asks you to help analyze the rotational dynamics of the Explorer 1 satellite for your job interview. The satellite can be modeled approximately as a cylinder with a length of 2 m and a diameter of 16 cm. Assume the mass is 16kg with a uniform mass distribution.
+     NASA asks you to help analyze the rotational dynamics of the Explorer 1 satellite for your job interview. The satellite can be modeled approximately as a cylinder with a length of 2 m and a diameter of 16 cm. Assume the mass is 16 kg with a uniform mass distribution.
 \begin{figure}[H]
     \centering
 \tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
@@ -1199,6 +1314,7 @@ We assume that most readers are broadly familiar with the topics discussed in AA
 
 
 \section{Practice Problems}
+
 \begin{enumerate}
     \item On a nice Wednesday evening during one of your strolls through campus, you are kidnapped by a business major, who will only let you free if you can fix the vibration of the squeaky door at their frat house.
 
@@ -1354,16 +1470,16 @@ You can consider the door hinge as a mass-spring system constrained to motion al
 \end{enumerate}
 \newpage
 \printendnotes
+\markboth{NOTES}{NOTES}
+
 \chapter{Energy Methods of Mechanics}\label{sec:energy methods}
 \begin{chapquote}{Joseph Fourier}
     ``Mathematics compares the most diverse phenomena and discovers the secret analogies that unite them.''
 \end{chapquote}
 
-Energy methods of mechanics employ the concepts of the energy of a system to solve a problem in mechanics. This is in contrast to the Newtonian method, which considers the forces of a system. The good news is that both will result in the same answer (see proof in \autoref{equiv newt and lang}). However, having both in your set of tools as an engineer can prove especially useful.
+Energy methods of mechanics employ the concepts of the energy of a system to solve a problem in mechanics. This is in contrast to the Newtonian method, which considers the forces of a system. The good news is that both will result in the same answer (see proof in \autoref{equiv newt and lang}). However, having both in your set of tools as an engineer can prove especially useful. To grasp energy methods, it is best to have an intuition for Newtonian dynamics first. A thorough reading of \autoref{sec: Newtonian Dynamics} and other sources will help prepare the reader for this section.
 
-To grasp energy methods, it is best to have an intuition for Newtonian dynamics first. A thorough reading of \autoref{sec: Newtonian Dynamics} and other sources will help prepare the reader for this section.
-
-There are two main types of energy mechanics, referred to as Hamiltonian and \gls{Lagrangian} mechanics. In this chapter, we will mostly focus on the \gls{Lagrangian} version of these mechanics. Hamiltonian mechanics are arguably more fundamental, but will only be briefly discussed.
+There are two main types of energy mechanics, referred to as Hamiltonian and \gls{Lagrangian} mechanics. In this chapter, we will focus on the \gls{Lagrangian} version of these mechanics. Hamiltonian mechanics are arguably more fundamental, but we will leave that discussion for Volume III.
 
 \newglossaryentry{symplectic int}
 {
@@ -1372,7 +1488,7 @@ There are two main types of energy mechanics, referred to as Hamiltonian and \gl
     description={A class of numerical integration schemes that are energy preserving because they preserve certain geometric properties of a differential equation}
 }
 
-Although the Hamiltonian and \gls{Lagrangian} are not directly used in the case of our 6-\gls{dof}, they are fundamental to other areas of mechanics and make derivations far simpler in many cases. The Hamiltonian and \gls{Lagrangian} descriptions of mechanics are more often taught to physics students rather than engineers, but we feel that they deserve inclusion among the topics presented here. When we discuss \gls{numerical int}, we can use \glspl{symplectic int} when our problem has a Hamiltonian description. This will be further discussed in \autoref{sec:other numerical ints}. You may find that certain \gls{eom} derivations, such as the spinning top and problems in orbital mechanics are more easily accomplished with energy methods.
+Although the Hamiltonian and \gls{Lagrangian} are not directly used in the case of our 6-\gls{dof}, they are fundamental to other areas of mechanics and make derivations simpler in many cases. The Hamiltonian and \gls{Lagrangian} descriptions of mechanics are more often taught to physics students rather than engineers, but we feel that they deserve inclusion among the topics presented here. When we discuss \gls{numerical int}, we can use \glspl{symplectic int} when our problem has a Hamiltonian description. This will be further discussed in \autoref{sec:other numerical ints}. You may find that certain \gls{eom} derivations, such as the spinning top and problems in orbital mechanics are more easily accomplished with energy methods.
 
 Another reason to motivate these systems is that these energy methods are rotationally invariant because energy methods can employ a generalized coordinate system. These generalized coordinates are very powerful and allow us to describe a huge variety of systems. We will see this later in some examples.
 
@@ -1386,10 +1502,13 @@ A brief overview of the differences between the two schemes of \gls{eom} derivat
     \caption{Newtonian vs. Lagrangian Mechanics Approach}
     \label{fig:newt v lang}
 \end{figure}
+The discussion of these systems in the volume is curtailed because it is not directly applicable to the work on our specific 6-\gls{dof} model. However, the fundamental implications of energy methods are important, but that discussion is saved for Volume III.
 
-\section{Calculus of Variations}
+A background on the calculus of variations, which provides a derivation for Lagrangian mechanics, is also presented in Volume III. We present here only the formulaic approach and its used.
 
-The calculus of variations underpins the ideas of \gls{Lagrangian} and Hamiltonian mechanics, so it is important to understand the principles behind it before moving on to the actual mechanics. In analogy to how single variable calculus is fundamental to Newtonian mechanics, the calculus of variations is fundamental to energy mechanics.
+\section{Hamilton's Principle}
+
+Before we can get to Hamilton's principle, we need to understand a new type of calculus, one which is the calculus of whole functions. We call this type of calculus the calculus of variations. The calculus of variations underpins the ideas of \gls{Lagrangian} and Hamiltonian mechanics, so it is important to understand the principles behind it before moving on to the actual mechanics. In analogy to how single variable calculus is fundamental to Newtonian mechanics, the calculus of variations is fundamental to energy mechanics.
 
 \newglossaryentry{geodesic}
 {
@@ -1402,81 +1521,6 @@ The fundamental idea of the calculus of variations is simple. We want to find th
 
 Because so many physical phenomena are governed by this behavior to minimize certain quantities, Hamilton (the same mathematical hero we will see later with attitude dynamics), decided to formulate a mathematical description of this.
 
-\newglossaryentry{functional}
-{
-    name=functional,
-    first = {\textit{functional}},
-    description={A quantity that maps a function onto the real number line. Often,  this is called a `function of a function'}
-}
-
-Before we get to Hamilton's formulation, we need to understand what the calculus of variations is trying to do. To find a minima means that naturally, we should look for the extrema of some quantity. We call this quantity a \gls{functional}, which we define as:
-\begin{equation}\label{eq:functional}
-    J=\int_{x_1}^{x_2}f\left[y(x),y'(x);x\right]{dx}
-\end{equation}
-The \gls{functional}, $J$, is a quantity which maps a function onto the real number line. This means that it takes the function as an input and outputs a single real number. We are attempting to find an input function, $y(x)$, that yields an extrema of $J$. 
-
-\newglossaryentry{neigh func}
-{
-    name=neighborhood function,
-    first = {\textit{neighborhood function}},
-    description={A small function added to another function in the calculus of variations. Analogous to a differential element in single variate calculus}
-}
-
-To be precise about this definition of an extrema - we are attempting to find a function $y(x)$ such that any other function added to $y(x)$, no matter how close it is to $y(x)$, must change the value of $J$ such that it is no longer an extrema. By convention, this other function added to $y(x)$ is called the \gls{neigh func}, and is denoted $\eta(x)$.
-
-We can compactly write this $y(x)+\eta(x)$ as $y(\varepsilon,x)$. We define the condition $y(0,x)\equiv y(x)$, where $y(x)$ is the function that gives the extrema of $J$. So, we can write $y(\varepsilon,x)$ as
-\begin{equation}\label{eq:y epsilon}
-    y(\varepsilon,x)=y(0,x)+\varepsilon\eta(x)
-\end{equation}
-The important restriction that we impose on $\eta(x)$ is that it must vanish at the endpoints, $x_1$ and $x_2$. This will prove important later so we can apply integration rules on our function. We also want a continuous first derivative so that $y'(\varepsilon,x)$ can be defined as
-\begin{equation}\label{eq:y prime epsilon}
-    y'(\varepsilon,x)=\frac{dy(0,x)}{dx}+\varepsilon\frac{d\eta}{dx}
-\end{equation}
-
-Using this definition of the \gls{neigh func}, we can rewrite \eqref{eq:functional} as
-\begin{equation}\label{eq:neighborhood functional}
-    J(\varepsilon)=\int_{x_1}^{x_2}f\left[y(\varepsilon,x),y'(\varepsilon,x);x\right]{dx}
-\end{equation}
-So, with this redefined version of the function, we can finally find the extrema using the familiar calculus rule, setting the derivative equal to zero. We also evaluate at zero since this is where we defined the extrema to exist:
-\begin{equation}
-    \left.\frac{\partial J(\varepsilon)}{\partial\varepsilon}\right\vert_{\varepsilon=0}=0
-\end{equation}
-Applying this to \eqref{eq:functional}, we arrive at
-\begin{equation}\label{eq:neighborhood functional diff}
-    \frac{\partial J(\varepsilon)}{\partial\varepsilon}= \frac{\partial}{\partial\varepsilon}\int_{x_1}^{x_2}f\left[y(0,x),y'(0,x);x\right]{dx}
-\end{equation}
-The $\varepsilon$ terms drop out from the RHS from the evaluation of $\varepsilon=0$. Applying the Leibniz Integral Rule, the partial derivative can be moved inside the RHS integral:
-\begin{equation}
-    \frac{\partial J(\varepsilon)}{\partial\varepsilon}= \int_{x_1}^{x_2}\frac{\partial}{\partial\varepsilon}f\left[y(x),y'(x);x\right]{dx}
-\end{equation}
-Applying the rules of implicit integration on the integrand, we get:
-\begin{equation}\label{eq:diff functional}
-    \frac{\partial J(\varepsilon)}{\partial\varepsilon}= \int_{x_1}^{x_2}f\left(\frac{\partial f}{\partial y}\frac{\partial y}{\partial\varepsilon}+\frac{\partial f}{\partial y'}\frac{\partial y'}{\partial\varepsilon}\right){dx}
-\end{equation}
-Note that we still must take the partial derivative with respect to $\varepsilon$ on the RHS, even though we have plugged in 0 for $\varepsilon$.
-
-Next, we can find expressions for $\frac{\partial y}{\partial \varepsilon}$ and $\frac{\partial y'}{\partial \varepsilon}$. This is done with the expressions \eqref{eq:y epsilon} and \eqref{eq:y prime epsilon}. Starting with the first, we differentiate \eqref{eq:y epsilon} with respect to $\varepsilon$:
-\begin{equation}\label{eq:y diff epsilon}
-    \frac{\partial}{\partial \varepsilon}y(\varepsilon,x)=\frac{\partial}{\partial \varepsilon}\left[y(0,x)+\varepsilon\eta(x)\right]
-\end{equation}
-Here, $y(0,x)$ is independent of $\varepsilon$ since we define it to occur at value $\varepsilon=0$. So this leaves us with
-\begin{equation}\label{eq:diff y diff epsilon}
-     \frac{\partial y}{\partial \varepsilon}= \eta(x)
-\end{equation}
-Doing the same for \eqref{eq:y diff epsilon}, we arrive at
-\begin{equation}\label{diff y' diff epsilon}
-     \frac{\partial y'}{\partial \varepsilon}= \frac{\partial \eta}{\partial x}
-\end{equation}
-Finally, plugging these back into the original expression for \eqref{eq:diff functional}, we get the expression
-\begin{equation}\label{eq:diff functional subs}
-    \frac{\partial J(\varepsilon)}{\partial\varepsilon}= \int_{x_1}^{x_2}\left(\frac{\partial f}{\partial y}\eta(x)+\frac{\partial f}{\partial y'}\frac{\partial \eta}{\partial x}\right){dx}
-\end{equation}
-Finally, performing some integration by parts, we arrive at the final integral expression of the maximum:
-\begin{equation}\label{eq:diff functional final}
-    \frac{\partial J(\varepsilon)}{\partial\varepsilon}= \int_{x_1}^{x_2}\left(\frac{\partial f}{\partial y}-\frac{d}{dx}\frac{\partial f}{\partial y'}\right)\eta(x){dx}
-\end{equation}
-Since we are evaluating the maximum, $\frac{\partial J(\varepsilon)}{\partial\varepsilon}$ evaluates to 0. Since $\eta(x)$ is an arbitrary function, the only way to guarantee an equality is to ensure that the part of the integrand in parenthesis is 0.
-
 \newglossaryentry{Euler Equation}
 {
     name=Euler's equation,
@@ -1485,23 +1529,31 @@ Since we are evaluating the maximum, $\frac{\partial J(\varepsilon)}{\partial\va
     see={functional}
 }
 
-This gives us the fundamental equation of the calculus of variations, called \gls{Euler Equation}:
+\newglossaryentry{functional}
+{
+    name=functional,
+    first = {\textit{functional}},
+    description={A quantity that maps a function onto the real number line. Often,  this is called a 'function of a function'}
+}
+
+In essence, we are attempting to find a function that is the minimum of some set of conditions. These conditions also take the form of a function, so we attempt to find a function that is a minimum of another function. We call this quantity which we are minimizing a \gls{functional}, which we define as:
+\begin{equation}\label{eq:functional}
+    J=\int_{x_1}^{x_2}f\left[y(x),y'(x);x\right]{dx}
+\end{equation}
+The \gls{functional}, $J$, is a quantity which maps a function onto the real number line. This means that it takes the function as an input and outputs a single real number (that is, a function of a function). We are attempting to find an input function, $y(x)$, that yields an extrema of $J$. Our goal is to find criteria for $y(x)$ that make $J$ a maximum or a minimum.
+
+For now, we present the way to do this without derivation. The fundamental equation of the calculus of variations is called the \gls{Euler Equation}:
 \begin{equation}\label{eq: Euler's Diff eq}
     \frac{\partial f}{\partial y}-\frac{d}{dx}\frac{\partial f}{\partial y'}=0
 \end{equation}
-\subsection{Delta Notation}
-In later sections, it is useful to have a shorthand for these partial derivative quantities. For a quantity $\chi$, the variation, $\delta$ is given as:
-$$\delta\equiv\frac{\partial\chi}{\partial \varepsilon}d\varepsilon$$Using this notation, we can rewrite \eqref{eq:diff functional final} after some algebraic manipulation as:
+Really, what we have done is find a condition such that the integrand is zero. We define a quantity $\delta$, the variation, which can help us show this. We can reformulate the problem of calculus of variations to the following:
 \begin{equation}
     \delta J= \int_{x_1}^{x_2}\left(\frac{\partial f}{\partial y}-\frac{d}{dx}\frac{\partial f}{\partial y'}\right)\delta y{dx}
 \end{equation}
-And thus, \eqref{eq: Euler's Diff eq} can be written concisely as:
+We see that the Euler Equation is the integrand of this equation. Since we know that this is zero, $\delta J$ must be zero! And thus, \eqref{eq: Euler's Diff eq} can be written concisely as:
 \begin{equation}
     \color{blue}\boxed{\color{black}\delta J=0}
 \end{equation}
-This is a very general and far reaching conclusion that can be applied to many systems. For our use cases in dynamics, we have more useful forms of this equation which will be explored in the following section.
-
-\section{Hamilton's Principle}
 
 Following directly from the ideas of the calculus of variations, Hamilton (alongside many other mathematicians) wanted to apply this to physical systems. Hamilton's Principle is as follows:
 \begin{theorem}[Hamilton's Principle]
@@ -1540,9 +1592,9 @@ The time integral of the \gls{Lagrangian} is the \gls{action}, denoted $S$. This
 \begin{equation}
     S=\int_{t_1}^{t_2}{L}{dt}
 \end{equation}
+
 So, our \gls{action} takes the form of the \gls{functional} from the calculus of variations. From Hamilton's principle, this \gls{functional}, the \gls{action}, must be minimized. So, we often see the compact form of Hamilton's Principle as:
 $$\delta S=0$$
-
 \newglossaryentry{euler lagrange}
 {
     name=Euler-Lagrange Equation,
@@ -1555,6 +1607,7 @@ Expressed using Euler's differential equation, \eqref{eq: Euler's Diff eq}, we g
 \begin{gather}\label{eq: Euler-Lagrange}
     \color{blue}\boxed{\color{black}\frac{\partial L}{\partial x_i}-\frac{d}{dt}\frac{\partial L}{\partial \dot{x}_i}=0}\\ \mathrm{\color{blue}Euler-Lagrange \ Equations}
 \end{gather}
+
 Before we look into some examples of how to utilize these equations in practice, we should consider in what situations these will be better than the Newtonian methods.
 
 \newglossaryentry{conservative}
@@ -2010,7 +2063,7 @@ We notice that with the \gls{Lagrangian} approach, we did not need to have an un
 
 \section{Hamiltonian Mechanics}\label{sec:hamiltonian}
 After the formulation of \gls{Lagrangian} Mechanics, another formulation was created by Hamilton later on. The Hamiltonian formulation, like the \gls{Lagrangian}, does not introduce any new concepts, because it is simply an alternate approach to dynamics. However, like the \gls{Lagrangian}, it makes some types of problems more simple. We present the Hamiltonian here briefly for its use case in \glspl{symplectic int}.
-\subsection{Derivation of the Hamiltonian}
+
 The exact derivation of the Hamiltonian using Legendre transforms is beyond the scope of our present discussion, so we will mostly discuss the consequences of this derivation. 
 
 \newglossaryentry{gen momenta}
@@ -2040,7 +2093,7 @@ Using relations with the \gls{Lagrangian}, we can write two first order differen
 This is all we will note about Hamiltonian Mechanics for now. We will note here that these are more useful in the case of \gls{numerical int} because these are first order differential equations, as opposed to the second order differential equations of \gls{Lagrangian} Mechanics.
 \section{Lagrangian Derivation of Rigid Body Dynamics}
 
-In \autoref{Euler Rotation Equations}, we explored the Newtonian method of deriving the Euler rotation equations using the \gls{bke}. Here, we present an alternative derivation that utilizes the \gls{Lagrangian} approach and is ultimately a more fundemental and simple derivation.
+In \autoref{Euler Rotation Equations}, we explored the Newtonian method of deriving the Euler rotation equations using the \gls{bke}. Here, we present an alternative derivation that utilizes the \gls{Lagrangian} approach and is ultimately a more fundamental derivation.
 
 We showed earlier in \autoref{sec: rigid body constraints} that we can describe a \gls{rigid body} system with 6 generalized parameters, three of which are angles.
 \subsection{Torque Free Equations}
@@ -2092,13 +2145,11 @@ We can perform the analogous analysis for the other axes, yielding the full set 
 \color{blue}
 \mathrm{Torque-Free \ Rotations}
 \end{gather}
-\subsection{Forced Euler Rigid Body Dynamics}
 \section{Key Ideas}
 \begin{enumerate}
     \item We can find the \gls{eom} of a system using either the Newtonian approach or the \gls{Lagrangian} approach, and it is often easier to find an \gls{eom} using the \gls{Lagrangian} for a \gls{conservative} system.
     \item The \gls{Lagrangian} is scalar, so it is invariant to coordinate transforms. This means we can choose any variables we want for our generalized coordinates when performing derivations.
-    \item The methodology of Newtonian mechanics and \gls{Lagrangian} mechanics are fundementally different. Newtonian mechanics deals with the influence of external \glspl{action} (forces), while \gls{Lagrangian} Mechanics emphasizes the internal state of the system.
-    \item %add Hamiltonian v. Lagrangian
+    \item The methodology of Newtonian mechanics and \gls{Lagrangian} mechanics are fundamentally different. Newtonian mechanics deals with the influence of external \glspl{action} (forces), while \gls{Lagrangian} Mechanics emphasizes the internal state of the system.
 \end{enumerate}
 \section{Further Reading}
 The following section borrows heavily from the derivations of Chapter 6 and 7 of  \cite{thornton_classical_nodate} and Chapter 5 of  \cite{noauthor_variational_2017}. A good video overview of this topic can be found at \cite{veritasium_closest_2024}.
@@ -2119,9 +2170,7 @@ Find a suitable set of generalized coordinates to describe this system. Write ou
     \item Use the Euler-Lagrange equation to solve for the form of this curve (You may find the integral form useful!). Plot the result.
 \end{enumerate}
 
-\item  Th\'eoden, king of the Rohirrim, is riding his armies north through the Emyn Muil. His horse, Snowmane, trips on a small rock and Th\'eoden begins to lose his balance.
-
-You can model Th\'eoden as a mass on the end of a massless rod and his horse as a cart constrained to motion along the $\hat{x}$-axis. The angle of Th\'eoden from the vertical is denoted as $\theta$. Derive the \gls{eom} of the system using energy methods. The set-up is shown in \autoref{fig:Inverted Pendulum}.
+\item  Jonah wakes up one day and he is running late to his dynamics final! In a rush, he hops on his Onewheel and starts riding to class. You can model Jonah as a mass on the end of a massless rod and his Onewheel as a cart constrained to motion along the $\hat{x}$-axis. The angle of Jonah from the vertical is denoted as $\theta$. Derive the \gls{eom} of the system using energy methods. The set-up is shown in \autoref{fig:Inverted Pendulum}.
 \begin{figure}[ht]
     \centering
 
@@ -2154,9 +2203,9 @@ You can model Th\'eoden as a mass on the end of a massless rod and his horse as 
     \label{fig:Inverted Pendulum}
 \end{figure}
 \newpage
-\item After his daring stunt with the rock, Th\'eoden runs into Frodo, who is carrying the Phial of Galadriel, which holds the light of E\"arendil's star, which has some of the primordial light from the two trees of Valinor.
+\item Luckily,  Jonah was an avid reader of the Flight Dynamics Bible and aced his dynamics exam! On his way back home, he needs to grab a small model rocket for some aerodynamics testing. On the way, the parachute pops out of the nose and Jonah grabs it right before it hits the ground. Jonah is holding the rocket by the parachute and the rocket and parachute are swinging around.
 
-The Phial is hanging from a chain. The dynamics of the system can be modelled as a double pendulum with two rigid arms, both of length $L$, which are free to rotate in the $xy$-plane. Find the \gls{eom} for the system as shown in \autoref{fig:Double Pendulum}.
+The dynamics of the system can be modeled as a double pendulum with two rigid arms, both of length $L$, which are free to rotate in the $xy$-plane. Find the \gls{eom} for the system as shown in \autoref{fig:Double Pendulum}.
 \begin{figure}[ht]
     \centering
 
@@ -2231,6 +2280,7 @@ The Phial is hanging from a chain. The dynamics of the system can be modelled as
 
 \newpage
 \printendnotes
+\markboth{NOTES}{NOTES}
 
 \chapter{Computational Attitude Dynamics}\label{sec:attitude dynamics}
 \begin{chapquote}{Lord Kelvin, 1892}
@@ -2292,9 +2342,9 @@ Putting it all together, we're going to write a simple code using \gls{Euler ang
     2.5&0.1&0.1
 \end{bmatrix}^T$, we can also find the \gls{Euler rates} of the system. The following code listing quickly runs through the process, with sufficient commentary within the script explaining every \gls{action} taken.
 
-\lstset{style=mystyle}
+%\lstset{style=mystyle}
 
-\lstinputlisting[language=Matlab, caption=Euler Angle Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyEuler.m}\label{Euler Dynamics Listing}
+\lstinputlisting[style = Matlab-custom, language=Matlab, caption=Euler Angle Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyEuler.m}\label{Euler Dynamics Listing}
 
 Our results come out to be the following, with the gravity force expressed in the \gls{body frame} and thrust expressed in the \gls{inertial frame} as:
 \begin{equation}
@@ -2350,7 +2400,9 @@ Let's take the exact same example as before. We have the force of gravity equal 
     2.5&0.1&0.1
 \end{bmatrix}^T$. Wanting to obtain the gravity vector expressed in the \gls{body frame} instead of the \gls{inertial frame}, and vice versa for the thrust vector, this time we're going to use \glspl{quaternion} to do so. In addition, we're now going to find the \gls{quaternion} rate at the given moment. The listing below does this, and is sufficiently explained in the comments between operations to hopefully give you as the reader a sufficient understanding of what is happening. Note: you should see numerous similarities, with some sections of the code identical to the previous. 
 
-\lstset{style=mystyle}
+%\lstset{style=mystyle}
+
+\lstset{style=Matlab-custom}
 
 \lstinputlisting[language=Matlab, caption=Quaternion Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyQuat.m}\label{Quat Dynamics Listing}
 
@@ -2624,6 +2676,7 @@ Define any additional quantities that you deem necessary to solve the problem.
 
 \newpage
 \printendnotes
+\markboth{NOTES}{NOTES}
 
 \chapter{Aerodynamic Modeling}\label{sec: aerodynamics}
 \begin{chapquote}{Werner Heisenberg}
@@ -2783,7 +2836,7 @@ Another hurdle to overcome when describing the aerodynamics of our system is to 
 This gives us a standard value of $\rho_{\infty}$ and $a_{\infty}$ to use. However, the value of can vary by up to 10\% depending on the weather conditions \cite{svickova_air_2020}. Similarly, the Mach number has a strong dependence on temperature $\left(M=\sqrt{\gamma RT}\right)$, so the free-stream Mach number may also be different by 10-20\% of standard values. Further derivation of this mach relation can be found in \cite{filmer_fluid_nodate}.
 
 All of this is to say that using "atmosisa" gives us a good baseline model of the atmosphere, but is not the final say in atmospheric modeling. For now, we use "atmosisa" in our modeling because we can live with this variation in our model. However, it may be useful in the future to use other sources of atmospheric data that give location- and time-specific data.
-\section{Computational Aerodynamics}
+\section{Computational Aerodynamics}\label{sec:computational aero}
 In the case of our rocket, we encounter a variety of flight regimes from subsonic to high supersonic. Because of this variety, hand calculations of our aerodynamics can become very complicated. As a result, we choose to use computational tools to compute the aerodynamics of our rocket.
 \subsection{RasAero}
 The main tool that we use presently is RasAero. This tool allows us to input the geometry of the rocket and will output the \gls{drag coeff} as a function of the Mach number. This is less than perfect, as we lose some of the dependence on Reynolds number. Additionally, the dependence on \gls{angle of attack} is quite course (only measurements every 2$\degree$. That being said, RasAero has been used to model many rocket systems around the same scale as our rocket with an average error in apogee of $3.47\%$ and $80\%$ of the flights within $\pm10\%$ of the true apogee. For us, this is an acceptable compromise so that we can focus on flight dynamics modeling rather than aerodynamics.
@@ -2831,6 +2884,7 @@ For more complex studies of aerodynamics, we recommend Modern Compressible Flow 
 
 \newpage
 \printendnotes
+\markboth{NOTES}{NOTES}
 
 \chapter{Numerical Integration Schemes}\label{sec:numerical integration schemes}
 
@@ -2952,7 +3006,6 @@ a = 4;
 b = f(a)
 \end{lstlisting}
 where "computeSquare" is defined as:
-\lstset{style=mystyle}
 \begin{lstlisting}[style=Matlab-editor]
 function y = computeSquare(x)
 y = x.^2;
@@ -2971,7 +3024,7 @@ We get an output of "b = 16  36  100". The usefulness of this is immediately app
 Another useful feature of \glspl{func handle} for \gls{numerical int} is that they allow us to pass in only the variables needed for \gls{numerical int} and pass other variables in the expression as constants. In general, we want our numerical scheme to only accept our \gls{state vector} and the time vector. This is the same thing that "ode45" does, so it is best practice to do the same thing here.
 
 Our RK2 algorithm is a direct translation of \eqref{eq:rk2} into code. We present this below in \autoref{code:rk2}:
-\begin{lstlisting}[style=Matlab-editor, caption=RK2 Integrator]
+\begin{lstlisting}[style=Matlab-custom, caption=RK2 Integrator]
 %% RK2 Integrator
 % numerically integrates a first order initial value problem using Runge-Kutta 2nd order.
 % inputs:
@@ -3013,7 +3066,7 @@ The form of these equations is shown in \eqref{eq:RK4}.
     k_4=f(x_i+\Delta t,y_i+\Delta tk_3)
 \end{gather}
 An implementation of this algorithm into code is shown below.
-\begin{lstlisting}[style=Matlab-editor, caption=RK4 Integrator]
+\begin{lstlisting}[style=Matlab-custom, caption=RK4 Integrator]
 %% RK4 Integrator
 % numerically integrates a first order initial value problem
 % inputs:
@@ -3042,7 +3095,7 @@ While examples are helpful, it is useful to see the inner workings of "ode45" fo
 
 "ode45" only takes integration functions that are a function of time and the state variable, or "(t,x)" in MATLAB notation. If we have an integration function that is a function of more than just these two variables, we need to pass them through using \glspl{func handle}. We can do this in the following manner:
 
-\begin{lstlisting}[language=Matlab]
+\begin{lstlisting}[style=Matlab-editor]
 @(t,x) integrator(t,x,a,b)
 \end{lstlisting}
 In this example, we have a function that performs our \gls{numerical int}, called "integrator", the output of which will be the derivative of our \gls{state vector}. We want "ode45" to see this function and only input "(t,x)", so we put that in a \gls{func handle} at the front. After the \gls{func handle}, we are free to pass in any other variables, such as "a" and "b". These will simply be read in as constants in the "ode45" integration scheme.
@@ -3137,7 +3190,7 @@ Because the Hamiltonian equations are first order already, they are ready for nu
 
 A similar operation can be done to reduce the \gls{Lagrangian} to two first order equations, in a system known as a variational integrator.
 
-MATLAB has no built in functions for variational or \glspl{symplectic int}, so we do not discuss them further here for now.
+MATLAB has no built in functions for variational or \glspl{symplectic int}, so we do not discuss them further here for now. Further discussion is in Volume III.
 
 \subsubsection{Use Case of Symplectic Integrators}
 Although MATLAB does not have built-in functions for these integrators, scripts to do so can be written or found online.
@@ -3195,8 +3248,9 @@ The MATLAB documentation for \gls{numerical int} schemes is quite good. For non-
 
 \newpage
 \printendnotes
+\markboth{NOTES}{NOTES}
 
-\chapter{The 6-DoF}
+\chapter{The 6-DoF}\label{sec:6DoF}
 In this section we will combine everything from the previous sections and explain how our 6-\gls{dof} model works. We will follow a similar set up to \autoref{sec:Dzhan}  here, describing the elements of the model in detail and then attaching relevant code either in-line or in the appendix.
 
 Our definitions of our frames follow from those discussed in \autoref{sec:Frame of Reference}. For the earth-centered \gls{inertial frame}, we follow the conventions discussed in \autoref{fig:InertialFrame}. Recall that the $\hat{x}$ axis points upward toward the zenith, the $\hat{y}$ axis points east along the surface, and the $\hat{z}$ axis finishes the right-handed coordinate system, pointing north.
@@ -3267,7 +3321,7 @@ Thrust is also fairly simple to model. If we consider the thrust to be coinciden
 Where $\dot{m}$ is the mass flow rate of the engine, $V_e$ is the exit velocity of the engine, $P_e$ is the exit pressure of the engine, $P_{atm}$ is the atmospheric pressure, and $A_e$ is the area of the nozzle exit. For a given propulsion system, these parameters are usually specified or can be easily derived, although we will not do so here. See \cite{dasilva_chemical_2023} or the propulsion team for more details.
 
 Here, we introduce the use of the rotation matrix to convert between different frames. MATLAB allows for the creation of a rotation matrix with the input of a \gls{quaternion} using the "quat2dcm" function. Using this, we can perform frame conversion to and from the body and earth frame. We show this below in \autoref{code:RotationMatrix}:
-\lstinputlisting[style=Matlab-editor, caption = Rotation Matrix]{6DoF Explanation Scripts/RotationMatrix.m}\label{code:RotationMatrix}
+\lstinputlisting[style=Matlab-custom, caption = Rotation Matrix]{6DoF Explanation Scripts/RotationMatrix.m}\label{code:RotationMatrix}
 Using this code, we can convert the thrust from the \gls{body frame} into the earth frame through the function call "RotationMatrix(thrustForceBody, quat, 1)". The input of 1 in this function means that the vector is transformed from the \gls{body frame} into the earth frame. In our case, this means that we multiply by the transpose of the rotation matrix in the MATLAB notation convention.
 \subsubsection{Lift and Drag}
 Our other two forces follow in a similar manner. The quantities of lift and drag are heavily discussed in \autoref{sec: aerodynamics}, so we will keep them succinct here. The directions of lift and drag in the earth frame are described by \eqref{eq:Lift} and \eqref{eq:drag}. To convert these forces into the \gls{body frame}, we use the function call "RotationMatrix(force, quat, 0)". The specification of "0" in the function converts a force in the earth frame into one in the \gls{body frame}. We need the \gls{body frame} force for computing the moments in the \gls{body frame}, as discussed in \autoref{sec:rotations in the body frame}.
@@ -3342,6 +3396,30 @@ Full model validation is usually more complex. One such example is our validatio
 \end{figure}
 
 
+\chapter{MATLAB Practices}\label{sec:MATLAB Practices}
+
+In this final chapter, we discuss the techniques and practices for implementing a 6-DoF in MATLAB. We will also discuss more general practices for large MATLAB code bases and methods to keep these organized. As of late May 2025, these practices are currently being implemented on our 6-DoF model.
+
+\section{Object Oriented Programming in MATLAB}
+
+\newacronym{oop}{OOP}{Object Oriented Programming}
+
+Up until now, we have mainly been using a procedural approach to programming. This is a very good method for writing short segments of code, but for larger databases that need to have greater code reusability, there are better approaches. One such approach that is particularly powerful is \gls{oop}.
+
+In \gls{oop}, the basis of our code is objects. These objects hold information of all types, whether that be numeric, string, or time data. The most important aspect of \gls{oop} is that it allows us to make user interaction with a large code base simpler, and also allows us to reuse large parts of the code.
+
+If it has not already become apparent, our model is fairly simple in the grand scheme of things. We are modeling a single rocket and most of the subsystems are simplified. What happens if we want to model a huge rocket system with different systems, sensors, measurements, errors, and so on? In this case, we need a better scheme for organization.
+
+\subsection{Objects, Properties, and Methods}
+
+
+
+\subsection{Overloading and Precedence}
+
+\subsection{Subclasses and Superclasses}
+
+
+
 \section{Data Visualization}
 Here, we will briefly discuss data visualization and best practices for MATLAB. No matter how good your simulation is, you must be able to appropriately share data in a way that is not only easily conveyed to a non-expert audience, but also visually interesting and descriptive.
 
@@ -3356,20 +3434,20 @@ set(groot, 'defaultTextInterpreter', 'latex')
 
 \subsection{Conventions for Plots}
 There are several conventions for plots which are generally followed in engineering practices. These will change depending on where your figures are to be published, but for our purposes, we use the following conventions:
-\begin{enumerate}
+\begin{itemize}
     \item All plots should have clear axis labels. Units are typically included in brackets as [$m$], in example of a length. Units should be SI base units wherever possible.
     \item Be knowledgeable of the use of color. Overuse of color may distract the viewer from the information being presented. Additionally, if your content is to be presented to a large audience, be mindful of those with color vision deficiencies. If your content may be printed, plots should be easily readable in black and white. Using different markers and line types is a good strategy.
     \item Always include a legend when plotting multiple data on a single graph. 
     \item When the magnitudes of data are vastly different, a logarithmic axis or two y-axes are best practice.
-\end{enumerate}
+\end{itemize}
 
 \subsection{Changing Default MATLAB Plotting}
 If you want to have these changes to figures universally applied in MATLAB, you can create a file in MATLAB called 'startup.m' that is run when MATLAB is opened. This file must exist in the user path for MATLAB. To find the user path for MATLAB, the command "userpath" can be typed into the command line. This will output something like:
 \\
 "C:\Users\YourName\OneDrive\Documents\MATLAB"
 
-The code in \autoref{code:startup} is the d efault plotting used in this document, which should be a good baseline for professional plots.
-\lstinputlisting[style=Matlab-editor, caption = Startup File for Plotting]{startup.m}\label{code:startup}
+The code in \autoref{code:startup} is the default plotting used in this document, which should be a good baseline for professional plots.
+\lstinputlisting[style=Matlab-custom, caption = Startup File for Plotting]{startup.m}\label{code:startup}
 
 And with that, we have completed the first Volume of the Flight Dynamics Bible. Additional information and code can be found in the Appendix. If you have any questions, concerns, or suggestions, feel free to reach out to Hudson Reynolds on Slack or via email at Hudsonj.reynolds@gmail.com.
 
@@ -3439,23 +3517,23 @@ So, we have $F=m\ddot{x}_i$.
 \section{Code}
 This section contains lengthier segments of example code from either the 6-\gls{dof} itself or a proof/example relating to it. Refer to the section numbers to find the appropriate implementation of each code segment.
 \subsection{Lorenz Attractor RK4 Example}\label{sec:Lorenz Attractor RK4 Example}
-\lstinputlisting[style=Matlab-editor, caption = Lorenz Attractor]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAttractor.m}\label{code:Lorenz}
+\lstinputlisting[style=Matlab-custom, caption = Lorenz Attractor]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAttractor.m}\label{code:Lorenz}
 
 We also have a script to display the results of this in a nice animation:
 
-\lstinputlisting[style=Matlab-editor, caption =Lorenz Animation]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAnimation.m}\label{code:LorenzAnim}
+\lstinputlisting[style=Matlab-custom, caption =Lorenz Animation]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAnimation.m}\label{code:LorenzAnim}
 \subsection{Dzhanibekov Effect Model}
-\lstinputlisting[style=Matlab-editor, caption = Dzhanibekov Main]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovMain.m}\label{code:DzhanMain}
+\lstinputlisting[style=Matlab-custom, caption = Dzhanibekov Main]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovMain.m}\label{code:DzhanMain}
 
-\lstinputlisting[style=Matlab-editor, caption = Dzhanibekov Integrator]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovIntegrator.m}\label{code:DzhanInt}
+\lstinputlisting[style=Matlab-custom, caption = Dzhanibekov Integrator]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovIntegrator.m}\label{code:DzhanInt}
 
-\lstinputlisting[style=Matlab-editor, caption = Dzhanibekov Rotation Visualizer]{6DoF Explanation Scripts/Dzhanibekov/RotationsVisualizer.m}\label{code:DzhanRotVis}\
+\lstinputlisting[style=Matlab-custom, caption = Dzhanibekov Rotation Visualizer]{6DoF Explanation Scripts/Dzhanibekov/RotationsVisualizer.m}\label{code:DzhanRotVis}\
 
 
 \subsection{Numerical Integration Error Examples}
-\lstinputlisting[style=Matlab-editor, caption = Numerical Integration Error Comparison]{6DoF Explanation Scripts/NumericalIntegratorError.m}\label{code:Numerical Error $y'=2t$}
+\lstinputlisting[style=Matlab-custom, caption = Numerical Integration Error Comparison]{6DoF Explanation Scripts/NumericalIntegratorError.m}\label{code:Numerical Error $y'=2t$}
 
-\lstinputlisting[style=Matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
+\lstinputlisting[style=Matlab-custom, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
 \subsection{6-DoF Code}\label{sec:6DoF Code}
 The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this .pdf and .tex document:
 
