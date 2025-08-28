@@ -2719,7 +2719,7 @@ With all of these defined, we can write the derivative of our \gls{state vector}
 \end{equation}
 From here, we can implement this in "ode45". We show all of the code for this model in the appendix.
 
-Our initialization of the \gls{state vector} and all of the basic setup in contained in the main file, shown in \autoref{code:DzhanMain}. The code that gets the derivative of the \gls{state vector} is the function passed into ode45. This code is shown in listing \autoref{code:DzhanInt}. There is additionally a file to display the rotation of the body in an animation, which is shown in \autoref{code:DzhanRotVis}.
+Our initialization of the \gls{state vector} and all of the basic setup in contained in the main file, shown in "DzhanibekovMain.m". The "DzhanibekovIntegrator.m" code operates on the state vector using "ode45" to get the derivative. This code is . There is additionally a file to display the rotation of the body in an animation, which is "RotationVisualizer.m". This code can be found in \autoref{sec:Dzanibekov Code}.
 
 %% add listings.
 \section{Key Ideas}
@@ -3344,7 +3344,7 @@ We previously discuss the concept of \gls{stiff} systems in \autoref{sampling an
 
 For systems that have moderate stiffness, we can use "ode23" instead of the more typical "ode45" in MATLAB. Using a lower order integration leads to more course results, but it also allows very \gls{stiff} parts of the system to be computed faster.
 
-On the converse side, for systems that require very high precision, such as orbits, algorithms of the 8th or 9th order are often used. In MATLAB, such algorithms are used in the "ode78" and "ode89" functions. Using a higher order, the \gls{trunc error} can be significantly reduced and fewer timesteps are needed when very high tolerances are required. However, in most scenarios, there algorithms are about 300-500\% slower than "ode45" while providing few accuracy benefits. Thus, these algorithms are mostly used for only very high precision use cases.
+On the converse side, for systems that require very high precision, such as orbits, algorithms of the 8th or 9th order are often used. In MATLAB, such algorithms are used in the "ode78" and "ode89" functions. Using a higher order, the \gls{trunc error} can be significantly reduced because fewer timesteps are needed when very high tolerances are required. However, in most scenarios, there algorithms are about 300-500\% slower than "ode45" while providing few accuracy benefits. Thus, these algorithms are mostly used for only very high precision use cases.
 
 \subsection{Symplectic and Variational Integrators}
 In addition to these \gls{numerical int} schemes, there are a variety of integration schemes that use energy conservation as the basis of their integration schemes. These types of integrators are called \gls{symplectic int}. These types of integrators directly solve Hamilton's equations for a Hamiltonian system. The form of these equations is discussed briefly in \autoref{sec:hamiltonian}.
@@ -3387,7 +3387,7 @@ The flame graph gives a visual representation of how long the code spends on eac
 
 Poorly optimized code will spend a long time running an excessive number of operations. In some cases, this is unavoidable. For example, ode45, which runs the RK4 integration scheme we discussed in \autoref{sec: rk4}, must run for every time step and is likely to comprise a large part of simulation time.
 
-However, other operations, such as "atmosisa", should not comprise a large portion of simulation time. As seen in Figure 15, calling the atmosisa function on every loop takes about 40\% of the total time spent in ‘RK4Integrator’ function. By instead creating a table of the atmosisa data before running the simulation, we can reduce the runtime quite drastically. Implementing this simple change, we can see the reduction in simulation time as shown in \autoref{fig:flame2}
+However, other operations, such as "atmosisa", should not comprise a large portion of simulation time. As seen in \autoref{fig:flame1}, calling the atmosisa function on every loop takes about 40\% of the total time spent in ‘RK4Integrator’ function. By instead creating a table of the atmosisa data before running the simulation, we can reduce the runtime quite drastically. Implementing this simple change, we can see the reduction in simulation time as shown in \autoref{fig:flame2}
 
 \begin{figure}
     \centering
@@ -3400,7 +3400,7 @@ However, other operations, such as "atmosisa", should not comprise a large porti
 \begin{enumerate}
     \item \Gls{numerical int} schemes of higher order can better approximate systems. Generally, a higher order will require more up front computation but will be more accurate and will take fewer steps to achieve a given accuracy
     \item When numerically integrating functions with high frequencies or rapid changes, we need to be mindful of stiffness of the system and ensure to sample at at least the \gls{bandwidth} of the signal.
-    \item Keep in mind what you need to calculate inside the integrator and what should be passed through. Calculations inside the integral are very time expensive!
+    \item Keep in mind what you need to calculate inside the integrator and what should be passed through. Calculations inside the integrator are very time expensive!
 \end{enumerate}
 
 \section{Notes and Further Reading}
@@ -3665,9 +3665,12 @@ The code in \autoref{code:startup} is the default plotting used in this document
 
 And with that, we have completed the first Volume of the Flight Dynamics Bible. Additional information and code can be found in the Appendix. If you have any questions, concerns, or suggestions, feel free to reach out to Hudson Reynolds on Slack or via email at Hudsonj.reynolds@gmail.com.
 
-\chapter*{Appendix A: Answers to Selected Problems}
+\appendix
+\renewcommand{\chaptername}{Appendix}
 
-\chapter*{Appendix B: Proofs and Derivations}\label{sec:ProofsAndDerivations}
+\chapter{Answers to Selected Problems}
+
+\chapter{Proofs and Derivations}\label{sec:ProofsAndDerivations}
 It is often useful, especially for mathematical reasoning, to see more exact derivations. We have included several of the most useful derivations in this appendix.
 
 \section{Buckingham Pi}\label{Buckingham Pi Deriv}
@@ -3730,26 +3733,16 @@ So, we have $F=m\ddot{x}_i$.
     It can further be shown that the Newtonian derivation must be performed in an inertial frame.
 \end{corollary}
 
-\chapter*{Appendix C: Code}
+\chapter{Code}
 
+This chapter contains lengthier segments of example code from either the 6-\gls{dof} itself or a proof/example relating to it. Since the code is cumbersome to show in full, we have opted to link to the GitHub repository instead.
+\section{Lorenz Attractor RK4 Example}\label{sec:Lorenz Attractor RK4 Example}
+\href{https://github.com/HudsonReynolds/Flight-Dynamics-Bible/tree/main/6DoF%20Explanation%20Scripts/Lorenz%20Attractor}{Lorenz Attractor}
 
-\section{Code}
-This section contains lengthier segments of example code from either the 6-\gls{dof} itself or a proof/example relating to it. Refer to the section numbers to find the appropriate implementation of each code segment.
-\subsection{Lorenz Attractor RK4 Example}\label{sec:Lorenz Attractor RK4 Example}
-\lstinputlisting[style=matlab-editor, caption = Lorenz Attractor]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAttractor.m}\label{code:Lorenz}
+\section{Dzhanibekov Effect Model} \label{sec:Dzanibekov Code}
+\href{https://github.com/HudsonReynolds/Flight-Dynamics-Bible/tree/main/6DoF%20Explanation%20Scripts/Dzhanibekov}{Dzhanibekov Effect}
 
-We also have a script to display the results of this in a nice animation:
-
-\lstinputlisting[style=matlab-editor, caption =Lorenz Animation]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAnimation.m}\label{code:LorenzAnim}
-\subsection{Dzhanibekov Effect Model}
-\lstinputlisting[style=matlab-editor, caption = Dzhanibekov Main]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovMain.m}\label{code:DzhanMain}
-
-\lstinputlisting[style=matlab-editor, caption = Dzhanibekov Integrator]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovIntegrator.m}\label{code:DzhanInt}
-
-\lstinputlisting[style=matlab-editor, caption = Dzhanibekov Rotation Visualizer]{6DoF Explanation Scripts/Dzhanibekov/RotationsVisualizer.m}\label{code:DzhanRotVis}\
-
-
-\subsection{Numerical Integration Error Examples}
+\section{Numerical Integration Error Examples}
 \lstinputlisting[style=matlab-editor, caption = Numerical Integration Error Comparison]{6DoF Explanation Scripts/NumericalIntegratorError.m}\label{code:Numerical Error $y'=2t$}
 
 \lstinputlisting[style=matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
