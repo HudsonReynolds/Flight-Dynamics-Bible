@@ -6,6 +6,7 @@
 \documentclass[12pt]{report}
 \usepackage[letterpaper, total={6in, 8in}]{geometry}
 \usepackage[T1]{fontenc}
+\usepackage{booktabs}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{tikz}
@@ -13,6 +14,7 @@
 \usetikzlibrary{patterns}
 \usetikzlibrary{shadows.blur}
 \usetikzlibrary{shapes}
+\usepackage[RPvoltages, siunitx]{circuitikz}
 \usepackage{indentfirst}
 \usepackage{mathdots}
 \usepackage{amssymb}
@@ -26,7 +28,7 @@
 \usepackage{enumitem}
 \usepackage{extarrows}
 \usepackage{setspace}
-\usepackage[framed,numbered]{matlab-prettifier}
+\usepackage{matlab-prettifier}
 \usepackage{csquotes}
 \usepackage[style=numeric]{biblatex}
 \addbibresource{references.bib}
@@ -87,12 +89,15 @@
 \renewcommand{\subsectionautorefname}
 {subsection}
 \newcommand{\exampleautorefname}{Example}
+\newcommand{\exerciseautorefname}{Exercise}
+
 
 \usepackage[bf,small,hypcap=true]{caption}
 
 \usepackage{xcolor}
 
 \definecolor{linkgreen}{rgb}{0.117,0.67,0.24}
+\definecolor{maroon}{rgb}{0.5,0.1,0.1}
 \definecolor{refRed}{rgb}{0.443,0.0588,0.0392}
 \definecolor{Maroon}{rgb}{0.749,0.047,0.09}
 
@@ -147,6 +152,8 @@
 %% GLOSSARY:
 \usepackage[toc]{glossaries}
 
+%\usepackage[style=tree, toc]{glossaries-extra}
+
 \glsdisablehyper
 
 \makeglossaries
@@ -188,45 +195,29 @@
 %% Code Listings
 \usepackage{listings}
 
-\lstset{
-    style=Matlab-editor,
-    basicstyle=\footnotesize\ttfamily,
-    breaklines=true,                  % Optional: breaks long lines
-    showstringspaces=false            % Optional: cleaner string appearance
-}
-
-\lstdefinestyle{Matlab-custom}{
-    style=Matlab-editor,
-    basicstyle=\footnotesize\ttfamily
-}
-
-
-\mlttfamily
-\usepackage[T1]{fontenc}
-
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.95}
 
-% \lstdefinestyle{mystyle}{
-%     backgroundcolor=\color{backcolour},   
-%     commentstyle=\color{codegreen},
-%     keywordstyle=\color{magenta},
-%     numberstyle=\tiny\color{codegray},
-%     stringstyle=\color{codepurple},
-%     basicstyle=\ttfamily\footnotesize,
-%     breakatwhitespace=false,         
-%     breaklines=true,                 
-%     captionpos=t,                    
-%     keepspaces=true,                 
-%     numbers=left,                    
-%     numbersep=5pt,                  
-%     showspaces=false,                
-%     showstringspaces=false,
-%     showtabs=false,                  
-%     tabsize=4
-% }
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=t,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
 
 \lstMakeShortInline[style=Matlab-editor]"
 
@@ -291,13 +282,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Book's title and subtitle
-\title{\Huge \textbf{Flight Dynamics Bible}  \\ \huge Volume I: \\Everything about 6 Degree of Freedom Modeling}
-
+\title{\Huge \textbf{Flight Dynamics Bible}  \\ \huge Volume I: \\6 Degree of Freedom Modeling}
 % Author
 \author{\textsc{Hudson Reynolds} \\ \textit{Author}
 \and
 \textsc{Preston Wright} \\ \textit{Co-Author}
 }
+
+\date{August 2025 \\ \newline \large{\textbf{Second Edition}}}
+
 
 
 \begin{document}
@@ -312,9 +305,7 @@
 %% Things to do:
 % more figures would be nice
 % add more proofs for relevant sections
-% finish the 6-DoF Section, add code and attach code in google drive as well
-% clean up some of the figs, especially the body frame.png
-
+% finish the OOP section
 %
 \pagenumbering{roman}
 
@@ -362,16 +353,21 @@ In this first volume, we cover primarily the translational dynamics and the basi
 
 Because of the depth of the subjects described here, we have decided to cover most of attitude dynamics in a separate volume. In this volume, we mostly describe how attitude dynamics can be implemented in MATLAB. Volume II contains most of the theory about attitude dynamics. This second volume is especially useful for the mathematically inclined reader or those who want to implement attitude dynamics math in another programming language.
 
-As a note, while our work on flight dynamics has mainly focused on modeling rockets, we hope that this document can be used more widely for a variety of 3-DoF and 6-DoF models. As such, we have attempted to include content that is useful for other systems, such as aircraft modeling and orbital dynamics, insofar as we have experience in these areas. That being said, to limit the scope of this document, we have decided to explore these concepts in the context of rocket modeling, and hope that our explanations provide enough clarity for the intrepid reader to explore modeling in other domains.
+As a note, while our work on flight dynamics has mainly focused on modeling rockets, we hope that this series can be used more widely for a variety of 3-DoF and 6-DoF models. As such, we have attempted to include content that is useful for other systems, such as aircraft modeling and orbital dynamics, insofar as we have experience in these areas. That being said, to limit the scope of this document, we have decided to explore these concepts in the context of rocket modeling, and hope that our explanations provide enough clarity for the intrepid reader to explore modeling in other domains.
 
-Some other areas are also covered in this document but are curtailed because Preston and I do not have the experience to give full authority on these subjects. However, as we learn more, this document is growing every day. In future volumes, we hope to expand and add some of these other sections, especially those related to aerodynamics, energy methods, and control theory, to better serve those in the future who may hope to recreate the work we have done here.
+Some other areas are also covered in this document but are curtailed because Preston and I do not have the experience to give full authority on these subjects. However, as we learn more, these volumes continue to grow. In Volume II and III, we expand and add many of these other sections, especially those related to attitude dynamics, energy methods, and control theory, to better serve those in the future who may hope to recreate the work we have done here.
+
+\section*{Preface to the Second Edition}
+In this second edition of Volume I, we have reworked many of the figures and the text to be more clear. There has also been an effort to reduce the amount of jargon and improve the pedagogical effectiveness of the book. Solutions to some of the problems have additionally been provided.
+
+New content, specifically related to object-oriented programming, has been emphasized in the end of this volume. Some of the sections on energy methods of mechanics has been reduced and placed in Volume III instead. Material on derivative transport (otherwise known as the Basic Kinematic Equation) which was previously omitted has now been included in this volume.
 
 \section*{User Guide}\label{sec:User Guide}
 For those readers who want to learn both the theory and the practical implementation of a 6-\gls{dof}, we recommend reading the entirety of Volume I, and supplementing sections of Volume II and III as required.
 
 For those who have requisite knowledge but want information on implementation of 6-\gls{dof} into MATLAB, \autoref{sec:attitude dynamics}, \autoref{sec:computational aero}, \autoref{sec:numerical integration schemes}, and \autoref{sec:MATLAB Practices} are recommended.
 
-For those interested solely in Attitude Dynamics, \autoref{sec:attitude dynamics}, Volume II, and Part I of Volume III (Particularly the Chapter on Lie Theory) are suggested. If the reader's interests are in spacecraft dynamics in general, Part II of Volume III is additionally suggested.
+For those interested solely in Attitude Dynamics, \autoref{sec:attitude dynamics}, Volume II, and Part I of Volume III (Particularly the section on Lie Theory) are suggested. If the reader's interests are in spacecraft dynamics in general, Part II of Volume III is additionally suggested.
 
 For those interested in control system design and analysis, we recommend \autoref{sec: Newtonian Dynamics}, \autoref{sec:energy methods}, Part V of Volume II, and Volume III (with an emphasis on Part III).
 
@@ -434,20 +430,21 @@ $$\begin{array}{ll}
         \Delta t& \mathrm{timestep}\\
 \end{array}$$
 \subsection*{Coding Standards}
-An ideal 6-\gls{dof} not only models the motion of a vehicle through the atmosphere as accurately as possible but is also well-structured and easily readable. Strict adherence to an agreed upon and appropriate set of coding standards is essential for a successful program. These cover everything from naming conventions to heading structure, and make the integration of codes from multiple contributors more seamless.
+An ideal 6-\gls{dof} not only models the motion of a vehicle through the atmosphere as accurately as possible but is also well-structured and easily readable. Strict adherence to an agreed upon and appropriate set of coding standards is essential for a successful program. These standards cover everything from naming conventions to heading structure, and make the integration of codes from multiple contributors more seamless.
 
 For short pieces of code written inline, we use a mono-spaced font with the appearance of "code snippet" as shown. Longer code is included in listings with line numbers using the same mono-spaced font.
 
 Generally, we use the following conventions in our coding practice:
 \begin{itemize}
-    \item Variables utilize camelCase (symbolic variables are the only exception, where an underscore may be used)
-    \item File names and functions utilize PascalCase
+    \item Variables utilize camelCase where possible
+    \item Symbolic variables may use underscores
+    \item File names, functions, and classes utilize PascalCase
 
 
 \end{itemize}
 MATLAB script file headers are of the following format:
 
-\lstinputlisting[style=Matlab-custom, caption = Script Header]{6DoF Explanation Scripts/ScriptHeader.m}
+\lstinputlisting[style=Matlab-editor, caption = Script Header]{6DoF Explanation Scripts/ScriptHeader.m}
 \chapter{Overview}
 
 \pagenumbering{arabic}
@@ -461,9 +458,7 @@ In much the same way, we must construct all of the mathematical background requi
 \section{Document Outline}
 A general overview of the scope of this document is given in the preface.  Here, we will go into more detail about the layout of each section. Our goal is to present this document in a similar manner to a textbook while still remaining approachable and interesting to read.
 
-Our pedagogical approach is strongly reliant on examples and trying problems. We find that this is the best method for readers to learn the content.
-
-In each chapter (aside from this overview chapter), there will be some additional content at the end that may be especially useful for quick reference. For quick reference, we include a `Key Ideas' section that may be used to quickly reference the big takeaways from each chapter.
+Our pedagogical approach is strongly reliant on examples and trying problems. We find that this is the best method for readers to learn the content. In each chapter (aside from this overview chapter), there will be some additional content at the end that may be especially useful for quick reference. For quick reference, we include a `Key Ideas' section that may be used to quickly reference the big takeaways from each chapter.
 
 Additionally, a  `Further Reading and Notes' is included which the curious reader may benefit from. Many topics are covered in this document; each of which deserve their own book-length discussion. Because we have neither the desire nor capability to write such a long document, we have linked these beneficial resources whenever possible. It is certainly not necessary to read any/all of these sources to comprehend the content here, but they may prove useful for deeper research into topic areas that interest the reader.
 
@@ -476,9 +471,9 @@ The goal of this document is to provide a comprehensive overview of the process 
 
 The first time an important technical jargon is used, we will \textit{italicize} the word for recognition. It is important to learn these terms to effectively and concisely describe your work. That being said, we attempt to keep the usage of jargon to a minimum to make this text approachable. A glossary with these terms has also been added so that all of these words are included in a single location. 
 
-To aid in comprehensibility, we have added sources that we find especially useful and avoided the use of superfluous sources. These sources are hyperlinked for ease of access. In addition, useful links and footnotes have been highlighted in red boxes to be easily located. 
+To aid in comprehensibility, we have added sources that we find especially useful and avoided the use of superfluous sources. These sources are attached in the bibliography for ease of access. In addition, useful links and footnotes have been highlighted to be easily located. 
 
-To fully comprehend and successfully use this document, it is recommended that you have a good understanding of calculus, linear algebra, and calculus-based physics. A rudimentary understanding of differential equations and dynamics will also prove useful but is not strictly required. Topics covered in AAE 203 / Introduction Dynamics will be used. 
+To fully comprehend and successfully use this document, it is recommended that you have a good understanding of calculus, linear algebra, and calculus-based physics. A rudimentary understanding of differential equations and dynamics will also prove useful but is not strictly required. Topics covered in AAE 203 / Introduction Dynamics will be used.
 
 Some concepts will arise in this document that are derived from graduate-level coursework and complex mathematics. In these instances, we may not attempt to derive the background and full understanding, but rather only what is necessary for building a 6-\gls{dof} model. In these cases, we also try to link to source material if you are inclined to learn more about those topics.
 
@@ -487,7 +482,7 @@ Let’s start off with some terminology in this section. A \acrlong{dof} (\gls{d
 
 When modeling rigid body dynamics, it is common to see 1-\gls{dof}, 3-\gls{dof}, and 6-\gls{dof} models all used in aerospace applications. Each of these are useful constructs, and sometimes a simulation with more degrees of freedom is not necessarily better, depending on the application.
 \subsection{1-DoF}
-The first modeling that is often done for the sizing of rockets may use 1-\gls{dof} modeling. In this type of model, there is only one axis along which an object may translate or rotate about. In this case of rocket modeling, the only degree of freedom is the vertical altitude of the rocket. The goal of this type of model is mainly to provide a heuristic for determining rocket performance in the very preliminary stages of sizing by estimating the maximum altitude they can achieve.
+The first modeling that is often done for the sizing of rockets may use 1-\gls{dof} modeling. In this type of model, there is only one axis along which an object may translate or rotate about. In this case of rocket modeling, the only degree of freedom is the altitude of the rocket. The goal of this type of model is mainly to provide a heuristic for determining rocket performance in the very preliminary stages of sizing by estimating the maximum altitude they can achieve.
 
 Another example of this type of model is a simple mass-spring system along one axis. Such models may be useful for estimating the vibrations of bodies or as a first-order approximation of fuel slosh.
 
@@ -519,6 +514,13 @@ Doing so is quite a difficult challenge, but it is not insurmountable. With care
 The structure of a 6-\gls{dof} consists of three main, large “blocks” of code that are executed in sequence. The first is the initialization section. This is where all known, fixed parameters of the vehicle, atmosphere, and physics are initialized to be called later in the program. The second section is the integrator. This block utilizes a certain integration scheme to step through time, calculating the derivatives of the vehicle’s \gls{state vector}. Within the integrator, there are three major sub-blocks corresponding to major aspects of the dynamics: the forces, the moments, and the attitude dynamics. The forces section takes on the more familiar particle dynamics – regarding position, velocity, and acceleration - that are seen in a high school physics class. The moments section takes on the torques and rotational forces acting on the system. Lastly, there is  attitude dynamics – the orientation of the vehicle in space. This can take the form of either Euler Angles or Parameters, which will be discussed further later. The final block is the visualizer block. This block writes pertinent information to matrices, animates the movement of the vehicle from launch to land, and outputs graphs of important metrics for the user to visualize.
 
 Each of the previously mentioned sections will be discussed in more detail throughout this document.
+
+\section{The General Picture}
+It is often useful to see where we are going -- and our general method of getting there -- before we start. With this `map' at our disposal, it is much easier to get through the complexities of the mathematics involved in creating a 6-\gls{dof} model.
+
+The essence of the 6-\gls{dof} is to simulate the movements of a system through time. To do so, we need some description of how the system may respond to certain forces. We will spend quite a while discussing how these forces arise and how we may use them to understand the subsequent motion of a vehicle.
+
+Talk about forces into moments, rotations, and why numerical integration is required. Mention aerodynamic forces. Include diagram similar to the one shown in the code review.
 
 \chapter{Newtonian Dynamics}\label{sec: Newtonian Dynamics}
 \begin{chapquote}{Isaac Newton}
@@ -626,8 +628,7 @@ F_T \cdot [1-u(t-t_b)]-\frac{1}{2}\rho_{\infty}V_{\infty}^2SC_D-mg=m\vec{a}\labe
 \end{gather}
  From here, we use integration to find the velocity and then position of the object with time. Formally, we might define this formally as:
  $$\vec{v}=\int{\vec{a}}{dt}$$
-However, you may notice something strange with our equation. In our expression for acceleration, we need to know the velocity to compute the drag. However, we do not know the velocity without integrating the equation first. Since this dependence is non-linear, this becomes even more complicated to solve. In general, there is no known analytical solution to this paradigm!
-We must take a different approach to the problem. \endnote{Sometimes systems like this can be solved with traditional ODE methods. The most easy identifier is if the system is linear or not. However, most complex systems like our 6-\gls{dof} have no known analytical solutions. We will focus on numerical integration because it will be more useful in general. }
+However, you may notice something strange with our equation. In our expression for acceleration, we need to know the velocity to compute the drag. However, we do not know the velocity without integrating the equation first. Since this dependence is non-linear, this becomes even more complicated to solve. In general, there is no known analytical solution to this paradigm! We must take a different approach to the problem. \endnote{Sometimes systems like this can be solved with traditional ODE methods. The most easy identifier is if the system is linear or not. However, most complex systems like our 6-\gls{dof} have no known analytical solutions. We will focus on numerical integration because it will be more useful in general. }
 
 \newglossaryentry{numerical int}
 {
@@ -638,11 +639,9 @@ We must take a different approach to the problem. \endnote{Sometimes systems lik
 
 The way we resolve this is to make an approximation of the solution in a process called \gls{numerical int}. Here, we will outline the simplest type of \gls{numerical int}, known as Euler’s Method. This section aims to show how to implement Euler’s method in code, and the mathematical reasoning will be given a more formal treatment in \autoref{sec:euler integration}. We will describe more complex \gls{numerical int} schemes and why you might want to use them, but it’s good to see the code for a simple case first.
 
-Euler’s Method involves discretizing our time interval. You may remember the concept of a Riemann sum from calculus, where you approximate an integral in discrete time steps. We will take a similar approach with Euler’s Method. Euler’s method is applicable to solving first order ordinary differential equations (ODE’s). However, in our problem, we have a second order differential equation, because $\vec{a}=\ddot{y}$.
+Euler’s Method involves discretizing our time interval into many small pieces. You may remember the concept of a Riemann sum from calculus, where you approximate an integral in discrete time steps. We will take a similar approach with Euler’s Method. Euler’s method is applicable to solving first order ordinary differential equations (ODE’s). However, in our problem, we have a second order differential equation, because $\vec{a}=\ddot{y}$.
 
-To resolve this issue, we will make this one differential equation into a system of first-order differential equations. In general, we can convert an nth-order ODE into a system of n first-order ODEs.
-
-In this case, we define a variable, $v=\dot{y}$. Now, we can express equation \eqref{eq2} as a system of two differential equations:
+To resolve this issue, we will make this one differential equation into a system of first-order differential equations. In general, we can convert an nth-order ODE into a system of n first-order ODEs. In this case, we define a variable, $v=\dot{y}$. Now, we can express equation \eqref{eq2} as a system of two differential equations:
 
 \begin{gather}\label{system}
         \dot{v}=\frac{F_T \cdot [1-u(t-t_b)]-\frac{1}{2}\rho_{\infty}V_{\infty}^2SC_D}{m}-g\\
@@ -702,7 +701,7 @@ If you still feel slightly unsure about some details, note that a more formal de
 We also show this Euler Integrator example in MATLAB \autoref{Script 1} below. Note that $\frac{1}{2}\rho_{\infty}SC_D$ is called $k$ in the script for simplicity. This simplification assumes that $\rho_{\infty}$ and the $C_D$ are constant, which we will later see is a quite poor assumption for rocket modeling but is okay for a first approximation.
 
 \newpage
-\lstinputlisting[style=Matlab-custom,  caption=1 DoF]{6DoF Explanation Scripts/OneDofEuler.m}\label{Script 1}
+\lstinputlisting[style=Matlab-editor,  caption=1 DoF]{6DoF Explanation Scripts/OneDofEuler.m}\label{Script 1}
 
 There are a few important things to note about the MATLAB implementation of the script. Firstly, the only force that is defined outside of the loop is gravity, because the magnitude and direction of this force is independent of the current state of the system. We contrast this with the drag force and the thrust, which must be calculated on every iteration through the algorithm to find an updated value for the force.
 
@@ -817,7 +816,137 @@ For our current model, the \gls{body frame} of our 6-\gls{dof} has its origin in
     description={The angle of offset of the freestream velocity with the $\hat{X}$/$\hat{b}_1$, or longitudinal axis, of the vehicle. This is often denoted with the Greek letter $\alpha$}
 }
 
-The last and by far least important frame of reference is the \gls{wind frame}. This frame of reference, like the \gls{body frame}, is always anchored at some point in the vehicle. Also like the \gls{body frame}, it moves and rotates with the vehicle and allows for a new way of describing the \gls{state vector}. Unlike the \gls{body frame}, the most important definition is not along the longitudinal axis of the vehicle. As indicated by its name, the necessary orientation of a basis vector points in the direction of the free stream velocity. Relating this to the \gls{body frame}, this translates to an offset from the \gls{body frame} by the \gls{angle of attack} and sideslip. This frame is often useful for aircraft, but we do not use it explicitly in our 6-\gls{dof}. The \gls{wind frame} itself is in fact skipped over during wind calculations, as the \gls{angle of attack} and imparted forces/moments are calculated directly onto the \gls{body frame}. So as this isn’t as useful as the other two reference frames, we won’t elaborate on this frame any further, and it won’t be shown as much in our example 6-\gls{dof}.
+The last and by far least important frame of reference is the \gls{wind frame}. This frame of reference, like the \gls{body frame}, is always anchored at some point in the vehicle. Also like the \gls{body frame}, it moves and rotates with the vehicle and allows for a new way of describing the \gls{state vector}. Unlike the \gls{body frame}, the most important definition is not along the longitudinal axis of the vehicle. As indicated by its name, the necessary orientation of a basis vector points in the direction of the free stream velocity.
+
+Relating this to the \gls{body frame}, this translates to an offset from the \gls{body frame} by the \gls{angle of attack} and sideslip. This frame is often useful for aircraft, but we do not use it explicitly in our 6-\gls{dof}. The \gls{wind frame} itself is in fact skipped over during wind calculations, as the \gls{angle of attack} and imparted forces/moments are calculated directly onto the \gls{body frame}. So as this isn’t as useful as the other two reference frames, we won’t elaborate on this frame any further, and it won’t be shown as much in our example 6-\gls{dof}.
+
+\section{Derivative Transport}
+The last issue that we tackle when different reference frames get involved is the fact that objects are moving around, so it can be hard to express quantities in an inertial frame. We can create various reference frames, but to apply laws of physics we want to use an inertial frame.
+
+A reference frame may very well translate a vector from one frame to another, but transforming a derivative requires a bit more subtlety.  The tool we use to do this `derivative frame translation' is called derivative transport, or the \gls{bke}. The \gls{bke}, then, is just a tool that we use to convert derivatives between various reference frames.
+
+\begin{example}[The Frisbee]
+    To understand the \gls{bke}, let us consider a scenario. You are out on a lovely day with your dog, Hans. Hans loves to play Frisbee with you. Of course, when you throw a Frisbee, you apply some spin to make sure the Frisbee remains stable as it is flying. The motion of the Frisbee is now quite complex. There is translational motion, but the Frisbee is also rotating about its vertical axis. What should you do if you want to find the velocity of a point at the edge of the Frisbee?
+
+    We will use some of our tools with reference frames to help us. We will establish an inertially fixed frame, $\hat{e}$. This frame will stand still and gives us a `ruler' to measure everything against. 
+    
+    We also want a reference frame that is embedded in the frisbee, which we may call $\hat{a}$. We can embed the $\hat{a}$-frame in the Frisbee such that $\hat{e}_3$ and $\hat{a}_3$ are both pointing out of the page. We can construct a visual of this, as shown in \autoref{fig:frisbee}. In this figure, we can see that the Frisbee has some rotation with respect to the $\hat{e}$-frame.
+
+\begin{figure}[H]
+    \centering
+    
+
+
+% Gradient Info
+  
+\tikzset {_uyifu37ke/.code = {\pgfsetadditionalshadetransform{ \pgftransformshift{\pgfpoint{0 bp } { 0 bp }  }  \pgftransformscale{1 }  }}}
+\pgfdeclareradialshading{_5umj9dmj0}{\pgfpoint{0bp}{0bp}}{rgb(0bp)=(0.51,0.69,0.9);
+rgb(0bp)=(0.51,0.69,0.9);
+rgb(25bp)=(0.29,0.56,0.89);
+rgb(400bp)=(0.29,0.56,0.89)}
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Straight Lines [id:da296290914532399] 
+\draw    (125,222) -- (125,184) ;
+\draw [shift={(125,182)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da47887158967740406] 
+\draw    (125,222) -- (163,222) ;
+\draw [shift={(165,222)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Shape: Circle [id:dp882888242699463] 
+\path  [shading=_5umj9dmj0,_uyifu37ke] (200,160) .. controls (200,121.34) and (231.34,90) .. (270,90) .. controls (308.66,90) and (340,121.34) .. (340,160) .. controls (340,198.66) and (308.66,230) .. (270,230) .. controls (231.34,230) and (200,198.66) .. (200,160) -- cycle ; % for fading 
+ \draw  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ] (200,160) .. controls (200,121.34) and (231.34,90) .. (270,90) .. controls (308.66,90) and (340,121.34) .. (340,160) .. controls (340,198.66) and (308.66,230) .. (270,230) .. controls (231.34,230) and (200,198.66) .. (200,160) -- cycle ; % for border 
+
+%Shape: Circle [id:dp14087711648604728] 
+\draw  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ] (245,160) .. controls (245,146.19) and (256.19,135) .. (270,135) .. controls (283.81,135) and (295,146.19) .. (295,160) .. controls (295,173.81) and (283.81,185) .. (270,185) .. controls (256.19,185) and (245,173.81) .. (245,160) -- cycle ;
+%Shape: Circle [id:dp14996813993946012] 
+\draw  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ] (237.5,160) .. controls (237.5,142.05) and (252.05,127.5) .. (270,127.5) .. controls (287.95,127.5) and (302.5,142.05) .. (302.5,160) .. controls (302.5,177.95) and (287.95,192.5) .. (270,192.5) .. controls (252.05,192.5) and (237.5,177.95) .. (237.5,160) -- cycle ;
+%Shape: Circle [id:dp8552836305752883] 
+\draw  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ] (228.75,160) .. controls (228.75,137.22) and (247.22,118.75) .. (270,118.75) .. controls (292.78,118.75) and (311.25,137.22) .. (311.25,160) .. controls (311.25,182.78) and (292.78,201.25) .. (270,201.25) .. controls (247.22,201.25) and (228.75,182.78) .. (228.75,160) -- cycle ;
+%Shape: Circle [id:dp014283387489532173] 
+\draw  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ] (219.38,160) .. controls (219.38,132.04) and (242.04,109.38) .. (270,109.38) .. controls (297.96,109.38) and (320.63,132.04) .. (320.63,160) .. controls (320.63,187.96) and (297.96,210.63) .. (270,210.63) .. controls (242.04,210.63) and (219.38,187.96) .. (219.38,160) -- cycle ;
+%Shape: Circle [id:dp8571882816252198] 
+\draw  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ] (209.69,160) .. controls (209.69,126.69) and (236.69,99.69) .. (270,99.69) .. controls (303.31,99.69) and (330.31,126.69) .. (330.31,160) .. controls (330.31,193.31) and (303.31,220.31) .. (270,220.31) .. controls (236.69,220.31) and (209.69,193.31) .. (209.69,160) -- cycle ;
+%Straight Lines [id:da7488368327399176] 
+\draw [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ]   (270.14,160) -- (251.14,127.09) ;
+\draw [shift={(250.14,125.36)}, rotate = 60] [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da5631329390561624] 
+\draw [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ]   (270.14,160) -- (303.05,141) ;
+\draw [shift={(304.78,140)}, rotate = 150] [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da9222848769845972] 
+\draw    (396.46,186) -- (396.46,148) ;
+\draw [shift={(396.46,146)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da5525285908237496] 
+\draw    (396.46,186) -- (434.46,186) ;
+\draw [shift={(436.46,186)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+\draw [shift={(396.46,186)}, rotate = 0] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]      (0, 0) circle [x radius= 2.34, y radius= 2.34]   ;
+%Straight Lines [id:da21444392128297163] 
+\draw [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ]   (396.46,186) -- (377.46,153.09) ;
+\draw [shift={(376.46,151.36)}, rotate = 60] [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da013770633485812533] 
+\draw [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ]   (396.46,186) -- (429.37,167) ;
+\draw [shift={(431.11,166)}, rotate = 150] [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da1153562240804955] 
+\draw    (330,126) ;
+\draw [shift={(330,126)}, rotate = 0] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]      (0, 0) circle [x radius= 2.01, y radius= 2.01]   ;
+%Straight Lines [id:da6264680513788441] 
+\draw    (270.14,160) -- (270,160) ;
+\draw [shift={(270,160)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]      (0, 0) circle [x radius= 2.01, y radius= 2.01]   ;
+
+% Text Node
+\draw (166,210.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{e}_{1}$};
+% Text Node
+\draw (122,158.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{e}_{2}$};
+% Text Node
+\draw (299.84,129.45) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,opacity=1 ,rotate=-330]  {$\hat{a}_{1}$};
+% Text Node
+\draw (235.74,106.42) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,opacity=1 ,rotate=-330]  {$\hat{a}_{2}$};
+% Text Node
+\draw (437.46,174.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{e}_{1}$};
+% Text Node
+\draw (393.46,122.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{e}_{2}$};
+% Text Node
+\draw (426.17,155.45) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,opacity=1 ,rotate=-330]  {$\hat{a}_{1}$};
+% Text Node
+\draw (362.07,132.42) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,opacity=1 ,rotate=-330]  {$\hat{a}_{2}$};
+% Text Node
+\draw (331,106.4) node [anchor=north west][inner sep=0.75pt]    {$P$};
+% Text Node
+\draw (261,162.4) node [anchor=north west][inner sep=0.75pt]    {$A$};
+% Text Node
+\draw (381,188.4) node [anchor=north west][inner sep=0.75pt]    {$O$};
+
+
+\end{tikzpicture}
+
+
+
+    \caption{Derivative Transport on a Frisbee}
+    \label{fig:frisbee}
+\end{figure}
+
+Our end objective is to describe the position, velocity, and acceleration of this point $P$ on the Frisbee. We may start by describing the position, which is the easiest to handle. Say we want to describe the location of point $P$ on the Frisbee. We can do this by expressing the location of point $A$ from the origin in the $\hat{e}$-frame, and then go the rest of the way in the $\hat{a}$-frame. That is to say, we can describe the position of the center of mass ($A$) and then it is simply a translation along the $\hat{a}_1$-direction to arrive at point $P$. Doing so would look like:
+$$\vec{r}^{\ OP}=\vec{r}^{\ OA} + \vec{r}^{\ AP}$$
+Let us attach some variables to this to make it more tangible. Say we have thrown the pendulum directly north, along the $\hat{e}_2$ direction, by $30 \mathrm{\ m}$. This gives us $\vec{r}^{\ OA}$, which is $30 \hat{e}_2$. $\vec{r}^{\ AP}$ is computed similarly. Taking $R$ as the radius, this vector is $R\hat{a}_1$. Altogether:
+$$\vec{r}^{\ OP}=30\hat{e}_2 + R\hat{a}_1$$
+
+Some complication comes when we try to express the velocity of point $A$. We know that the velocity is the time derivative of the position, but our position is being described using non-inertial coordinates in the $\hat{a}$ frame!
+
+We can solve this by computing the rotation of one reference frame with respect to the other. This will give us the ability to compute a valid derivative.
+
+We can solve this by splitting the velocity into two components, a translational component and a rotational component. The translational component is simply the velocity of the center of mass, which is the time derivative of the position at the center of mass.
+
+For the rotation, we consider the lever arm from point $O$ to point $A$. When the Frisbee rotates, this lever arm creates some rotation of point $A$ about point $O$. To solve for this rotation, we simply consider the cross product of the position vector with the rotation vector, $\omega$.
+
+
+$${}^e\frac{d}{dt}\vec{r}={}^a\frac{d}{dt}{\vec{r}}+{}^e\vec{\omega}^a\times\vec{r}$$
+
+\end{example}
+
+In general, we can use the \gls{bke} to express frame translations. We can perform analysis using multiple intermediate frames to build a sequence of 
+
 
 \section{The 3-DoF Case}\label{sec: 3DoF Case}
 \subsection{Vectors in the 3-DoF Case}
@@ -861,23 +990,24 @@ We present below a modified version of the 1-\gls{dof} below in full 3D in \auto
 
 \begin{figure}[ht]
     \centering
-    \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+
+
+
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
 %uncomment if require: \path (0,308); %set diagram left start at 0, and has height of 308
 
-%Shape: Cube [id:dp15885218660825062] 
-\draw  [fill={rgb, 255:red, 155; green, 155; blue, 155 }  ,fill opacity=0.15 ] (260,129.92) -- (289.92,100) -- (380,100) -- (380,190.08) -- (350.08,220) -- (260,220) -- cycle ; \draw   (380,100) -- (350.08,129.92) -- (260,129.92) ; \draw   (350.08,129.92) -- (350.08,220) ;
 %Straight Lines [id:da7537274804871096] 
 \draw    (160,210) -- (160,172) ;
 \draw [shift={(160,170)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
 %Straight Lines [id:da28051238395124845] 
 \draw    (160,210) -- (194,210) ;
 \draw [shift={(196,210)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
-%Straight Lines [id:da0491508391303197] 
-\draw    (160,210) -- (141.41,228.59) ;
-\draw [shift={(140,230)}, rotate = 315] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
 %Straight Lines [id:da4424478744689285] 
-\draw    (170,30) -- (228.8,108.4) ;
-\draw [shift={(230,110)}, rotate = 233.13] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+\draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (170,40) -- (228.8,118.4) ;
+\draw [shift={(230,120)}, rotate = 233.13] [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
 %Straight Lines [id:da9341165159771404] 
 \draw [line width=1.5]    (316.56,170) -- (316.56,247) ;
 \draw [shift={(316.56,250)}, rotate = 270] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=1.5]    (14.21,-4.28) .. controls (9.04,-1.82) and (4.3,-0.39) .. (0,0) .. controls (4.3,0.39) and (9.04,1.82) .. (14.21,4.28)   ;
@@ -885,8 +1015,8 @@ We present below a modified version of the 1-\gls{dof} below in full 3D in \auto
 \draw [line width=1.5]    (316.56,170) -- (374.76,247.6) ;
 \draw [shift={(376.56,250)}, rotate = 233.13] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=1.5]    (14.21,-4.28) .. controls (9.04,-1.82) and (4.3,-0.39) .. (0,0) .. controls (4.3,0.39) and (9.04,1.82) .. (14.21,4.28)   ;
 %Straight Lines [id:da6206056974950449] 
-\draw [line width=1.5]    (316.56,170) -- (316.56,53) ;
-\draw [shift={(316.56,50)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=1.5]    (14.21,-4.28) .. controls (9.04,-1.82) and (4.3,-0.39) .. (0,0) .. controls (4.3,0.39) and (9.04,1.82) .. (14.21,4.28)   ;
+\draw [line width=1.5]    (316.56,170) -- (251.78,82.41) ;
+\draw [shift={(250,80)}, rotate = 53.51] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=1.5]    (14.21,-4.28) .. controls (9.04,-1.82) and (4.3,-0.39) .. (0,0) .. controls (4.3,0.39) and (9.04,1.82) .. (14.21,4.28)   ;
 %Shape: Circle [id:dp9278618893074794] 
 \draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (310,170) .. controls (310,166.38) and (312.94,163.44) .. (316.56,163.44) .. controls (320.19,163.44) and (323.13,166.38) .. (323.13,170) .. controls (323.13,173.62) and (320.19,176.56) .. (316.56,176.56) .. controls (312.94,176.56) and (310,173.62) .. (310,170) -- cycle ;
 %Straight Lines [id:da05847350311292765] 
@@ -895,45 +1025,86 @@ We present below a modified version of the 1-\gls{dof} below in full 3D in \auto
 %Shape: Arc [id:dp5580370574812169] 
 \draw  [draw opacity=0] (423.67,179.66) .. controls (422.48,179.88) and (421.25,180) .. (420,180) .. controls (408.95,180) and (400,171.05) .. (400,160) .. controls (400,148.95) and (408.95,140) .. (420,140) .. controls (431.05,140) and (440,148.95) .. (440,160) .. controls (440,160.15) and (440,160.29) .. (440,160.44) -- (420,160) -- cycle ; \draw   (423.67,179.66) .. controls (422.48,179.88) and (421.25,180) .. (420,180) .. controls (408.95,180) and (400,171.05) .. (400,160) .. controls (400,148.95) and (408.95,140) .. (420,140) .. controls (431.05,140) and (440,148.95) .. (440,160) .. controls (440,160.15) and (440,160.29) .. (440,160.44) ;  
 \draw   (415,175) -- (425,180) -- (415,185) ;
+%Shape: Can [id:dp5708413876571488] 
+\draw   (281.9,97.37) -- (375.95,223.51) .. controls (377.43,225.48) and (373.28,231.06) .. (366.7,235.97) .. controls (360.12,240.87) and (353.59,243.25) .. (352.12,241.28) -- (258.07,115.14) .. controls (256.59,113.16) and (260.74,107.59) .. (267.32,102.68) .. controls (273.9,97.77) and (280.43,95.39) .. (281.9,97.37) .. controls (283.37,99.34) and (279.23,104.92) .. (272.65,109.83) .. controls (266.07,114.74) and (259.54,117.11) .. (258.07,115.14) ;
+%Shape: Arc [id:dp5017223334123663] 
+\draw  [draw opacity=0] (160,220) .. controls (160,220) and (160,220) .. (160,220) .. controls (160,220) and (160,220) .. (160,220) .. controls (154.48,220) and (150,215.52) .. (150,210) .. controls (150,204.48) and (154.48,200) .. (160,200) .. controls (165.52,200) and (170,204.48) .. (170,210) -- (160,210) -- cycle ; \draw   (160,220) .. controls (160,220) and (160,220) .. (160,220) .. controls (160,220) and (160,220) .. (160,220) .. controls (154.48,220) and (150,215.52) .. (150,210) .. controls (150,204.48) and (154.48,200) .. (160,200) .. controls (165.52,200) and (170,204.48) .. (170,210) ;  
 
 % Text Node
 \draw (197,200.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
 % Text Node
 \draw (163,152.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
 % Text Node
-\draw (127,222.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
+\draw (162,213.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
 % Text Node
-\draw (203,52.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{V}_{\infty }$};
+\draw (202,50.4) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ]  {$\vec{V}_{\infty }$};
 % Text Node
-\draw (311,250.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{g}$};
+\draw (311,250.4) node [anchor=north west][inner sep=0.75pt]    {$F_{g}$};
 % Text Node
-\draw (371,250.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{D}$};
+\draw (371,250.4) node [anchor=north west][inner sep=0.75pt]    {$F_{D}$};
 % Text Node
-\draw (301,25) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{T}$};
+\draw (251,60.4) node [anchor=north west][inner sep=0.75pt]    {$F_{T}$};
 % Text Node
-\draw (351,142.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{L}$};
+\draw (351,142.4) node [anchor=north west][inner sep=0.75pt]    {$F_{L}$};
 % Text Node
-\draw (431,172.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{M}^{A}$};
+\draw (431,172.4) node [anchor=north west][inner sep=0.75pt]    {$M_{A}$};
 % Text Node
-\draw (291,162.4) node [anchor=north west][inner sep=0.75pt]    {$A$};
+\draw (285,172.4) node [anchor=north west][inner sep=0.75pt]    {$A$};
 
 
 \end{tikzpicture}
+
 
     \caption{3-DoF Forces on a Body}
     \label{fig:3 DoF Forces}
 \end{figure}
 
-As compared to 1-\gls{dof} case, we have three new quantities that are present. The first of these is $\vec{V}_{\infty}$, the \gls{freestream} airflow vector.\endnote{\Gls{freestream} velocity  is drawn in the direction of incoming air by convention. However, for calculations, we will use the convention that $\vec{V}$ is the direction of the velocity of the vehicle (opposite sign to drawing). These statements are identical depending on the reference frame of the observer.} This is represented diagrammatically because it is no longer constrained along the $\hat{y}$ direction. When we have an angle between the nose (the direction through which the thrust force points in \autoref{fig:3 DoF Forces}) and the \gls{freestream} velocity, we refer to this as an \gls{angle of attack}. This \gls{angle of attack} is often denoted with the letter $\alpha$. We will discuss \gls{angle of attack} and its effects more in \autoref{sec: aerodynamics}. For now, we simply need to understand how to calculate $\alpha$ given the vector through the nose and the \gls{freestream} velocity vector.
+As compared to 1-\gls{dof} case, we have three new quantities that are present. The first of these is $V_{\infty}$, the \gls{freestream} airflow vector.\endnote{\Gls{freestream} velocity  is drawn in the direction of incoming air by convention. However, for calculations, we will use the convention that $\vec{V}$ is the direction of the velocity of the vehicle (opposite sign to drawing). These direction of the vector is only dependent on the reference frame of the observer.} This is represented diagrammatically because it is no longer constrained along the $\hat{y}$ direction.
+
+When we have an angle between the nose (the direction through which the thrust force points in \autoref{fig:3 DoF Forces}) and the \gls{freestream} velocity, we refer to this as an \gls{angle of attack}. This \gls{angle of attack} is often denoted with the letter $\alpha$. We will discuss \gls{angle of attack} and its effects more in \autoref{sec: aerodynamics}. For now, we simply need to understand how to calculate $\alpha$ given the vector through the nose and the \gls{freestream} velocity vector. We show the \gls{angle of attack} diagrammatically in \autoref{fig:AoA}.
+
+\begin{figure}[ht]
+    \centering
+ 
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Straight Lines [id:da047886647982596786] 
+\draw [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ]   (192.63,101.44) -- (300,160) ;
+\draw [shift={(190,100)}, rotate = 28.61] [fill={rgb, 255:red, 218; green, 44; blue, 0 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ;
+%Straight Lines [id:da6909419236257905] 
+\draw    (170,160) -- (257,160) ;
+\draw [shift={(260,160)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ;
+%Shape: Can [id:dp43605402344466004] 
+\draw   (236.81,108.83) -- (374.97,184.12) .. controls (377.13,185.3) and (375.7,192.1) .. (371.77,199.31) .. controls (367.84,206.52) and (362.9,211.41) .. (360.74,210.23) -- (222.58,134.93) .. controls (220.42,133.76) and (221.85,126.96) .. (225.78,119.75) .. controls (229.71,112.54) and (234.65,107.65) .. (236.81,108.83) .. controls (238.97,110.01) and (237.54,116.81) .. (233.61,124.02) .. controls (229.68,131.22) and (224.75,136.11) .. (222.58,134.93) ;
+%Shape: Arc [id:dp009958865504112402] 
+\draw  [draw opacity=0][dash pattern={on 4.5pt off 4.5pt}] (202.5,160) .. controls (202.5,143.21) and (206.74,127.41) .. (214.22,113.62) -- (300,160) -- cycle ; \draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][dash pattern={on 4.5pt off 4.5pt}] [dash pattern={on 4.5pt off 4.5pt}]  (202.5,160) .. controls (202.5,144.22) and (206.25,129.31) .. (212.91,116.12) ; \draw [shift={(214.22,113.62)}, rotate = 115.11] [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ][dash pattern={on 3.49pt off 4.5pt}][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ; 
+
+% Text Node
+\draw (131,92) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,opacity=1 ] [align=left] {Heading};
+% Text Node
+\draw (168,160) node [anchor=east] [inner sep=0.75pt]    {$V_{\infty }$};
+% Text Node
+\draw (189,124.4) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ]  {$\alpha $};
+
+
+\end{tikzpicture}
+
+    \caption{Angle of Attack}
+    \label{fig:AoA}
+\end{figure}
 
 To do this, we use the fact that the dot product is related to the cosine of the angle between the vectors. Denoting the vector through the nose of the rocket $\hat{X}$, we can find the \gls{angle of attack} as:
 \begin{equation}\label{eq:alpha}
     \alpha=cos^{-1}\left(\frac{\hat{X}\cdot \vec{V}_{\infty}}{||\hat{X}||\ ||\vec{V}_{\infty}||}\right)
 \end{equation}
 
-The next new quantity is $\vec{F}_L$, the force of lift. The force of lift is always perpendicular in direction to $\vec{V}_{\infty}$. Knowing this, we can find the direction of the force of lift as:
+The next new quantity is $\vec{F}_L$, the force of lift. The force of lift is always perpendicular in direction to ${V}_{\infty}$. Knowing this, we can find the direction of the force of lift as:
 \begin{equation}\label{eq:Lift}
-    \hat{L}=\frac{(\vec{V}_{\infty} \times \hat{X}) \times \vec{V}_{\infty}}{||(\vec{V}_{\infty} \times \hat{X}) \times \vec{V}_{\infty}||}
+    \hat{L}=\frac{({V}_{\infty} \times \hat{X}) \times {V}_{\infty}}{||({V}_{\infty} \times \hat{X}) \times {V}_{\infty}||}
 \end{equation}
 Here, the cross product is used because it generates a vector orthogonal to the two input vectors. This is exactly the property that we need when defining lift.
 
@@ -957,85 +1128,76 @@ We will show how to compute this moment if the location of the center of gravity
 
 \begin{figure}[ht]
     \centering
-    
+
+ 
+
 \tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
 
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
 %uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
 
-%Shape: Rectangle [id:dp16059631350753278] 
-\draw   (224,90) -- (364,90) -- (364,230) -- (224,230) -- cycle ;
-%Shape: Circle [id:dp26152316559967836] 
-\draw   (284,160) .. controls (284,154.48) and (288.48,150) .. (294,150) .. controls (299.52,150) and (304,154.48) .. (304,160) .. controls (304,165.52) and (299.52,170) .. (294,170) .. controls (288.48,170) and (284,165.52) .. (284,160) -- cycle ;
-%Straight Lines [id:da4396178512453982] 
-\draw [line width=1.5]    (294,150) -- (294,33) ;
-\draw [shift={(294,30)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=1.5]    (14.21,-4.28) .. controls (9.04,-1.82) and (4.3,-0.39) .. (0,0) .. controls (4.3,0.39) and (9.04,1.82) .. (14.21,4.28)   ;
-%Straight Lines [id:da6367078669315451] 
-\draw [line width=1.5]    (294,170) -- (294,247) ;
-\draw [shift={(294,250)}, rotate = 270] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=1.5]    (14.21,-4.28) .. controls (9.04,-1.82) and (4.3,-0.39) .. (0,0) .. controls (4.3,0.39) and (9.04,1.82) .. (14.21,4.28)   ;
-%Shape: Circle [id:dp9868324677149697] 
-\draw  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ] (334,160) .. controls (334,154.48) and (338.48,150) .. (344,150) .. controls (349.52,150) and (354,154.48) .. (354,160) .. controls (354,165.52) and (349.52,170) .. (344,170) .. controls (338.48,170) and (334,165.52) .. (334,160) -- cycle ;
-%Straight Lines [id:da08375154983020605] 
-\draw [line width=1.5]    (344,160) -- (371.5,141.66) ;
-\draw [shift={(374,140)}, rotate = 146.31] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=1.5]    (14.21,-4.28) .. controls (9.04,-1.82) and (4.3,-0.39) .. (0,0) .. controls (4.3,0.39) and (9.04,1.82) .. (14.21,4.28)   ;
-%Straight Lines [id:da9997269035553926] 
-\draw [line width=1.5]    (344,160) -- (402.2,237.6) ;
-\draw [shift={(404,240)}, rotate = 233.13] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=1.5]    (14.21,-4.28) .. controls (9.04,-1.82) and (4.3,-0.39) .. (0,0) .. controls (4.3,0.39) and (9.04,1.82) .. (14.21,4.28)   ;
-%Straight Lines [id:da3915949331033487] 
-\draw [color={rgb, 255:red, 128; green, 128; blue, 128 }  ,draw opacity=1 ]   (344,160) -- (432.34,218.89) ;
-\draw [shift={(434,220)}, rotate = 213.69] [color={rgb, 255:red, 128; green, 128; blue, 128 }  ,draw opacity=1 ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-%Shape: Circle [id:dp6233406826761347] 
-\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (342.33,160) .. controls (342.33,159.08) and (343.08,158.33) .. (344,158.33) .. controls (344.92,158.33) and (345.67,159.08) .. (345.67,160) .. controls (345.67,160.92) and (344.92,161.67) .. (344,161.67) .. controls (343.08,161.67) and (342.33,160.92) .. (342.33,160) -- cycle ;
-%Shape: Pie [id:dp5263153723129019] 
-\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (294,150) .. controls (294,150) and (294,150) .. (294,150) .. controls (299.52,150) and (304,154.48) .. (304,160) -- (294,160) -- cycle ;
-%Shape: Pie [id:dp03519524739615432] 
-\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (294,170) .. controls (294,170) and (294,170) .. (294,170) .. controls (294,170) and (294,170) .. (294,170) .. controls (288.48,170) and (284,165.52) .. (284,160) -- (294,160) -- cycle ;
-%Straight Lines [id:da5638933773253405] 
-\draw [color={rgb, 255:red, 208; green, 2; blue, 27 }  ,draw opacity=1 ][line width=1.5]    (294,160) -- (340,160) ;
-\draw [shift={(344,160)}, rotate = 180] [fill={rgb, 255:red, 208; green, 2; blue, 27 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (9.29,-4.46) -- (0,0) -- (9.29,4.46) -- cycle    ;
-%Shape: Circle [id:dp854204209250383] 
-\draw   (444,50) .. controls (444,44.48) and (448.48,40) .. (454,40) .. controls (459.52,40) and (464,44.48) .. (464,50) .. controls (464,55.52) and (459.52,60) .. (454,60) .. controls (448.48,60) and (444,55.52) .. (444,50) -- cycle ;
-%Shape: Pie [id:dp5370740069872785] 
-\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (454,60) .. controls (454,60) and (454,60) .. (454,60) .. controls (454,60) and (454,60) .. (454,60) .. controls (448.48,60) and (444,55.52) .. (444,50) -- (454,50) -- cycle ;
-%Shape: Pie [id:dp7640770799900009] 
-\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (454,40) .. controls (454,40) and (454,40) .. (454,40) .. controls (459.52,40) and (464,44.48) .. (464,50) -- (454,50) -- cycle ;
-%Shape: Circle [id:dp281241699306923] 
-\draw  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ] (444,90) .. controls (444,84.48) and (448.48,80) .. (454,80) .. controls (459.52,80) and (464,84.48) .. (464,90) .. controls (464,95.52) and (459.52,100) .. (454,100) .. controls (448.48,100) and (444,95.52) .. (444,90) -- cycle ;
-%Straight Lines [id:da2704614420307284] 
-\draw    (130,190) -- (130,152) ;
-\draw [shift={(130,150)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
-%Straight Lines [id:da24091737468013485] 
-\draw    (130,190) -- (164,190) ;
-\draw [shift={(166,190)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
-%Shape: Arc [id:dp6249807559731687] 
-\draw  [draw opacity=0] (130,200) .. controls (130,200) and (130,200) .. (130,200) .. controls (130,200) and (130,200) .. (130,200) .. controls (124.48,200) and (120,195.52) .. (120,190) .. controls (120,184.48) and (124.48,180) .. (130,180) .. controls (135.52,180) and (140,184.48) .. (140,190) -- (130,190) -- cycle ; \draw   (130,200) .. controls (130,200) and (130,200) .. (130,200) .. controls (130,200) and (130,200) .. (130,200) .. controls (124.48,200) and (120,195.52) .. (120,190) .. controls (120,184.48) and (124.48,180) .. (130,180) .. controls (135.52,180) and (140,184.48) .. (140,190) ;  
-\draw   (125,195) .. controls (126.67,197.78) and (128.33,199.44) .. (130,200) .. controls (128.33,200.56) and (126.67,202.22) .. (125,205) ;
+%Shape: Rectangle [id:dp9423434109125819] 
+\draw   (180,150) -- (440,150) -- (440,190) -- (180,190) -- cycle ;
+%Shape: Circle [id:dp4309563173732832] 
+\draw   (300,170) .. controls (300,164.48) and (304.48,160) .. (310,160) .. controls (315.52,160) and (320,164.48) .. (320,170) .. controls (320,175.52) and (315.52,180) .. (310,180) .. controls (304.48,180) and (300,175.52) .. (300,170) -- cycle ;
+%Straight Lines [id:da9456591093693174] 
+\draw [line width=1.5]    (310,180) -- (310,256) ;
+\draw [shift={(310,260)}, rotate = 270] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (11.61,-5.58) -- (0,0) -- (11.61,5.58) -- cycle    ;
+%Shape: Circle [id:dp5237792129053443] 
+\draw  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ] (350,170) .. controls (350,164.48) and (354.48,160) .. (360,160) .. controls (365.52,160) and (370,164.48) .. (370,170) .. controls (370,175.52) and (365.52,180) .. (360,180) .. controls (354.48,180) and (350,175.52) .. (350,170) -- cycle ;
+%Straight Lines [id:da09955341399973427] 
+\draw [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ]   (360,170) -- (408.08,227.7) ;
+\draw [shift={(410,230)}, rotate = 230.19] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (9.82,-4.72) -- (0,0) -- (9.82,4.72) -- cycle    ;
+%Shape: Pie [id:dp13633073436840593] 
+\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (310,160) .. controls (310,160) and (310,160) .. (310,160) .. controls (315.52,160) and (320,164.48) .. (320,170) -- (310,170) -- cycle ;
+%Shape: Pie [id:dp16026550532540762] 
+\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (310,180) .. controls (310,180) and (310,180) .. (310,180) .. controls (310,180) and (310,180) .. (310,180) .. controls (304.48,180) and (300,175.52) .. (300,170) -- (310,170) -- cycle ;
+%Shape: Circle [id:dp473818095350796] 
+\draw   (464,61) .. controls (464,55.48) and (468.48,51) .. (474,51) .. controls (479.52,51) and (484,55.48) .. (484,61) .. controls (484,66.52) and (479.52,71) .. (474,71) .. controls (468.48,71) and (464,66.52) .. (464,61) -- cycle ;
+%Shape: Pie [id:dp22926947041960688] 
+\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (474,71) .. controls (474,71) and (474,71) .. (474,71) .. controls (474,71) and (474,71) .. (474,71) .. controls (468.48,71) and (464,66.52) .. (464,61) -- (474,61) -- cycle ;
+%Shape: Pie [id:dp053159935463349295] 
+\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (474,51) .. controls (474,51) and (474,51) .. (474,51) .. controls (479.52,51) and (484,55.48) .. (484,61) -- (474,61) -- cycle ;
+%Shape: Circle [id:dp1802989144310676] 
+\draw  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ] (464,101) .. controls (464,95.48) and (468.48,91) .. (474,91) .. controls (479.52,91) and (484,95.48) .. (484,101) .. controls (484,106.52) and (479.52,111) .. (474,111) .. controls (468.48,111) and (464,106.52) .. (464,101) -- cycle ;
+%Straight Lines [id:da11363929006275086] 
+\draw    (90,170) -- (90,132) ;
+\draw [shift={(90,130)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da09061120859780936] 
+\draw    (90,170) -- (124,170) ;
+\draw [shift={(126,170)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Shape: Arc [id:dp7211379182460548] 
+\draw  [draw opacity=0] (90,180) .. controls (90,180) and (90,180) .. (90,180) .. controls (90,180) and (90,180) .. (90,180) .. controls (84.48,180) and (80,175.52) .. (80,170) .. controls (80,164.48) and (84.48,160) .. (90,160) .. controls (95.52,160) and (100,164.48) .. (100,170) -- (90,170) -- cycle ; \draw   (90,180) .. controls (90,180) and (90,180) .. (90,180) .. controls (90,180) and (90,180) .. (90,180) .. controls (84.48,180) and (80,175.52) .. (80,170) .. controls (80,164.48) and (84.48,160) .. (90,160) .. controls (95.52,160) and (100,164.48) .. (100,170) ;  
+\draw   (85,175) .. controls (86.67,177.78) and (88.33,179.44) .. (90,180) .. controls (88.33,180.56) and (86.67,182.22) .. (85,185) ;
+%Straight Lines [id:da922150833980892] 
+\draw [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ]   (310,140) -- (357,140) ;
+\draw [shift={(360,140)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (9.82,-4.72) -- (0,0) -- (9.82,4.72) -- cycle    ;
+\draw [shift={(310,140)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ,draw opacity=1 ][line width=0.75]    (0,6.15) -- (0,-6.15)   ;
+%Shape: Arc [id:dp4289882902917804] 
+\draw  [draw opacity=0] (483.67,189.66) .. controls (482.48,189.88) and (481.25,190) .. (480,190) .. controls (468.95,190) and (460,181.05) .. (460,170) .. controls (460,158.95) and (468.95,150) .. (480,150) .. controls (491.05,150) and (500,158.95) .. (500,170) .. controls (500,170.15) and (500,170.29) .. (500,170.44) -- (480,170) -- cycle ; \draw    (483.67,189.66) .. controls (482.48,189.88) and (481.25,190) .. (480,190) .. controls (468.95,190) and (460,181.05) .. (460,170) .. controls (460,158.95) and (468.95,150) .. (480,150) .. controls (491.05,150) and (500,158.95) .. (500,170) ; \draw [shift={(500,170.44)}, rotate = 259.81] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ; 
 
 % Text Node
-\draw (284,10.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{T}$};
+\draw (305,263.4) node [anchor=north west][inner sep=0.75pt]    {$F_{g}$};
 % Text Node
-\draw (285,252.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{g}$};
+\draw (412,233.4) node [anchor=north west][inner sep=0.75pt]    {$F_{Aero}$};
 % Text Node
-\draw (374,132.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{L}$};
+\draw (321,114.4) node [anchor=north west][inner sep=0.75pt]    {$\stackrel {\rightharpoonup}{r}_{ma}$};
 % Text Node
-\draw (405,242.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{D}$};
+\draw (493,53.4) node [anchor=north west][inner sep=0.75pt]    {$\stackrel {\rightharpoonup}{r}_{cg}$};
 % Text Node
-\draw (435,212.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{F}_{R}$};
+\draw (495,91.4) node [anchor=north west][inner sep=0.75pt]    {$\stackrel {\rightharpoonup}{r}_{cp}$};
 % Text Node
-\draw (305,130.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{r}_{ma}$};
+\draw (127,160.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
 % Text Node
-\draw (473,42.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{r}_{cg}$};
+\draw (93,112.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
 % Text Node
-\draw (475,80.4) node [anchor=north west][inner sep=0.75pt]    {$\vec{r}_{cp}$};
+\draw (92,183.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
 % Text Node
-\draw (167,180.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{x}$};
-% Text Node
-\draw (133,132.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{y}$};
-% Text Node
-\draw (132,203.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{z}$};
+\draw (491,182.4) node [anchor=north west][inner sep=0.75pt]    {$M_{Aero}$};
 
 
 \end{tikzpicture}
+
 
     \caption{Moment Demonstration}
     \label{fig:Moments}
@@ -2287,7 +2449,7 @@ The dynamics of the system can be modeled as a double pendulum with two rigid ar
 ``Quaternions came from Hamilton after his really good work had been done; and, though beautifully ingenious, have been an unmixed evil to those who have touched them in any way, including Clerk Maxwell.''
 \end{chapquote}
 
-Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. In fact, we have dedicated the entirety of Volume II to the theory behind attitude determination and dynamics. Derivations for everything from simple, two-dimensional problems and single-axis rotations to \glspl{quaternion} are included in that book. Following the core purpose of this volume, we will only be describing implementation of attitude dynamics using MATLAB functions. However, the entirety of Volume II contains the theory necessary to gain a more definitive understanding of what, and more importantly why, everything is happening with the code in this section.\endnote{Volume II is yet to be released, and is currently scheduled to do so late Summer 2025.}
+Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. In fact, we have dedicated the entirety of Volume II to the theory behind attitude dynamics, determination, and control. Derivations for everything from simple, two-dimensional problems and single-axis rotations to \glspl{quaternion} are included in that book, as well as the more foundational principles derived using topics from abstract algebra. Following the core purpose of this volume, we will only be describing implementation of attitude dynamics using MATLAB functions. However, the entirety of Volume II contains the theory necessary to gain a more definitive understanding of what, and more importantly why, everything is happening with the code in this section.\endnote{Volume II is yet to be released, and is currently scheduled to do so late Winter 2025.}
 
 
 \section{Euler Angles}\label{sec:Euler Angles}
@@ -2295,12 +2457,12 @@ Attitude Dynamics is the math describing the orientation of a vehicle in space a
 {
     name=Euler angles,
     first = {\textit{Euler angles}},
-    description={A group of three scalar values used to describe the orientation of a body in space}
+    description={A group of three scalar values used to describe the orientation of a rigid body in space}
 }
 
-The first method to express the orientation of a vehicle in space is through the use of \gls{Euler angles}. These form the basis for our understanding of attitude determination, being the more intuitive method. As stated previously, the theory and derivations for everything you will use here is included in Volume II! If you haven't read this yet, don't worry, we will provide some basic definitions here to give you the bare bones of what is needed in the function calls to help you and your code be successful.
+The first method to express the orientation of a vehicle in space is the use of \gls{Euler angles}. These form the basis for our understanding of attitude dynamics, being the more intuitive method. To keep this section as independent as possible, basic definitions and derivations will be included here to give you the bare bones of what is needed in the function calls to help you and your code be successful.
 
-First and foremost, we use the intrinsic (body-fixed) 3-2-1 rotation sequence to determine \gls{Euler angles}. This means we have an angle $\phi$ to describe the rotation about the $x$-axis, an angle $\theta$ to describe the rotation about the $y$-axis, and an angle $\psi$ to describe the rotation about the $z$-axis. The order in which we complete these rotations is Z-Y-X, or $\psi$-$\theta$-$\phi$.\endnote{These intermediate rotations about the body frame are sequentially and individually applied to our system as we move from frame to frame in our rotation order.} Remembering this rotation sequence is very important, as every function call within your MATLAB script will depend in part on this chosen sequence!
+First and foremost, we use the intrinsic (body-fixed) 3-2-1 rotation sequence to determine \gls{Euler angles}. This means we have an angle $\phi$ to describe the rotation about the $x$-axis, an angle $\theta$ to describe the rotation about the $y$-axis, and an angle $\psi$ to describe the rotation about the $z$-axis. The order in which we complete these rotations is Z-Y-X, or $\psi$-$\theta$-$\phi$.\endnote{These intermediate rotations about the body frame are sequentially applied to our system as we move from frame to frame in our chosen rotation sequence.} Remembering this rotation sequence is very important, as every function call within your MATLAB script will depend in part on this!
 
 \subsection{The Direction Cosine Matrix}\label{sec:TheDCM}
 
@@ -2320,7 +2482,7 @@ In MATLAB, there exists a function - "angle2dcm" - that creates this for us!\end
     description={A way to describe rotational rates with orientation for 3-dimensional rotations, they are denoted by the dot of the corresponding Euler angle: ($\dot{\psi},\dot{\theta},\dot{\phi}$)}
 }
 
-One thing you might recall if you have read Volume II is that integrating the angular velocities in a 3-dimensional case DOES NOT return the \gls{Euler angles}. Giving a quick reason as to why: angular velocity is expressed exclusively with respect to the body frame, while our Euler angles are defined about their corresponding intermediate frame in the rotation sequence. Meaning this job for integration is left to \gls{Euler rates}, something else we need to include in the code. All you brilliant readers will also recall the existence of what we affectionately call the ``B'' matrix that allows us to use \gls{Euler angles} to express a relation between \gls{Euler rates} and angular velocities. Unfortunately, there doesn't exist a MATLAB function that can calculate the ``B'' matrix, leaving us to our own devices to construct one from scratch. Luckily, we already did the heavy lifting, meaning we can copy the matrix derived in Volume II straight into our MATLAB script. That matrix and equation is as follows, for quick reference:
+As with our translational values, we want to take the integral of our rate of change of these angular parameters in order to find our new, updated Euler angles. While it might be easy to assume the values we would be integrating are the angular velocities, doing so DOES NOT return the \gls{Euler angles}. Giving a quick reason as to why: angular velocity is expressed exclusively with respect to the body frame, while our Euler angles are defined about their corresponding intermediate frame in the rotation sequence. Meaning this job for integration is left to \gls{Euler rates}, something else we need to include in the code. There exists what we affectionately call the ``B'' matrix that allows us to use \gls{Euler angles} to express a relation between \gls{Euler rates} and angular velocities. Unfortunately, there doesn't exist a MATLAB function that can calculate the ``B'' matrix, leaving us to our own devices to construct one from scratch. The heavy lifting for this is completed in Volume II, meaning we can copy the matrix derived there straight into our MATLAB script. That matrix and equation is as follows, for quick reference:
 \begin{gather}
     \color{blue}\boxed{\color{black}\begin{bmatrix}
         \dot{\phi}\\\dot{\theta}\\\dot{\psi}
@@ -2335,16 +2497,17 @@ One thing you might recall if you have read Volume II is that integrating the an
     0&\dfrac{sin(\phi)}{cos(\theta)}&\dfrac{cos(\phi)}{cos(\theta)}
 \end{bmatrix}}\\\color{blue}\mathrm{The\ ^{``}B''\ Matrix\ for\ 3-2-1\ Rotations}
 \end{gather}
+It is important to note, that the ``B'' matrix will be different for every rotation sequence. So, the matrix given above is only valid for our specific chosen sequence!
 
 \subsection{Euler Angle MATLAB Function Example}\label{sec:EulerDynamicsMATLABExample}
 
-Putting it all together, we're going to write a simple code using \gls{Euler angles} to practice using MATLAB's built in functions. Say we have a very important vector we want to express in the \gls{body frame} and another important vector we want to express in the \gls{inertial frame}: gravity and thrust respectively. If our rocket weighs 100 Newtons and outputs a thrust of 1000 Newtons, we know this appears in vector notation as: $-100\hat{x}$ and $-1000\hat{X}$ respectively. Consider a moment in time, when - using the 3-2-1 rotation sequence - our vehicle is at a roll angle of 2.71 radians and a yaw and pitch angles of 0.2 radians, where we want to convert our gravity vector from the \gls{inertial frame} to the \gls{body frame}. In addition, with knowledge that the angular velocity at that instant is $\begin{bmatrix}
+Putting it all together, we are going to write a simple code using \gls{Euler angles} to practice using MATLAB's built in functions. Say we have a very important vector we want to express in the \gls{body frame} and another important vector we want to express in the \gls{inertial frame}: gravity and thrust respectively. If our rocket weighs 100 Newtons and outputs a thrust of 1000 Newtons, we know this appears in vector notation as: $-100\hat{x}$ and $-1000\hat{X}$ respectively. Consider a moment in time, when - using the 3-2-1 rotation sequence - our vehicle is at a roll angle of 2.71 radians and a yaw and pitch angles of 0.2 radians, where we want to convert our gravity vector from the \gls{inertial frame} to the \gls{body frame}. In addition, with knowledge that the angular velocity at that instant is $\begin{bmatrix}
     2.5&0.1&0.1
 \end{bmatrix}^T$, we can also find the \gls{Euler rates} of the system. The following code listing quickly runs through the process, with sufficient commentary within the script explaining every \gls{action} taken.
 
 %\lstset{style=mystyle}
 
-\lstinputlisting[style = Matlab-custom, language=Matlab, caption=Euler Angle Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyEuler.m}\label{Euler Dynamics Listing}
+\lstinputlisting[style = matlab-editor, language=Matlab, caption=Euler Angle Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyEuler.m}\label{Euler Dynamics Listing}
 
 Our results come out to be the following, with the gravity force expressed in the \gls{body frame} and thrust expressed in the \gls{inertial frame} as:
 \begin{equation}
@@ -2372,17 +2535,17 @@ At this point, we would use our \gls{numerical int} scheme to approximate the ne
     description={A matrix which obeys the property that every $a_{ij}=-a_{ji}$. This can be interpreted to mean every term across the diagonal is equal in magnitude, but opposite in sign. Sometimes called an anti-symmetric matrix or anti-metric matrix}
 }
 
-To match industry/academia standards and improve the robustness of our simulation, our 6DoF model uses \glspl{quaternion}. The use of hyper-imaginary numbers in a normalized vector allows us to avoid losing a degree of freedom at a specific orientation of our rocket (called gimbal lock), which is what makes the simulation more robust. Just as with \gls{Euler angles}, MATLAB has an extensive suite of functions that makes the implementation of \glspl{quaternion} just as easy. 
+To match industry/academia standards and improve the robustness of our simulation, our 6DoF model uses \glspl{quaternion}. The use of normalized hyper-complex numbers allows us to avoid losing a degree of freedom at a specific orientation of our rocket (called gimbal lock), which is what makes the simulation more robust. Just as with \gls{Euler angles}, MATLAB has an extensive suite of functions that makes the implementation of \glspl{quaternion} just as easy. 
 
 \subsection{Quaternion Rotation Matrix}
 
-We're going to combine a few initial steps of the code surrounding \gls{quaternion} attitude dynamics. To start, we want to convert from \gls{Euler angles} to \glspl{quaternion}, as \gls{Euler angles} are more intuitive to define and initialize in the simulation. MATLAB's function "eul2quat" does just that. By inputting the \gls{Euler angles} in the appropriate sequence, along with the chosen rotation sequence (make sure to match the \gls{Euler angles} with the order), the function returns the corresponding \gls{quaternion} vector. Mathworks documentation for this function can be found at Source \cite{mathworks_eul2quat_nodate}.
+We are going to combine a few initial steps of the code surrounding \gls{quaternion} based attitude dynamics. To start, we want to convert from \gls{Euler angles} to \glspl{quaternion}, as \gls{Euler angles} are more intuitive to define and initialize in the simulation. MATLAB's function "eul2quat" does just that. By inputting the \gls{Euler angles} in the appropriate sequence, along with the chosen rotation sequence (make sure to match the \gls{Euler angles} with the order), the function returns the corresponding \gls{quaternion}. Mathworks documentation for this function can be found at Source \cite{mathworks_eul2quat_nodate}.
 
-Having initialized our \gls{quaternion} vector, we can now use another MATLAB function to construct our DCM. The function "quat2dcm" takes the \gls{quaternion} as an input, and returns the DCM at that instant. Incredibly simple and incredibly useful; however, we must once again consider that this DCM converts only from the \gls{inertial frame} to the \gls{body frame}. Meaning just as we had done with \gls{Euler angles}, it is necessary to take the transpose (inverse) of the matrix if we want to transform from the \gls{body frame} to the \gls{inertial frame}. The Mathworks documentation for the "quat2dcm" function can be found at Source \cite{mathworks_quat2dcm_nodate}.
+Having initialized our \gls{quaternion}, we can now use another MATLAB function to construct our DCM. The function "quat2dcm" takes the \gls{quaternion} as an input, and returns the DCM at that instant.\footnote{This step begins the divergence from the true method of quaternion encoded rotations, as we choose to use elements of the quaternion to build the elements of the DCM for clarity's sake. True quaternion encoded rotations are discussed in-depth in Volume II.} Incredibly simple and incredibly useful; however, we must once again consider that this DCM converts only from the \gls{inertial frame} to the \gls{body frame}. Meaning just as we had done with \gls{Euler angles}, it is necessary to take the transpose (inverse) of the matrix if we want to transform from the \gls{body frame} to the \gls{inertial frame}. The Mathworks documentation for the "quat2dcm" function can be found at Source \cite{mathworks_quat2dcm_nodate}.
 
 \subsection{Quaternion Rates}\label{sec: quaternion rates}
 
-Just as we had done for \gls{Euler angles} with \gls{Euler rates}, we want to find a vector of \gls{quaternion} rates that allows us to integrate and obtain a new \gls{quaternion} vector. Also just as with \gls{Euler angles}, there is no MATLAB function allowing us to relate \gls{quaternion} rates with angular velocity. But once again, just as with \gls{Euler angles}, we've already found the necessary matrix to do so! This equation is shown in \eqref{eq: quat rates}. So plugging it into our script is an easy fix to make this operation possible. The calculation is included here for quick reference:
+Just as we had done for \gls{Euler angles} with \gls{Euler rates}, we want to find the \gls{quaternion} rates that allows us to integrate and obtain a new \gls{quaternion}. Also just as with \gls{Euler angles}, there is no MATLAB function allowing us to relate \gls{quaternion} rates with angular velocity. But once again, just as with \gls{Euler angles}, we can derive the necessary method to do so! The outcome of this derivation is shown in \eqref{eq: quat rates}. So plugging it into our script is an easy fix to make this operation possible. The calculation is included here for quick reference:
 
 \begin{gather}\label{eq: quat rates}
     \color{blue}\boxed{\color{black}\dot{\textbf{q}}=\frac{1}{2}\begin{bmatrix}
@@ -2402,7 +2565,7 @@ Let's take the exact same example as before. We have the force of gravity equal 
 
 %\lstset{style=mystyle}
 
-\lstset{style=Matlab-custom}
+\lstset{style=matlab-editor}
 
 \lstinputlisting[language=Matlab, caption=Quaternion Dynamics Example]{6DoF Explanation Scripts/Attitude Dynamics Examples/GravityToBodyQuat.m}\label{Quat Dynamics Listing}
 
@@ -3024,7 +3187,7 @@ We get an output of "b = 16  36  100". The usefulness of this is immediately app
 Another useful feature of \glspl{func handle} for \gls{numerical int} is that they allow us to pass in only the variables needed for \gls{numerical int} and pass other variables in the expression as constants. In general, we want our numerical scheme to only accept our \gls{state vector} and the time vector. This is the same thing that "ode45" does, so it is best practice to do the same thing here.
 
 Our RK2 algorithm is a direct translation of \eqref{eq:rk2} into code. We present this below in \autoref{code:rk2}:
-\begin{lstlisting}[style=Matlab-custom, caption=RK2 Integrator]
+\begin{lstlisting}[style=matlab-editor, caption=RK2 Integrator]
 %% RK2 Integrator
 % numerically integrates a first order initial value problem using Runge-Kutta 2nd order.
 % inputs:
@@ -3066,7 +3229,7 @@ The form of these equations is shown in \eqref{eq:RK4}.
     k_4=f(x_i+\Delta t,y_i+\Delta tk_3)
 \end{gather}
 An implementation of this algorithm into code is shown below.
-\begin{lstlisting}[style=Matlab-custom, caption=RK4 Integrator]
+\begin{lstlisting}[style=matlab-editor, caption=RK4 Integrator]
 %% RK4 Integrator
 % numerically integrates a first order initial value problem
 % inputs:
@@ -3321,7 +3484,7 @@ Thrust is also fairly simple to model. If we consider the thrust to be coinciden
 Where $\dot{m}$ is the mass flow rate of the engine, $V_e$ is the exit velocity of the engine, $P_e$ is the exit pressure of the engine, $P_{atm}$ is the atmospheric pressure, and $A_e$ is the area of the nozzle exit. For a given propulsion system, these parameters are usually specified or can be easily derived, although we will not do so here. See \cite{dasilva_chemical_2023} or the propulsion team for more details.
 
 Here, we introduce the use of the rotation matrix to convert between different frames. MATLAB allows for the creation of a rotation matrix with the input of a \gls{quaternion} using the "quat2dcm" function. Using this, we can perform frame conversion to and from the body and earth frame. We show this below in \autoref{code:RotationMatrix}:
-\lstinputlisting[style=Matlab-custom, caption = Rotation Matrix]{6DoF Explanation Scripts/RotationMatrix.m}\label{code:RotationMatrix}
+\lstinputlisting[style=matlab-editor, caption = Rotation Matrix]{6DoF Explanation Scripts/RotationMatrix.m}\label{code:RotationMatrix}
 Using this code, we can convert the thrust from the \gls{body frame} into the earth frame through the function call "RotationMatrix(thrustForceBody, quat, 1)". The input of 1 in this function means that the vector is transformed from the \gls{body frame} into the earth frame. In our case, this means that we multiply by the transpose of the rotation matrix in the MATLAB notation convention.
 \subsubsection{Lift and Drag}
 Our other two forces follow in a similar manner. The quantities of lift and drag are heavily discussed in \autoref{sec: aerodynamics}, so we will keep them succinct here. The directions of lift and drag in the earth frame are described by \eqref{eq:Lift} and \eqref{eq:drag}. To convert these forces into the \gls{body frame}, we use the function call "RotationMatrix(force, quat, 0)". The specification of "0" in the function converts a force in the earth frame into one in the \gls{body frame}. We need the \gls{body frame} force for computing the moments in the \gls{body frame}, as discussed in \autoref{sec:rotations in the body frame}.
@@ -3396,27 +3559,75 @@ Full model validation is usually more complex. One such example is our validatio
 \end{figure}
 
 
-\chapter{MATLAB Practices}\label{sec:MATLAB Practices}
+\chapter{MATLAB and Coding Practices}\label{sec:MATLAB Practices}
+In this final chapter, we discuss the techniques and practices for implementing a 6-DoF in MATLAB. We will also discuss more general practices for large MATLAB code bases and methods to keep these organized. As of late June 2025, these practices are currently being implemented on our 6-DoF model. A large portion of the content in this chapter comes from what we have seen as practices adopted in industry for systems much more complex and larger than our own.
 
-In this final chapter, we discuss the techniques and practices for implementing a 6-DoF in MATLAB. We will also discuss more general practices for large MATLAB code bases and methods to keep these organized. As of late May 2025, these practices are currently being implemented on our 6-DoF model.
+That being said, as our system grows in complexity, following these practices becomes increasingly important for organization. If the reader is working on their own large code base or contribute to our code base, it is a good idea to follow these practices as well to stay organized.
 
 \section{Object Oriented Programming in MATLAB}
 
 \newacronym{oop}{OOP}{Object Oriented Programming}
 
-Up until now, we have mainly been using a procedural approach to programming. This is a very good method for writing short segments of code, but for larger databases that need to have greater code reusability, there are better approaches. One such approach that is particularly powerful is \gls{oop}.
+Up until now, we have mainly been using a procedural approach to programming. The procedural approach uses multiple interacting functions to run the code. Each function takes in inputs and outputs. Together, these functions work together to run the code and built the final output. In most introductory coding classes, this is the type of programming that is taught.
 
-In \gls{oop}, the basis of our code is objects. These objects hold information of all types, whether that be numeric, string, or time data. The most important aspect of \gls{oop} is that it allows us to make user interaction with a large code base simpler, and also allows us to reuse large parts of the code.
+This is a very good method for writing short segments of code, but for larger databases that need to have greater code reusability, there are better approaches. One such approach that is particularly powerful is \gls{oop}.\endnote{There exists some debate whether \gls{oop} is a superior method of coding. Of course, the true answer is nuanced and depends on the application. Object-Oriented programming, when done poorly, can make code quite unreadable. However, proper implementation of \gls{oop} can be extremely useful. See \cite{brian_will_object-oriented_2016}  for more information.} 
 
-If it has not already become apparent, our model is fairly simple in the grand scheme of things. We are modeling a single rocket and most of the subsystems are simplified. What happens if we want to model a huge rocket system with different systems, sensors, measurements, errors, and so on? In this case, we need a better scheme for organization.
+In \gls{oop}, the basis of our code is \textit{objects}. These objects hold information of all types, whether that be numeric, string, or time data. The most important aspect of \gls{oop} is that it allows us to make user interaction with a large code base simpler, and also allows us to reuse large parts of the code.
+
+If it has not already become apparent, the 6-\gls{dof} model described so far is fairly simple in the grand scheme of things. We are modeling a single rocket and most of the subsystems are simplified. What happens if we want to model a huge rocket system with different systems, sensors, measurements, errors, and so on? In this case, we need a better scheme for organization that makes the process simpler for the end user. \Gls{oop} is one method to achieve such organization that we use for our model.
 
 \subsection{Objects, Properties, and Methods}
 
+The basis of the \gls{oop} approach are, as the name suggests, objects. Objects hold much more information than standard variables. Typically, a variable contains only one piece of information, such as a string, an integer, or a floating point number. An object, on the other hand, can contain as much information as we want it to! 
 
+An object is a reuseable part of code that has certain attributes and functions associated within it. An object may be a "rocket", and it has features such as "propellant type", "mass", and "thrust", to name a few. The rocket might also have some functions associated with it, such as "SimulateFlight", which would simulate the rocket flight based on all the given inputs.
+
+Objects are inherently related to what are called \textit{classes}. A class defines the attributes and the functions that are associated with an object. The attributes associated with an object are called properties and the associated functions are called methods.
+
+In MATLAB, these classes can be created by clicking the dropdown when creating a new file and selecting `Class'. The default class looks like:
+
+\begin{lstlisting}[style=Matlab-editor]
+classdef untitled
+    %UNTITLED Summary of this class goes here
+    %   Detailed explanation goes here
+
+    properties
+        Property1
+    end
+
+    methods
+        function obj = untitled(inputArg1,inputArg2)
+            %UNTITLED Construct an instance of this class
+            %   Detailed explanation goes here
+            obj.Property1 = inputArg1 + inputArg2;
+        end
+
+        function outputArg = method1(obj,inputArg)
+            %METHOD1 Summary of this method goes here
+            %   Detailed explanation goes here
+            outputArg = obj.Property1 + inputArg;
+        end
+    end
+end
+\end{lstlisting}
 
 \subsection{Overloading and Precedence}
 
 \subsection{Subclasses and Superclasses}
+
+\section{Continuous Integration and Testing}
+Continuous development is a principle that software development should occur in small pieces that are developed rapidly, rather than the more conventional approach of doing large overhauls of a code base. We find that the continuous integration approach is more useful for us, as it allows us greater flexibility in how we code and allows for features to be developed in parallel to each other.
+
+\newacronym{ci}{CI}{continuous integration}
+
+In practice, this style of implementation can be difficult because it can be hard to check that each piece of code that is added to the database is properly written and constructed. To tackle this, \gls{ci} development employs automatic checks for the code to ensure quality standards and that the code being pushed has no errors. 
+
+This can be accomplished through the use of a program such as GitHub Actions, which checks code each time it is pushed to a new branch. We have set up a continuous integration platform for our 6-\gls{dof} already, but more information about setting up such a system can be found \cite{mathworks_continuous_2025}.
+
+It should be noted that GitHub Actions has a few limitations when using the built in Linux runner on GitHub. Firstly, the repository on which the information is stored must be public. Second, the runner only works for base MATLAB and not for any of the toolboxes such as Aerospace toolbox which we use quite frequently. For this reason, we use a self-hosted runner which allows us to avoid both of these issues.
+
+\subsection{Unit Testing}
+Unit testing works in combination with continuous integration practices and the object oriented approach to provide the capability to test the functionality of MATLAB code.
 
 
 
@@ -3447,14 +3658,19 @@ If you want to have these changes to figures universally applied in MATLAB, you 
 "C:\Users\YourName\OneDrive\Documents\MATLAB"
 
 The code in \autoref{code:startup} is the default plotting used in this document, which should be a good baseline for professional plots.
-\lstinputlisting[style=Matlab-custom, caption = Startup File for Plotting]{startup.m}\label{code:startup}
+\lstinputlisting[style=matlab-editor, caption = Startup File for Plotting]{startup.m}\label{code:startup}
+
+\newpage
+\printendnotes
 
 And with that, we have completed the first Volume of the Flight Dynamics Bible. Additional information and code can be found in the Appendix. If you have any questions, concerns, or suggestions, feel free to reach out to Hudson Reynolds on Slack or via email at Hudsonj.reynolds@gmail.com.
 
-\chapter{Appendix}
+\chapter*{Appendix A: Answers to Selected Problems}
 
-\section{Proofs and Derivations}\label{sec:ProofsAndDerivations}
-\subsection{Buckingham Pi}\label{Buckingham Pi Deriv}
+\chapter*{Appendix B: Proofs and Derivations}\label{sec:ProofsAndDerivations}
+It is often useful, especially for mathematical reasoning, to see more exact derivations. We have included several of the most useful derivations in this appendix.
+
+\section{Buckingham Pi}\label{Buckingham Pi Deriv}
 
 \begin{center}
 $\begin{array}{ccc}
@@ -3487,7 +3703,8 @@ Which is $\frac{1}{Re}$.  The same analysis is done for the rest of the $\Pi$ gr
     \Pi_3=\frac{F}{\rho V^2S}\\
     \Pi_4=\alpha
 \end{gather}
-\subsection{Equivalence of Newtonian and Lagrangian Mechanics}\label{equiv newt and lang}
+
+\section{Equivalence of Newtonian and Lagrangian Mechanics}\label{equiv newt and lang}
 
 \begin{proof}
 We start with Lagrange's equations in rectilinear coordinates $x_i=x,y,z$:
@@ -3513,27 +3730,29 @@ So, we have $F=m\ddot{x}_i$.
     It can further be shown that the Newtonian derivation must be performed in an inertial frame.
 \end{corollary}
 
+\chapter*{Appendix C: Code}
+
 
 \section{Code}
 This section contains lengthier segments of example code from either the 6-\gls{dof} itself or a proof/example relating to it. Refer to the section numbers to find the appropriate implementation of each code segment.
 \subsection{Lorenz Attractor RK4 Example}\label{sec:Lorenz Attractor RK4 Example}
-\lstinputlisting[style=Matlab-custom, caption = Lorenz Attractor]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAttractor.m}\label{code:Lorenz}
+\lstinputlisting[style=matlab-editor, caption = Lorenz Attractor]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAttractor.m}\label{code:Lorenz}
 
 We also have a script to display the results of this in a nice animation:
 
-\lstinputlisting[style=Matlab-custom, caption =Lorenz Animation]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAnimation.m}\label{code:LorenzAnim}
+\lstinputlisting[style=matlab-editor, caption =Lorenz Animation]{6DoF Explanation Scripts/Lorenz Attractor/LorenzAnimation.m}\label{code:LorenzAnim}
 \subsection{Dzhanibekov Effect Model}
-\lstinputlisting[style=Matlab-custom, caption = Dzhanibekov Main]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovMain.m}\label{code:DzhanMain}
+\lstinputlisting[style=matlab-editor, caption = Dzhanibekov Main]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovMain.m}\label{code:DzhanMain}
 
-\lstinputlisting[style=Matlab-custom, caption = Dzhanibekov Integrator]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovIntegrator.m}\label{code:DzhanInt}
+\lstinputlisting[style=matlab-editor, caption = Dzhanibekov Integrator]{6DoF Explanation Scripts/Dzhanibekov/DzhanibekovIntegrator.m}\label{code:DzhanInt}
 
-\lstinputlisting[style=Matlab-custom, caption = Dzhanibekov Rotation Visualizer]{6DoF Explanation Scripts/Dzhanibekov/RotationsVisualizer.m}\label{code:DzhanRotVis}\
+\lstinputlisting[style=matlab-editor, caption = Dzhanibekov Rotation Visualizer]{6DoF Explanation Scripts/Dzhanibekov/RotationsVisualizer.m}\label{code:DzhanRotVis}\
 
 
 \subsection{Numerical Integration Error Examples}
-\lstinputlisting[style=Matlab-custom, caption = Numerical Integration Error Comparison]{6DoF Explanation Scripts/NumericalIntegratorError.m}\label{code:Numerical Error $y'=2t$}
+\lstinputlisting[style=matlab-editor, caption = Numerical Integration Error Comparison]{6DoF Explanation Scripts/NumericalIntegratorError.m}\label{code:Numerical Error $y'=2t$}
 
-\lstinputlisting[style=Matlab-custom, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
+\lstinputlisting[style=matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
 \subsection{6-DoF Code}\label{sec:6DoF Code}
 The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this .pdf and .tex document:
 
