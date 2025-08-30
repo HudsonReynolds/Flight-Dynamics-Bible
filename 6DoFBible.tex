@@ -33,6 +33,7 @@
 \usepackage[style=numeric]{biblatex}
 \addbibresource{references.bib}
 \usepackage{braket}
+\usepackage{appendix}
 
 % If you want to break on URL numbers
 \setcounter{biburlnumpenalty}{9500}
@@ -90,7 +91,6 @@
 {subsection}
 \newcommand{\exampleautorefname}{Example}
 \newcommand{\exerciseautorefname}{Exercise}
-
 
 \usepackage[bf,small,hypcap=true]{caption}
 
@@ -339,6 +339,18 @@
 %%%%%%%%%%%
 % Preface %
 %%%%%%%%%%%
+
+\include{GlossaryTerms}
+
+\color{red} Things to include in 2nd edition:
+\begin{itemize}
+    \item Improve parachute modeling
+    \item Finish OOP section
+    \item Rework aerodynamics and atmosphere modeling
+    \item CFD?
+    \item Practice Problems
+\end{itemize}
+\color{black}
 \chapter*{Preface}\label{sec:preface}
 \markboth{PREFACE}{PREFACE}
 Preston and I began working on the Flight Dynamics sub-team in the fall of 2023. From May 2024 to January 2025, we focused our efforts on creating a 6-\gls{dof} model from scratch. During this time, we learned a lot about the mathematics and physics involved in creating such a model. We were often faced with frustration with different conventions and poor explanations of certain topics, all of which were exacerbated by the difficulty of what we were learning. This made much of the material intractable. In this document, we hope to provide detailed explanations of all the necessary concepts in one place to make this journey easier for those who may need it in the future. 
@@ -503,14 +515,6 @@ Although the rest of this document will mainly discuss 6-\gls{dof} models, reall
 Doing so is quite a difficult challenge, but it is not insurmountable. With careful planning, it is possible to gain an appreciation and understanding of the dynamics of a full 3D system. Doing so allows unrivaled modeling potential. In the case of a rocket, the primary reason that modeling in 6-\gls{dof} is so important is because it allows us to analyze the aerodynamic stability of the system. In both 1-\gls{dof} and 3-\gls{dof} modeling, this important aspect of the system is largely neglected.
 \subsection{Structure Hierarchy of a 6-DoF}
 
-\newglossaryentry{state vector}
-{
-    name=state vector,
-    first = {\textit{state vector}},
-    description={A vector containing information about the position and velocity of a body at a given time. This vector can also include more information, such as the angular velocity and quaternion. Generally, this vector includes all quantities needed to be integrated to find the new state},
-    see={quaternion}
-}
-
 The structure of a 6-\gls{dof} consists of three main, large “blocks” of code that are executed in sequence. The first is the initialization section. This is where all known, fixed parameters of the vehicle, atmosphere, and physics are initialized to be called later in the program. The second section is the integrator. This block utilizes a certain integration scheme to step through time, calculating the derivatives of the vehicle’s \gls{state vector}. Within the integrator, there are three major sub-blocks corresponding to major aspects of the dynamics: the forces, the moments, and the attitude dynamics. The forces section takes on the more familiar particle dynamics – regarding position, velocity, and acceleration - that are seen in a high school physics class. The moments section takes on the torques and rotational forces acting on the system. Lastly, there is  attitude dynamics – the orientation of the vehicle in space. This can take the form of either Euler Angles or Parameters, which will be discussed further later. The final block is the visualizer block. This block writes pertinent information to matrices, animates the movement of the vehicle from launch to land, and outputs graphs of important metrics for the user to visualize.
 
 Each of the previously mentioned sections will be discussed in more detail throughout this document.
@@ -518,7 +522,10 @@ Each of the previously mentioned sections will be discussed in more detail throu
 \section{The General Picture}
 It is often useful to see where we are going -- and our general method of getting there -- before we start. With this `map' at our disposal, it is much easier to get through the complexities of the mathematics involved in creating a 6-\gls{dof} model.
 
-The essence of the 6-\gls{dof} is to simulate the movements of a system through time. To do so, we need some description of how the system may respond to certain forces. We will spend quite a while discussing how these forces arise and how we may use them to understand the subsequent motion of a vehicle.
+The essence of the 6-\gls{dof} is to simulate the movements of a system through time. To do so, we need some description of how the system may respond to certain forces. We will spend quite a while discussing how these forces arise and how we may use them to understand the subsequent motion of a vehicle. However, as many of you likely remember from your physics classes, forces acting on a rigid body or more generally about a point give rise to moments. These moments impart some angular motion on our system, which motivates the study of mathematically describing orientation due to these rotations. After understanding how to describe both the translational and rotational motion of a rigid body, the dependence of aspects of these equations on variables we must integrate to solve form. This conundrum is mostly avoided through numerical integration, which allows us to approximate the motion of our vehicle governed by these derived equations. Before this; however, we must also consider how to accurately model the aerodynamic forces such as lift and drag on our vehicle. While equations are known, certain parameters within these equations are themselves functions of multiple other parameters, meaning computer simulations are required to accurately determine them. Finally, at the very end, we will be discussing the 6-DoF itself and the coding practices used in its construction. To help you better understand the framework, we have included a diagram below for a visualization.
+
+
+
 
 Talk about forces into moments, rotations, and why numerical integration is required. Mention aerodynamic forces. Include diagram similar to the one shown in the code review.
 
@@ -593,28 +600,6 @@ Following what you may do in an introductory physics class, we will describe eac
 \end{array}
 \end{equation}
 
-
-
-\newglossaryentry{freestream}
-{
-    name=freestream,
-    first = {\textit{freestream}},
-    description={A freestream quantity is one that is far away from the body, such that the influences of the body are negligible. For example, \gls{freestream} velocity is the velocity that would be seen outside the influence of the body at the same conditions}
-}
-
-\newglossaryentry{ref area}
-{
-    name=reference area,
-    first = \textit{reference area},
-    description={An area that is used to define a characteristic area of an object in aerodynamics. This is used to normalize quantities such as lift and drag}
-    }
-
-    \newglossaryentry{drag coeff}
-{
-    name=drag coefficient,
-    first = \textit{drag coefficient},
-    description={A non dimensional parameter that describes the amount of drag acting on an object. This non-dimensionalized value is given by $\frac{F_D}{q_{\infty}S}$, where $q_{\infty}$ is the dynamic pressure, $\frac{1}{2}\rho_{\infty}V_{\infty}^2$}
-    }
 The notation here is important to understand. In future AAE classes at Purdue, this is likely the notation that you will see. Terms with the subscript $\infty$ denote \gls{freestream} quantities, those that are freely flowing far away from the body of interest. Also of note is the unit step function, $u(t-t_b)$, which is a function which has value zero until reaching time $t_b$, where it thereafter equals one. The quantity  $\rho$ refers to the density of the fluid, and $S$ to the \gls{ref area}. The \gls{drag coeff} is $C_D$, a term which encapsulates the very complex nature of the fluid flow around an object. Calculating the value of $C_D$ will be explored more deeply in later sections of this document. For now, we may assume a constant value.
 
 It is helpful to think about these quantities as vectors, because we can add them together to achieve a resultant.\endnote{More formally, we define these vectors as existing a linear space, where multiplicative and additive properties are preserved. This formal definition allows us to apply this to any arbitrarily number of dimensions. For our uses, this will usually be up to 3 dimensions.} In the 1-dimensional case this is quite trivial since all vectors lie along the $\hat{y}$ unit vector, but this will become increasingly important as we move to higher dimensions.
@@ -630,12 +615,6 @@ F_T \cdot [1-u(t-t_b)]-\frac{1}{2}\rho_{\infty}V_{\infty}^2SC_D-mg=m\vec{a}\labe
  $$\vec{v}=\int{\vec{a}}{dt}$$
 However, you may notice something strange with our equation. In our expression for acceleration, we need to know the velocity to compute the drag. However, we do not know the velocity without integrating the equation first. Since this dependence is non-linear, this becomes even more complicated to solve. In general, there is no known analytical solution to this paradigm! We must take a different approach to the problem. \endnote{Sometimes systems like this can be solved with traditional ODE methods. The most easy identifier is if the system is linear or not. However, most complex systems like our 6-\gls{dof} have no known analytical solutions. We will focus on numerical integration because it will be more useful in general. }
 
-\newglossaryentry{numerical int}
-{
-    name=numerical integration,
-    first = {\textit{numerical integration}},
-    description={The process of making a numerical approximation of a differential equation through discretization of the independent variable (usually time for most physical phenomenon)}
-}
 
 The way we resolve this is to make an approximation of the solution in a process called \gls{numerical int}. Here, we will outline the simplest type of \gls{numerical int}, known as Euler’s Method. This section aims to show how to implement Euler’s method in code, and the mathematical reasoning will be given a more formal treatment in \autoref{sec:euler integration}. We will describe more complex \gls{numerical int} schemes and why you might want to use them, but it’s good to see the code for a simple case first.
 
@@ -660,13 +639,6 @@ Now, we will apply Euler’s method to solve the problem. We will use the follow
 5. To start, we define an initial state. This initial state will be the first value of $x_{old}$. 
 
 6. Iterate through values of $\Delta t$ until the desired time of simulation is achieved.
-
-\newglossaryentry{difference equation}
-{
-    name=difference equation,
-    first = {\textit{difference equation}},
-    description={A discretized form of a differential equation, with the continuous time properties replaced by discrete time intervals.}
-}
 
 What we have done is formally called writing a \gls{difference equation}.  Now only is this important for numerical integration, but in digital processing, because computers must discretize a signal! We will see these equation again when we study practical control systems in Volume III.
 
@@ -710,22 +682,8 @@ We also note the use of the "heaviside" function. This is functionally identical
 \section{Frame of Reference}\label{sec:Frame of Reference}
 Before attempting to describe movement in multiple dimensions, we should first discuss how we can describe important quantities through different lenses. Later, it will become apparent that a vector or problem is easier described or completed through one lens than another. We call these different lenses reference frames.
 
-\newglossaryentry{orthonormal}
-{
-    name=orthonormal,
-    first = {\textit{orthonormal}},
-    description={A set of basis vectors that are mutually orthogonal to each other in a vector space and have unit length. We mostly refer to orthonormal vectors in $\mathbb{R}^3$ space}
-}
-
 A frame of reference is an \gls{orthonormal} set within three-dimensional space. The \gls{orthonormal} nature of the basis vectors that create every frame of reference allows for any other vector in 3-dimensional space to be described as a linear combination of those three basis vectors (hence why we call it a basis for 3-space). This tool becomes incredibly useful within the study of Newtonian and Attitude Dynamics, as every arbitrary vector can be broken down into three set ``scalar'' directions. Naturally, the question arises of how we determine which set directions to utilize, and so we will be discussing a few frames of reference critical to the creation of a 6-\gls{dof} and aerospace engineering as a whole.
 \subsection{The Inertial Frame}
-
-\newglossaryentry{inertial frame}
-{
-    name=inertial frame,
-    first = {\textit{inertial frame}},
-    description={A reference frame that is static and experiences no accelerations. We use the Earth's surface as the reference frame for our rocket}
-}
 
 The first and most important frame of reference is the \gls{inertial frame}. Typically denoted by $e$ or $i$, or in our case $(\hat{x},\hat{y},\hat{z})$, this motionless frame is the one that allows for the use of Newton’s second law in the first place, as the frame itself has ``zero'' translational and rotational movement.\endnote{An \gls{inertial frame} can have some constant velocity and still be inertial. Of course, the earth has some velocity around the sun and with respect to the distant stars which we can approximate as constant for our time scales and thus ignore.} We say “zero” as this motion must be negligible in relation to the vehicle of interest. For example, our specific 6-\gls{dof} sets the \gls{inertial frame} to be anchored within the Earth on the launch pad. And while we are well aware the Earth is moving and rotating through space at a non-zero rate, this motion is negligible relative to the motion of our vehicle which remains close to Earth within the atmosphere for a short period of time. Therefore, we can assume that the Earth acts appropriately as an \gls{inertial frame} of reference, and Newton’s second law is valid for this frame. 
 
@@ -800,28 +758,12 @@ For our current model, the \gls{body frame} of our 6-\gls{dof} has its origin in
 
 \subsection{The Wind Frame}
 
-\newglossaryentry{wind frame}
-{
-    name=wind frame,
-    first = {\textit{wind frame}},
-    description={A reference frame in reference to the direction of freestream velocity, denoted $V_{\infty}$},
-    see = {freestream}
-}
-
-
-\newglossaryentry{angle of attack}
-{
-    name=angle of attack,
-    first={\textit{angle of attack}},
-    description={The angle of offset of the freestream velocity with the $\hat{X}$/$\hat{b}_1$, or longitudinal axis, of the vehicle. This is often denoted with the Greek letter $\alpha$}
-}
-
 The last and by far least important frame of reference is the \gls{wind frame}. This frame of reference, like the \gls{body frame}, is always anchored at some point in the vehicle. Also like the \gls{body frame}, it moves and rotates with the vehicle and allows for a new way of describing the \gls{state vector}. Unlike the \gls{body frame}, the most important definition is not along the longitudinal axis of the vehicle. As indicated by its name, the necessary orientation of a basis vector points in the direction of the free stream velocity.
 
 Relating this to the \gls{body frame}, this translates to an offset from the \gls{body frame} by the \gls{angle of attack} and sideslip. This frame is often useful for aircraft, but we do not use it explicitly in our 6-\gls{dof}. The \gls{wind frame} itself is in fact skipped over during wind calculations, as the \gls{angle of attack} and imparted forces/moments are calculated directly onto the \gls{body frame}. So as this isn’t as useful as the other two reference frames, we won’t elaborate on this frame any further, and it won’t be shown as much in our example 6-\gls{dof}.
 
 \section{Derivative Transport}
-The last issue that we tackle when different reference frames get involved is the fact that objects are moving around, so it can be hard to express quantities in an inertial frame. We can create various reference frames, but to apply laws of physics we want to use an inertial frame.
+The last issue that we tackle when different reference frames get involved is the fact that objects are moving around, specifically accelerating, so it can be hard to express quantities with just an inertial frame. We can create various reference frames, but to correctly apply Newton's second law, we must use our inertial frame as the original reference.
 
 A reference frame may very well translate a vector from one frame to another, but transforming a derivative requires a bit more subtlety.  The tool we use to do this `derivative frame translation' is called derivative transport, or the \gls{bke}. The \gls{bke}, then, is just a tool that we use to convert derivatives between various reference frames.
 
@@ -934,18 +876,103 @@ $$\vec{r}^{\ OP}=30\hat{e}_2 + R\hat{a}_1$$
 
 Some complication comes when we try to express the velocity of point $A$. We know that the velocity is the time derivative of the position, but our position is being described using non-inertial coordinates in the $\hat{a}$ frame!
 
-We can solve this by computing the rotation of one reference frame with respect to the other. This will give us the ability to compute a valid derivative.
+Using our standard derivative, there is no machinery that allows us to take this derivative in the $\hat{a}$-frame. We can solve this by computing the rotation of one reference frame with respect to the other. This will give us the ability to compute a valid derivative.
 
-We can solve this by splitting the velocity into two components, a translational component and a rotational component. The translational component is simply the velocity of the center of mass, which is the time derivative of the position at the center of mass.
+Going back to our frisbee, we can notice that $\hat{a}$ and $\hat{e}$ are offset by some angle. If we know this angle, and the rate at which it is changing, we can understand the relationship between the $\hat{a}$ and the $\hat{e}$ frame.
+\begin{figure}[H]
+    \centering
 
-For the rotation, we consider the lever arm from point $O$ to point $A$. When the Frisbee rotates, this lever arm creates some rotation of point $A$ about point $O$. To solve for this rotation, we simply consider the cross product of the position vector with the rotation vector, $\omega$.
+    
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Straight Lines [id:da6734390440512548] 
+\draw    (330.51,189.62) -- (330.51,72.53) ;
+\draw [shift={(330.51,70.53)}, rotate = 90] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da8274592898181261] 
+\draw    (330.51,189.62) -- (436,189.62) ;
+\draw [shift={(438,189.62)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+\draw [shift={(330.51,189.62)}, rotate = 0] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]      (0, 0) circle [x radius= 2.34, y radius= 2.34]   ;
+%Straight Lines [id:da5551069163424835] 
+\draw [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ]   (330.51,189.62) -- (277.68,88.26) ;
+\draw [shift={(276.76,86.48)}, rotate = 62.47] [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Straight Lines [id:da3422690975196643] 
+\draw [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ]   (330.51,189.62) -- (421.91,131.15) ;
+\draw [shift={(423.6,130.08)}, rotate = 147.4] [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ][line width=0.75]    (7.65,-2.3) .. controls (4.86,-0.97) and (2.31,-0.21) .. (0,0) .. controls (2.31,0.21) and (4.86,0.98) .. (7.65,2.3)   ;
+%Shape: Arc [id:dp9205531721685046] 
+\draw  [draw opacity=0] (362.26,169.78) .. controls (365.25,175.64) and (366.95,182.41) .. (366.95,189.62) -- (330.51,189.62) -- cycle ; \draw    (363.55,172.57) .. controls (365.73,177.75) and (366.95,183.53) .. (366.95,189.62) ;  \draw [shift={(362.26,169.78)}, rotate = 71.21] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
+%Shape: Arc [id:dp360045210851207] 
+\draw  [draw opacity=0] (368.45,141.06) .. controls (373.46,145.87) and (377.72,151.62) .. (381.01,158.06) -- (330.51,189.62) -- cycle ; \draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (370.58,143.21) .. controls (374.67,147.56) and (378.2,152.56) .. (381.01,158.06) ;  \draw [shift={(368.45,141.06)}, rotate = 49.49] [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
+
+% Text Node
+\draw (444,178) node [anchor=north west][inner sep=0.75pt]    {$\hat{e}_{1}$};
+% Text Node
+\draw (328.16,44.4) node [anchor=north west][inner sep=0.75pt]    {$\hat{e}_{2}$};
+% Text Node
+\draw (423.96,112.22) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,opacity=1 ,rotate=-330]  {$\hat{a}_{1}$};
+% Text Node
+\draw (255.42,59.35) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,opacity=1 ,rotate=-330]  {$\hat{a}_{2}$};
+% Text Node
+\draw (312,193.4) node [anchor=north west][inner sep=0.75pt]    {$O$};
+% Text Node
+\draw (370,166.4) node [anchor=north west][inner sep=0.75pt]    {$\theta $};
+% Text Node
+\draw (378,127.4) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ]  {$\omega $};
+\end{tikzpicture}
+    \caption{Angle Between Frames}
+    \label{fig:frame angle}
+\end{figure}
+So we have an angle between the two frames, $\theta$, and an angular rate, $\omega$. We want to find an expression for the infinitesimal change in $\hat{a}$. 
+\begin{figure}[H]
+    \centering
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Straight Lines [id:da41805008281440226] 
+\draw [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,draw opacity=1 ]   (270,170) -- (477.01,150.28) ;
+\draw [shift={(480,150)}, rotate = 174.56] [fill={rgb, 255:red, 218; green, 44; blue, 0 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ;
+%Straight Lines [id:da9398040341911073] 
+\draw    (480,150) -- (476.4,122.97) ;
+\draw [shift={(476,120)}, rotate = 82.41] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ;
+%Shape: Arc [id:dp39694654813438845] 
+\draw  [draw opacity=0][line width=0.75]  (282.2,186.19) .. controls (278.81,188.75) and (274.58,190.27) .. (270,190.27) .. controls (258.81,190.27) and (249.73,181.19) .. (249.73,170) .. controls (249.73,158.81) and (258.81,149.73) .. (270,149.73) .. controls (274.58,149.73) and (278.81,151.25) .. (282.2,153.81) -- (270,170) -- cycle ; \draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ][line width=0.75]    (279.68,187.82) .. controls (276.8,189.38) and (273.5,190.27) .. (270,190.27) .. controls (258.81,190.27) and (249.73,181.19) .. (249.73,170) .. controls (249.73,158.81) and (258.81,149.73) .. (270,149.73) .. controls (274.58,149.73) and (278.81,151.25) .. (282.2,153.81) ;  \draw [shift={(282.2,186.19)}, rotate = 160.06] [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (10.72,-5.15) -- (0,0) -- (10.72,5.15) -- (7.12,0) -- cycle    ;
+
+% Text Node
+\draw (377,163.4) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 218; green, 44; blue, 0 }  ,opacity=1 ]  {$r$};
+% Text Node
+\draw (231,162.4) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ]  {$\omega $};
+% Text Node
+\draw (487,122.4) node [anchor=north west][inner sep=0.75pt]    {$\dot{r}$};
 
 
-$${}^e\frac{d}{dt}\vec{r}={}^a\frac{d}{dt}{\vec{r}}+{}^e\vec{\omega}^a\times\vec{r}$$
+\end{tikzpicture}
+
+    
+    \caption{Infinitesimal rotation}
+    \label{fig:inf rot}
+\end{figure}
+Considering an infinitesimal rotation, $r$ will be displaced in a direction that is orthogonal to its current direction due to the rotation by $\omega$. We can see that this $\dot{r}$ is orthogonal to both $r$ and $\omega$ (which is pointing out of the page). Following the \gls{rhr}, this direction must be given by $\omega\times\vec{r}$.
+
+This cross product also gives us an appropriate magnitude for the vector, as the magnitude will increase with a larger $\omega$ or if the length of the lever arm, $r$, increases.
+
+There are more fundamental reasons for this cross-product relationship, but these will have to wait until Volume II and III to be explained by Lie theory.
+
+With the rotation considered, the rest is quite simple. We must consider the change of $r$ itself, so we consider the derivative of $r$ with respect to the $\hat{a}$-frame to do so. Altogether, we have the full \gls{bke}:
+\begin{gather}
+    \color{blue}\boxed{
+    \color{black}{}^e\frac{d}{dt}\vec{r}={}^a\frac{d}{dt}{\vec{r}}+{}^e\vec{\omega}^a\times\vec{r}}\\
+    \color{blue}\mathrm{Basic \ Kinematic\ Equation}
+\end{gather}
 
 \end{example}
 
-In general, we can use the \gls{bke} to express frame translations. We can perform analysis using multiple intermediate frames to build a sequence of 
+In general, we can use the \gls{bke} to express how frame translations affect the derivatives of states. We can perform analysis using multiple intermediate frames to build a sequence of rotations, or apply the \gls{bke} twice to get an acceleration.
 
 
 \section{The 3-DoF Case}\label{sec: 3DoF Case}
@@ -1225,19 +1252,6 @@ $$\dot{\textbf{X}}=\begin{bmatrix}
 \end{bmatrix}$$
 For the sake of compactness, these vectors are generally not written in their full form. In this text, we will often refer to a \gls{state vector} as just $\vec{X}$. Note that we also use the vector $\hat{X}$ to denote a unit vector in the \gls{body frame}, so the difference in the hat becomes an important distinction here.
 \section{Euler Rotation Equations}\label{Euler Rotation Equations}
-\newglossaryentry{rigid body}
-{
-    name=rigid body,
-    first=\textit{rigid body},
-    description={A rigid body is a system of particles whose positions with respect to each other is fixed. Rigid body dynamics are the basis of our analysis of rotational dynamics}
-}
-
-\newglossaryentry{moment of inertia}
-{
-    name=moment of inertia,
-    first={\textit{moment of inertia}},
-    description={A measure of its resistance to rotational acceleration. It is in essence, the rotational analogue of mass. Often denoted with the letter $I$}
-}
 
 In \autoref{sec:moments} we have explored the moments that are created when a force acts at a point that is not through the center of mass. Here, we will make the jump from particle dynamics into \gls{rigid body} dynamics.
 
@@ -1298,13 +1312,7 @@ $$I=\begin{bmatrix}
     0&I_{yy}&0\\
     0&0&I_{zz}
 \end{bmatrix}$$
-\newglossaryentry{principle axes}
-{
-    name={principle axes},
-    first=\textit{principle axes},
-    description={The axes defined such that the products of inertia for a body are zero. These axes are the values that solve the eigenvalue problem $I\vec{\omega}=I^*\vec{\omega}$}
-}
-\newacronym{pmoi}{PMOI}{principle moment of inertia}
+
 In fact, we can always find axes such that the products of inertia are zero. These are called the \gls{principle axes} and are important in other applications, such as structures \cite{baker_statics_2020}. For our rocket, it just happens that these \gls{principle axes} are the ones we have chosen to define as our \gls{body frame}. The \gls{moment of inertia} along these \gls{principle axes} are solutions to the eigenvalue problem $I\vec{\omega}=I^*\vec{\omega}$, where $I^*$ is a scalar. Essentially, we are finding a matrix $I$ such that the output is just a scalar multiple of the input, $\omega$. We can see that having this property will greatly simplify our results. This is another reason why we like to perform many calculations in the \gls{body frame}.
 
 Using the \gls{inertia tensor}, a matrix form of \eqref{eq:Iw}  is written as:
@@ -1315,14 +1323,6 @@ In the simplification using the \gls{principle axes}, we often refer to the term
 
 \subsection{Parallel Axis Theorem}
 Similar to the way in which we described the \gls{moment of inertia} of a particle to be $mr^2$, we can describe the change in \gls{moment of inertia} of a body due to the offset of its axis.
-
-\newglossaryentry{par axis thm}
-{
-    name=parallel axis theorem,
-    first = {\textit{parallel axis theorem}},
-    description={A theorem relating the moment of inertia and product of inertia about different rotation points},
-    see={moment of inertia}
-}
 
 We accomplish this with the \gls{par axis thm}, which relates the moment and products of inertia through different rotation points. To use \gls{par axis thm}, we simply take the known \gls{moment of inertia} and add $mr^2$ along that component direction. This looks like:
 $$I_{x'x'}=I_{xx}+m\left(y^2+z^2\right)$$
@@ -1643,18 +1643,11 @@ Energy methods of mechanics employ the concepts of the energy of a system to sol
 
 There are two main types of energy mechanics, referred to as Hamiltonian and \gls{Lagrangian} mechanics. In this chapter, we will focus on the \gls{Lagrangian} version of these mechanics. Hamiltonian mechanics are arguably more fundamental, but we will leave that discussion for Volume III.
 
-\newglossaryentry{symplectic int}
-{
-    name=symplectic integrator,
-    first = {\textit{symplectic integrator}},
-    description={A class of numerical integration schemes that are energy preserving because they preserve certain geometric properties of a differential equation}
-}
+The energy methods of mechanics are more advanced than the other topics discussed here. These topics will require a bit of background in multivariate calculus and are not strictly required for understanding the rest of the 6-\gls{dof} implementation. However, we believe it is best to be exposed to these ideas early such that the reader can gain an appreciation for where more advanced mechanics (and the subsequent volumes of this text) may take them.
 
-Although the Hamiltonian and \gls{Lagrangian} are not directly used in the case of our 6-\gls{dof}, they are fundamental to other areas of mechanics and make derivations simpler in many cases. The Hamiltonian and \gls{Lagrangian} descriptions of mechanics are more often taught to physics students rather than engineers, but we feel that they deserve inclusion among the topics presented here. When we discuss \gls{numerical int}, we can use \glspl{symplectic int} when our problem has a Hamiltonian description. This will be further discussed in \autoref{sec:other numerical ints}. You may find that certain \gls{eom} derivations, such as the spinning top and problems in orbital mechanics are more easily accomplished with energy methods.
+Although the Hamiltonian and \gls{Lagrangian} are not directly used in the case of our 6-\gls{dof}, they are fundamental to other areas of mechanics and make derivations simpler in many cases. The Hamiltonian and \gls{Lagrangian} descriptions of mechanics are more often taught to physics students rather than engineers, but we feel that they deserve inclusion among the topics presented here. You may find that certain \gls{eom} derivations, such as the spinning top and problems in orbital mechanics are more easily accomplished with energy methods.
 
-Another reason to motivate these systems is that these energy methods are rotationally invariant because energy methods can employ a generalized coordinate system. These generalized coordinates are very powerful and allow us to describe a huge variety of systems. We will see this later in some examples.
-
-A brief overview of the differences between the two schemes of \gls{eom} derivation is shown in \autoref{fig:newt v lang}.
+Another reason to motivate these systems is that these energy methods are rotationally invariant because energy methods can employ a generalized coordinate system. These generalized coordinates are very powerful and allow us to describe a huge variety of systems. We will see this later in some examples. A brief overview of the differences between the two schemes of \gls{eom} derivation is shown in \autoref{fig:newt v lang}.
 
 \begin{figure}[ht]
     \centering
@@ -1664,47 +1657,23 @@ A brief overview of the differences between the two schemes of \gls{eom} derivat
     \caption{Newtonian vs. Lagrangian Mechanics Approach}
     \label{fig:newt v lang}
 \end{figure}
-The discussion of these systems in the volume is curtailed because it is not directly applicable to the work on our specific 6-\gls{dof} model. However, the fundamental implications of energy methods are important, but that discussion is saved for Volume III.
-
-A background on the calculus of variations, which provides a derivation for Lagrangian mechanics, is also presented in Volume III. We present here only the formulaic approach and its used.
+The discussion of these systems in the volume is curtailed because it is not directly applicable to the work on our specific rocket 6-\gls{dof} model. However, the fundamental implications of energy methods are important, but that full discussion is saved for Volume III. A mathematical background on the calculus of variations, which provides a derivation for Lagrangian mechanics, is also presented in Volume III. We present here only the formulaic approach and its used.
 
 \section{Hamilton's Principle}
 
-Before we can get to Hamilton's principle, we need to understand a new type of calculus, one which is the calculus of whole functions. We call this type of calculus the calculus of variations. The calculus of variations underpins the ideas of \gls{Lagrangian} and Hamiltonian mechanics, so it is important to understand the principles behind it before moving on to the actual mechanics. In analogy to how single variable calculus is fundamental to Newtonian mechanics, the calculus of variations is fundamental to energy mechanics.
+Hamilton's Principle is the fact that underlies all of energy mechanics. To understand energy mechanics at all, we must study this idea closely. Before we can can describe Hamilton's principle, we need to understand a new type of calculus, one which is the calculus of whole functions. We call this type of calculus the `calculus of variations'. The calculus of variations underpins the ideas of \gls{Lagrangian} and Hamiltonian mechanics, so it is important to understand the principles behind it before moving on to the actual mechanics. In analogy to how single variable calculus is fundamental to Newtonian mechanics, the calculus of variations is fundamental to energy mechanics.
 
-\newglossaryentry{geodesic}
-{
-    name=geodesic,
-    first = {\textit{geodesic}},
-    description={The shortest path between two points in an arbitrarily curved space}
-}
+The fundamental idea of the calculus of variations is simple. We want to find the maximums and minimums of some quantity in our problem. Why? In physics, we often see that quantities are minimized or maximized for some reason. For example, a soap surface will minimize its surface area, or a beam of photons will follow a \gls{geodesic} of spacetime. Light will also refract through surfaces to minimize time as seen in Snell's Law.\endnote{More information on all of these topics is found in the introductory part of Volume III.}
 
-The fundamental idea of the calculus of variations is simple. We want to find the maximums and minimums of some quantity in our problem. Why? In physics, we often see that quantities are minimized or maximized for some reason. For example, a soap surface will minimize its surface area, or a beam of photons will follow a \gls{geodesic} of spacetime. Light will also refract through surfaces to minimize time as seen in Snell's Law. 
+Because so many physical phenomena are governed by this behavior to minimize certain quantities, Hamilton (the same mathematical hero we will see with attitude dynamics), decided to formulate a mathematical description of this.
 
-Because so many physical phenomena are governed by this behavior to minimize certain quantities, Hamilton (the same mathematical hero we will see later with attitude dynamics), decided to formulate a mathematical description of this.
-
-\newglossaryentry{Euler Equation}
-{
-    name=Euler's equation,
-    first = {\textit{Euler's equation}},
-    description={The fundemental equation in the calculus of variations describing the maximum or minimum conditions of a functional},
-    see={functional}
-}
-
-\newglossaryentry{functional}
-{
-    name=functional,
-    first = {\textit{functional}},
-    description={A quantity that maps a function onto the real number line. Often,  this is called a 'function of a function'}
-}
-
-In essence, we are attempting to find a function that is the minimum of some set of conditions. These conditions also take the form of a function, so we attempt to find a function that is a minimum of another function. We call this quantity which we are minimizing a \gls{functional}, which we define as:
+In essence, our goal is to find a function that is the minimum of some set of conditions. These conditions also take the form of a function, so we attempt to find a function that is a minimum of another function. We call this quantity which we are minimizing a \gls{functional}, which we define as:
 \begin{equation}\label{eq:functional}
     J=\int_{x_1}^{x_2}f\left[y(x),y'(x);x\right]{dx}
 \end{equation}
-The \gls{functional}, $J$, is a quantity which maps a function onto the real number line. This means that it takes the function as an input and outputs a single real number (that is, a function of a function). We are attempting to find an input function, $y(x)$, that yields an extrema of $J$. Our goal is to find criteria for $y(x)$ that make $J$ a maximum or a minimum.
+The \gls{functional}, $J$, is a quantity which maps a function onto the real number line. This means that it takes the function as an input and outputs a single real number (that is, a function of a function). We are attempting to find an input function, $y(x)$, that yields an extrema of $J$. Our goal is to find criteria for $y(x)$ that makes $J$ a maximum or a minimum.
 
-For now, we present the way to do this without derivation. The fundamental equation of the calculus of variations is called the \gls{Euler Equation}:
+For now, we present the way to achieve this without derivation. The fundamental equation of the calculus of variations is called the \gls{Euler Equation}:
 \begin{equation}\label{eq: Euler's Diff eq}
     \frac{\partial f}{\partial y}-\frac{d}{dx}\frac{\partial f}{\partial y'}=0
 \end{equation}
@@ -1716,18 +1685,11 @@ We see that the Euler Equation is the integrand of this equation. Since we know 
 \begin{equation}
     \color{blue}\boxed{\color{black}\delta J=0}
 \end{equation}
-
 Following directly from the ideas of the calculus of variations, Hamilton (alongside many other mathematicians) wanted to apply this to physical systems. Hamilton's Principle is as follows:
 \begin{theorem}[Hamilton's Principle]
 A system which may travel from one point to another within a specific time interval, the path that is followed is the path which minimizes the time integral of the difference between the kinetic and potential energies.
 $$\delta \int_{t_1}^{t_2}{T-U}{dt}=0$$
 \end{theorem}
-\newglossaryentry{Lagrangian}
-{
-    name=Lagrangian,
-    first = {\textit{Lagrangian}},
-    description={A description of the energy of a system given by $L\equiv T-U$. Denoted with the letter $L$}
-}
 
 The quantity $T-U$, the kinetic energy minus the potential energy, is a quantity called the \gls{Lagrangian}, denoted $L$. 
 \begin{equation}
@@ -1749,6 +1711,7 @@ The quantity $T-U$, the kinetic energy minus the potential energy, is a quantity
     see={action}
 }
 
+
 The time integral of the \gls{Lagrangian} is the \gls{action}, denoted $S$. This is often why Hamilton's Principle is also called the \gls{princ of least action}. 
 
 \begin{equation}
@@ -1757,14 +1720,6 @@ The time integral of the \gls{Lagrangian} is the \gls{action}, denoted $S$. This
 
 So, our \gls{action} takes the form of the \gls{functional} from the calculus of variations. From Hamilton's principle, this \gls{functional}, the \gls{action}, must be minimized. So, we often see the compact form of Hamilton's Principle as:
 $$\delta S=0$$
-\newglossaryentry{euler lagrange}
-{
-    name=Euler-Lagrange Equation,
-    first = {\textit{Euler-Lagrange Equation}},
-    description={The fundemental equations describing the solutions that give the extrema of the action in a Lagrangian system},
-    see={action}
-}
-
 Expressed using Euler's differential equation, \eqref{eq: Euler's Diff eq}, we get the \glspl{euler lagrange}:
 \begin{gather}\label{eq: Euler-Lagrange}
     \color{blue}\boxed{\color{black}\frac{\partial L}{\partial x_i}-\frac{d}{dt}\frac{\partial L}{\partial \dot{x}_i}=0}\\ \mathrm{\color{blue}Euler-Lagrange \ Equations}
@@ -1779,7 +1734,7 @@ Before we look into some examples of how to utilize these equations in practice,
     description={A system or potential which is independent of the path. A closed integral in a conservative field is 0}
 }
 
-We note that in this chapter, we will only consider potential functions which are \gls{conservative}, or path independent. This does mean that frictional forces and aerodynamics are not modeled with the \gls{Lagrangian} we describe here (although they can be with the utilization of Rayleigh's dissipation function and other techniques, such as those discussed in \cite{rabei_hamiltonian_2004}). This is the reason we do not directly use these equations in the 6-DoF.\endnote{Much of the rotational dynamics we describe can be represented equivalently using the \gls{Lagrangian} approach, so we do use these equations in a roundabout manner. We will explore this more extensively in Volume III}
+We note that in this chapter, we will only consider potential functions which are \gls{conservative}, or path independent. This does mean that frictional forces and aerodynamics are not modeled with the \gls{Lagrangian} we describe here (although they can be with the utilization of Rayleigh's dissipation function and other techniques, such as those discussed in \cite{rabei_hamiltonian_2004-1}). This is the reason we do not directly use these equations in the 6-DoF.\endnote{Much of the rotational dynamics we describe can be represented equivalently using the \gls{Lagrangian} approach, so we do use these equations in a roundabout manner. We will explore this more extensively in Volume III}
 
 So, for systems that are non-conservative, it is best to stick with the Newtonian method of mechanics, as we do for our 6-DoF. However, for those that are frictionless, the methods described here will work well. While it may seem that frictionless systems are very idealistic, we do see systems that can be approximated as frictionless quite often! Orbits, of course, are one case where this is especially true. For many other systems, such as a spinning top or other rotating bodies, we can often ignore the small amount of friction and arrive at analytical solutions without much hassle using the \gls{Lagrangian}. These methods also become extraordinarily important for our derivations of rotational equations.
 
@@ -2935,7 +2890,7 @@ When modeling aerodynamic forces, we can imagine that two differential force ele
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{6DoF Explanation Scripts/Images/ShearStress.png}
+    \includegraphics[width=0.8\linewidth]{Images/ShearStress.png}
     \caption{Pressure and Shear Stress on an Aerodynamic Surface}
     \label{fig:pressure and shear}
 \end{figure}
@@ -3276,7 +3231,7 @@ Using the same example differential equation from \autoref{sec:errors in the eul
     \caption{Comparison of Numerical Integration Schemes for $y'=2t$}
     \label{fig:Numerical Comparison}
 \end{figure}
-The code that runs this example is shown in \autoref{code:Numerical Error $y'=2t$} in the Appendix. This code is a good example for understanding the syntax for using the integration code snippets in Listing \autoref{code:rk2} and \autoref{code:rk4}.
+The code that runs this example is shown in \autoref{sec:numerical int error code} in the Appendix. This code is a good example for understanding the syntax for using the integration code snippets in Listing \autoref{code:rk2} and \autoref{code:rk4}.
 
 As we can see from this example, even with a fairly large timestep of $\Delta t=0.5s$, the RK4 perfectly matches the true curve. For this curve, there are no terms of higher order than quadratic, so the RK4 will perfectly match the solution curve.
 
@@ -3287,14 +3242,14 @@ The difference in these \gls{numerical int} schemes will become more apparent wh
 
 \begin{figure} [ht]
     \centering
-    \includegraphics[width=\linewidth]{6DoF Explanation Scripts/Numerical Integrator Nyquist 1.png}
+    \includegraphics[width=\linewidth]{Images/Numerical Integrator Nyquist 1.png}
     \caption{Numerical Integration of periodic function}
     \label{fig:Numerical Int Periodic}
 \end{figure}
 So, what timestep is required to accurately model a periodic function? For our example, we will use RK4 since we have shown it to be the most accurate of the integration schemes. We choose to do this to highlight effects aside from error in the numerical approximation. We can vary the timestep for this same periodic function and see what the response looks like. This is shown in \autoref{fig:Nyquist}.
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{6DoF Explanation Scripts/Numerical Integrator Nyquist 2.png}
+    \includegraphics[width=0.9\linewidth]{Images/Numerical Integrator Nyquist 2.png}
     
     \caption{Numerical Integration of Periodic Function with varying timestep}
     \label{fig:Nyquist}
@@ -3537,9 +3492,8 @@ So, taking all of these together, we have the derivative of our \gls{state vecto
     \end{bmatrix}
 \end{equation}
 \subsection{6-DoF Code}
-We take this integrated \gls{state vector} along with the initial conditions and integrate them using "ode45". The two most important scripts in this process are the "MainRK4.m" and "RK4Integrator.m" MATLAB scripts. Because these MATLAB scripts are quite long, we have chosen not to include them in the appendix. Instead, a link to the GitHub is given where the scripts can be found.
+We take this integrated \gls{state vector} along with the initial conditions and integrate them using "ode45". The two most important scripts in this process are the "MainRK4.m" and "RK4Integrator.m" MATLAB scripts. Because these MATLAB scripts are quite long, we have chosen not to include them in the appendix. Instead, a link to the GitHub is given where the scripts can be found. The full code can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or in Appendix \ref{Appendix:code}.
 
-The full code can be found at: \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or in the appendix in \autoref{sec:6DoF Code}.
 \section{Validation of 6-DoF}
 The validation of our 6-\gls{dof} model is achieved through modeling other rocket systems that have flown to check the validity of our model and modeling other physical phenomena. Validation can range from very simple to far more complex depending on the system that is being validated. For us, validation falls under two main categories:
 \begin{enumerate}
@@ -3547,9 +3501,7 @@ The validation of our 6-\gls{dof} model is achieved through modeling other rocke
     \item Full model validation - validation of the whole 6-\gls{dof} by modeling a different rocket system and comparing 6-\gls{dof} outputs to real outputs.
 \end{enumerate}
 
-Sub-component validation may look like the Dzhanibekov modeling in \autoref{sec:Dzhan}, where we test the attitude dynamics.
-
-Full model validation is usually more complex. One such example is our validation of our model against the V-2 rocket launch on March 7, 1949. This comparison is shown in \autoref{fig:V2 sim}
+Sub-component validation may look like the Dzhanibekov modeling in \autoref{sec:Dzhan}, where we test the attitude dynamics. Full model validation is usually more complex. One such example is our validation of our model against the V-2 rocket launch on March 7, 1949. This comparison is shown in \autoref{fig:V2 sim}
 
 \begin{figure}
     \centering
@@ -3576,13 +3528,15 @@ In \gls{oop}, the basis of our code is \textit{objects}. These objects hold info
 
 If it has not already become apparent, the 6-\gls{dof} model described so far is fairly simple in the grand scheme of things. We are modeling a single rocket and most of the subsystems are simplified. What happens if we want to model a huge rocket system with different systems, sensors, measurements, errors, and so on? In this case, we need a better scheme for organization that makes the process simpler for the end user. \Gls{oop} is one method to achieve such organization that we use for our model.
 
+\Gls{oop}, like any skill in coding, is best understood with practice. As a starting point, we highly recommend \cite{tearle_object-oriented_nodate}, which gives a guided introduction to \gls{oop} in MATLAB.
+
 \subsection{Objects, Properties, and Methods}
 
-The basis of the \gls{oop} approach are, as the name suggests, objects. Objects hold much more information than standard variables. Typically, a variable contains only one piece of information, such as a string, an integer, or a floating point number. An object, on the other hand, can contain as much information as we want it to! 
+The basis of the \gls{oop} approach are, as the name suggests, objects. Objects hold much more information than standard variables. Typically, a variable contains only one piece of information, such as a string, an integer, or a floating point number. These variables have a value / values, and a type. Aside from this, they contain no other information. An object, on the other hand, can contain as much information as we want it to! 
 
 An object is a reuseable part of code that has certain attributes and functions associated within it. An object may be a "rocket", and it has features such as "propellant type", "mass", and "thrust", to name a few. The rocket might also have some functions associated with it, such as "SimulateFlight", which would simulate the rocket flight based on all the given inputs.
 
-Objects are inherently related to what are called \textit{classes}. A class defines the attributes and the functions that are associated with an object. The attributes associated with an object are called properties and the associated functions are called methods.
+Objects are inherently related to what are called \textit{classes}. A class defines the attributes and the functions that are associated with an object. The attributes associated with an object are called \textit{properties} and the associated functions are called \textit{methods}. Properties and methods are exactly analogous to the variables and functions seen elsewhere, but they are applicable only to objects of that class.
 
 In MATLAB, these classes can be created by clicking the dropdown when creating a new file and selecting `Class'. The default class looks like:
 
@@ -3612,8 +3566,14 @@ end
 \end{lstlisting}
 
 \subsection{Overloading and Precedence}
+One special feature of \gls{oop} is that it allows us to change the behavior of the default MATLAB functions when applied on certain objects. For example, overloading allows the user to change the functionality of the "plot" or "disp" functions when they are acting on a user defined object.
+
+% talk about precedence and how overloading is achieved
 
 \subsection{Subclasses and Superclasses}
+Classes have the feature that they can share portions of their code with other classes. When a class takes it's base code from another class, this is referred to as \textit{inheritance}. The class which is inheriting is the \textit{subclass}, and the class which is being inherited from is the \textit{superclass}.
+
+The construct of the subclass and superclass is use
 
 \section{Continuous Integration and Testing}
 Continuous development is a principle that software development should occur in small pieces that are developed rapidly, rather than the more conventional approach of doing large overhauls of a code base. We find that the continuous integration approach is more useful for us, as it allows us greater flexibility in how we code and allows for features to be developed in parallel to each other.
@@ -3660,13 +3620,18 @@ If you want to have these changes to figures universally applied in MATLAB, you 
 The code in \autoref{code:startup} is the default plotting used in this document, which should be a good baseline for professional plots.
 \lstinputlisting[style=matlab-editor, caption = Startup File for Plotting]{startup.m}\label{code:startup}
 
+
+And with that, we have completed the first Volume of the Flight Dynamics Bible. Additional information and code can be found in the Appendix. If you have any questions, concerns, or suggestions, feel free to reach out to Hudson Reynolds or Preston Wright on Slack or via email at Hudsonj.reynolds@gmail.com and preston.wright0330@gmail.com.
+
 \newpage
 \printendnotes
 
-And with that, we have completed the first Volume of the Flight Dynamics Bible. Additional information and code can be found in the Appendix. If you have any questions, concerns, or suggestions, feel free to reach out to Hudson Reynolds on Slack or via email at Hudsonj.reynolds@gmail.com.
 
 \appendix
+\addappheadtotoc
+
 \renewcommand{\chaptername}{Appendix}
+\renewcommand{\chapterautorefname}{Appendix}
 
 \chapter{Answers to Selected Problems}
 
@@ -3733,27 +3698,24 @@ So, we have $F=m\ddot{x}_i$.
     It can further be shown that the Newtonian derivation must be performed in an inertial frame.
 \end{corollary}
 
-\chapter{Code}
-
-This chapter contains lengthier segments of example code from either the 6-\gls{dof} itself or a proof/example relating to it. Since the code is cumbersome to show in full, we have opted to link to the GitHub repository instead.
-\section{Lorenz Attractor RK4 Example}\label{sec:Lorenz Attractor RK4 Example}
-\href{https://github.com/HudsonReynolds/Flight-Dynamics-Bible/tree/main/6DoF%20Explanation%20Scripts/Lorenz%20Attractor}{Lorenz Attractor}
-
-\section{Dzhanibekov Effect Model} \label{sec:Dzanibekov Code}
-\href{https://github.com/HudsonReynolds/Flight-Dynamics-Bible/tree/main/6DoF%20Explanation%20Scripts/Dzhanibekov}{Dzhanibekov Effect}
-
-\section{Numerical Integration Error Examples}
-\lstinputlisting[style=matlab-editor, caption = Numerical Integration Error Comparison]{6DoF Explanation Scripts/NumericalIntegratorError.m}\label{code:Numerical Error $y'=2t$}
-
-\lstinputlisting[style=matlab-editor, caption = Numerical Integration of Periodic Function]{6DoF Explanation Scripts/NumericalIntegratorErrorNyquist.m}\label{code:Numerical Error y'=cos(4*pi*t)}
-\subsection{6-DoF Code}\label{sec:6DoF Code}
-The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this .pdf and .tex document:
+\chapter{Code}\label{Appendix:code}
+This chapter contains lengthier segments of example code from either the 6-\gls{dof} itself or a proof/example relating to it. Since the code is cumbersome to show in full, we have opted to link to the GitHub repository instead. The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this .pdf and .tex document:
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.5\linewidth]{Images/adobe-express-qr-code(1).png}
     \label{fig:qr code}
 \end{figure}
+The rest of the code shown below link to certain sections of this GitHub repository and are reproduced only for convenience. 
+
+\section{Lorenz Attractor RK4 Example}\label{sec:Lorenz Attractor RK4 Example}
+\href{https://github.com/HudsonReynolds/Flight-Dynamics-Bible/tree/main/6DoF%20Explanation%20Scripts/Lorenz%20Attractor}{Lorenz Attractor}
+
+\section{Dzhanibekov Effect Model} \label{sec:Dzanibekov Code}
+\href{https://github.com/HudsonReynolds/Flight-Dynamics-Bible/tree/main/6DoF%20Explanation%20Scripts/Dzhanibekov}{Dzhanibekov Effect}
+
+\section{Numerical Integration Error Examples}\label{sec:numerical int error code}
+\href{https://github.com/HudsonReynolds/Flight-Dynamics-Bible/tree/main/6DoF%20Explanation%20Scripts/Numerical%20Integration%20Examples}{Numerical Integration Examples}
 
 \setglossarystyle{altlist}
 \printglossary[title=Special Terms, toctitle = Special Terms]

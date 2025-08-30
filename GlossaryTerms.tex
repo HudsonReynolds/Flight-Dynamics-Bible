@@ -1,0 +1,148 @@
+\newglossaryentry{state vector}
+{
+    name=state vector,
+    first = {\textit{state vector}},
+    description={A vector containing information about the position and velocity of a body at a given time. This vector can also include more information, such as the angular velocity and quaternion. Generally, this vector includes all quantities needed to be integrated to find the new state},
+    see={quaternion}
+}
+
+\newglossaryentry{freestream}
+{
+    name=freestream,
+    first = {\textit{freestream}},
+    description={A freestream quantity is one that is far away from the body, such that the influences of the body are negligible. For example, \gls{freestream} velocity is the velocity that would be seen outside the influence of the body at the same conditions}
+}
+
+
+\newglossaryentry{ref area}
+{
+    name=reference area,
+    first = \textit{reference area},
+    description={An area that is used to define a characteristic area of an object in aerodynamics. This is used to normalize quantities such as lift and drag}
+    }
+
+    \newglossaryentry{drag coeff}
+{
+    name=drag coefficient,
+    first = \textit{drag coefficient},
+    description={A non dimensional parameter that describes the amount of drag acting on an object. This non-dimensionalized value is given by $\frac{F_D}{q_{\infty}S}$, where $q_{\infty}$ is the dynamic pressure, $\frac{1}{2}\rho_{\infty}V_{\infty}^2$}
+    }
+
+    
+\newglossaryentry{numerical int}
+{
+    name=numerical integration,
+    first = {\textit{numerical integration}},
+    description={The process of making a numerical approximation of a differential equation through discretization of the independent variable (usually time for most physical phenomenon)}
+}
+
+\newglossaryentry{difference equation}
+{
+    name=difference equation,
+    first = {\textit{difference equation}},
+    description={A discretized form of a differential equation, with the continuous time properties replaced by discrete time intervals.}
+}
+
+\newglossaryentry{orthonormal}
+{
+    name=orthonormal,
+    first = {\textit{orthonormal}},
+    description={A set of basis vectors that are mutually orthogonal to each other in a vector space and have unit length. We mostly refer to orthonormal vectors in $\mathbb{R}^3$ space}
+}
+
+\newglossaryentry{inertial frame}
+{
+    name=inertial frame,
+    first = {\textit{inertial frame}},
+    description={A reference frame that is static and experiences no accelerations. We use the Earth's surface as the reference frame for our rocket}
+}
+
+\newglossaryentry{wind frame}
+{
+    name=wind frame,
+    first = {\textit{wind frame}},
+    description={A reference frame in reference to the direction of freestream velocity, denoted $V_{\infty}$},
+    see = {freestream}
+}
+
+
+\newglossaryentry{angle of attack}
+{
+    name=angle of attack,
+    first={\textit{angle of attack}},
+    description={The angle of offset of the freestream velocity with the $\hat{X}$/$\hat{b}_1$, or longitudinal axis, of the vehicle. This is often denoted with the Greek letter $\alpha$}
+}
+
+\newglossaryentry{rigid body}
+{
+    name=rigid body,
+    first=\textit{rigid body},
+    description={A rigid body is a system of particles whose positions with respect to each other is fixed. Rigid body dynamics are the basis of our analysis of rotational dynamics}
+}
+
+\newglossaryentry{moment of inertia}
+{
+    name=moment of inertia,
+    first={\textit{moment of inertia}},
+    description={A measure of its resistance to rotational acceleration. It is in essence, the rotational analogue of mass. Often denoted with the letter $I$}
+}
+
+\newglossaryentry{principle axes}
+{
+    name={principle axes},
+    first=\textit{principle axes},
+    description={The axes defined such that the products of inertia for a body are zero. These axes are the values that solve the eigenvalue problem $I\vec{\omega}=I^*\vec{\omega}$}
+}
+\newacronym{pmoi}{PMOI}{principle moment of inertia}
+
+\newglossaryentry{par axis thm}
+{
+    name=parallel axis theorem,
+    first = {\textit{parallel axis theorem}},
+    description={A theorem relating the moment of inertia and product of inertia about different rotation points},
+    see={moment of inertia}
+}
+
+\newglossaryentry{symplectic int}
+{
+    name=symplectic integrator,
+    first = {\textit{symplectic integrator}},
+    description={A class of numerical integration schemes that are energy preserving because they preserve certain geometric properties of a differential equation}
+}
+
+\newglossaryentry{geodesic}
+{
+    name=geodesic,
+    first = {\textit{geodesic}},
+    description={The shortest path between two points in an arbitrarily curved space}
+}
+
+\newglossaryentry{Euler Equation}
+{
+    name=Euler's equation,
+    first = {\textit{Euler's equation}},
+    description={The fundemental equation in the calculus of variations describing the maximum or minimum conditions of a functional},
+    see={functional}
+}
+
+\newglossaryentry{functional}
+{
+    name=functional,
+    first = {\textit{functional}},
+    description={A quantity that maps a function onto the real number line. Often,  this is called a 'function of a function'}
+}
+
+\newglossaryentry{Lagrangian}
+{
+    name=Lagrangian,
+    first = {\textit{Lagrangian}},
+    description={A description of the energy of a system given by $L\equiv T-U$. Denoted with the letter $L$}
+}
+
+\newglossaryentry{euler lagrange}
+{
+    name=Euler-Lagrange Equation,
+    first = {\textit{Euler-Lagrange Equation}},
+    description={The fundemental equations describing the solutions that give the extrema of the action in a Lagrangian system},
+    see={action}
+}
