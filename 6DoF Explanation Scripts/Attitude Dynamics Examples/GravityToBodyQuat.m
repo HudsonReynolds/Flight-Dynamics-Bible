@@ -1,6 +1,10 @@
+% PSP FLIGHT DYNAMICS:
+%
 % Title: GravityToBodyQuat
 % Author: Preston Wright
-% Example converting a gravity force from the inertial to body frame and thrust force from body to inertial frame using quaternions
+% Last Modified: 8/30/25 
+%
+% Description: Example converting a gravity force from the inertial to body frame and thrust force from body to inertial frame using quaternions
 
 % Start with your initializations. Every angle should be in radians, and our forces are in Newtons
 phi = 2.71;                     % x-axis Euler angle [rad]
