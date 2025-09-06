@@ -343,12 +343,20 @@
 \include{GlossaryTerms}
 
 \color{red} Things to include in 2nd edition:
+
 \begin{itemize}
-    \item Improve parachute modeling
+    \item Improve parachute modeling (multibody)
+    \item Improve readabillity of 6-DoF
+    \item Update Confluence
     \item Finish OOP section
+    \item     Practice Problems
+    
+3rd edition:
+    \item Later:
     \item Rework aerodynamics and atmosphere modeling
     \item CFD?
-    \item Practice Problems
+
+    
 \end{itemize}
 \color{black}
 \chapter*{Preface}\label{sec:preface}
@@ -1480,7 +1488,7 @@ We assume that most readers are broadly familiar with the topics discussed in AA
 \begin{enumerate}
     \item On a nice Wednesday evening during one of your strolls through campus, you are kidnapped by a business major, who will only let you free if you can fix the vibration of the squeaky door at their frat house.
 
-You can consider the door hinge as a mass-spring system constrained to motion along the $\hat{x}$-direction. The spring has an equilibrium length of $L_0$ and a spring constant of $k=5$ N/m with a mass of 1 kg. At time $t_0$, an instantaneous impulse of 10 $\mathrm{N}\cdot \mathrm{s}$ is applied to the hinge in the $-\hat{x}$-direction by a misguided ping-pong ball hitting the door. This is shown diagrammatically in \autoref{fig:mass spring}. Assume that the system is at rest in the equilibrium position at $t_0$.
+You can consider the door hinge as a mass-spring system constrained to motion along the $\hat{x}$-direction. The spring has an equilibrium length of $L_0$ and a spring constant of $k=4 \ \mathrm{N/m}$ with a mass of $1 \ \mathrm{kg}$. At time $t_0$, the length is $L_0$. An instantaneous impulse of $10 \ \mathrm{N\cdot s}$ is applied to the hinge in the $-\hat{x}$-direction by a misguided ping-pong ball hitting the door. This is shown diagrammatically in \autoref{fig:mass spring}. Assume that the system is at rest in the equilibrium position at $t_0$.
 \begin{figure}[ht]
     \centering
     
@@ -3528,19 +3536,27 @@ In \gls{oop}, the basis of our code is \textit{objects}. These objects hold info
 
 If it has not already become apparent, the 6-\gls{dof} model described so far is fairly simple in the grand scheme of things. We are modeling a single rocket and most of the subsystems are simplified. What happens if we want to model a huge rocket system with different systems, sensors, measurements, errors, and so on? In this case, we need a better scheme for organization that makes the process simpler for the end user. \Gls{oop} is one method to achieve such organization that we use for our model.
 
-\Gls{oop}, like any skill in coding, is best understood with practice. As a starting point, we highly recommend \cite{tearle_object-oriented_nodate}, which gives a guided introduction to \gls{oop} in MATLAB.
+\Gls{oop}, like any skill in coding, is best understood with practice. As a starting point, we highly recommend \cite{tearle_object-oriented_nodate}, which gives a guided introduction to \gls{oop} in MATLAB. It may take several repititions and read-throughs to become familiar with the terminology of \gls{oop}.
 
 \subsection{Objects, Properties, and Methods}
+
+\subsubsection{Objects}
 
 The basis of the \gls{oop} approach are, as the name suggests, objects. Objects hold much more information than standard variables. Typically, a variable contains only one piece of information, such as a string, an integer, or a floating point number. These variables have a value / values, and a type. Aside from this, they contain no other information. An object, on the other hand, can contain as much information as we want it to! 
 
 An object is a reuseable part of code that has certain attributes and functions associated within it. An object may be a "rocket", and it has features such as "propellant type", "mass", and "thrust", to name a few. The rocket might also have some functions associated with it, such as "SimulateFlight", which would simulate the rocket flight based on all the given inputs.
 
-Objects are inherently related to what are called \textit{classes}. A class defines the attributes and the functions that are associated with an object. The attributes associated with an object are called \textit{properties} and the associated functions are called \textit{methods}. Properties and methods are exactly analogous to the variables and functions seen elsewhere, but they are applicable only to objects of that class.
+\subsubsection{Classes}
+
+Objects are inherently related to what are called \textit{classes}. A class defines the attributes and the functions that are associated with an object. The class is essentially a blueprint for what an object may look like.
+
+The attributes associated with an object are called \textit{properties} and the associated functions are called \textit{methods}. Properties and methods are exactly analogous to the variables and functions seen elsewhere, but they are applicable only to objects of that class.
 
 In MATLAB, these classes can be created by clicking the dropdown when creating a new file and selecting `Class'. The default class looks like:
 
-\begin{lstlisting}[style=Matlab-editor]
+\begin{figure}[ht]
+    \centering
+\begin{lstlisting}[style=Matlab-editor, caption=Class Example]
 classdef untitled
     %UNTITLED Summary of this class goes here
     %   Detailed explanation goes here
@@ -3564,6 +3580,41 @@ classdef untitled
     end
 end
 \end{lstlisting}
+    \label{fig:class example}
+\end{figure}
+
+A class often has a \textit{constructor} method, which constructs an object of that class. A constructor method is often useful to instantiate an object of a given class. In MATLAB, a constructor method takes the same name as the class itself. The class constructor and some of the subsequent ideas are best demonstrated with some example code:
+
+\begin{figure}[ht]
+    \centering
+\begin{lstlisting}[style=Matlab-editor, caption=Class Constructor Example]
+    properties
+        Name (1,1) string
+        SamplingRate (1,1) double
+        Variance double
+    end
+
+    methods
+        function out = Sensor(name,samplingRate,variance)
+            arguments
+                name (1,1) string
+                samplingRate (1,1) double   
+                variance = 0;
+            end
+            out.Name = name;
+            out.SamplingRate = samplingRate;
+            out.Variance = variance;
+        end
+    end
+\end{lstlisting}
+    \label{fig:constructor method}
+\end{figure}
+
+In this code, the function "Sensor" is a class constructor method of the file "Sensor.m". The class constructor takes user input for parameters such as a "name", and "samplingRate" for the sensor, which are assigned within the function. These are then assigned to the properties of the object of the same name. If we were to call
+
+Another useful property of classes which is demonstrated  here is input validation. Input validation allows us to ensure that the input into a class or one of its methods is of a certain type. In this example, the "name" can only be a "string" of size 1 (scalar).
+
+% example of a class constructor
 
 \subsection{Overloading and Precedence}
 One special feature of \gls{oop} is that it allows us to change the behavior of the default MATLAB functions when applied on certain objects. For example, overloading allows the user to change the functionality of the "plot" or "disp" functions when they are acting on a user defined object.
@@ -3574,6 +3625,33 @@ One special feature of \gls{oop} is that it allows us to change the behavior of 
 Classes have the feature that they can share portions of their code with other classes. When a class takes it's base code from another class, this is referred to as \textit{inheritance}. The class which is inheriting is the \textit{subclass}, and the class which is being inherited from is the \textit{superclass}.
 
 The construct of the subclass and superclass is use
+
+
+\subsection{Standards for Classes}
+Class structure in MATLAB is very powerful. If it is used inappropriately, though, it can make coding much more difficult. When you are building a class within MATLAB, you should consider the following:
+\begin{itemize}
+    \item Does this functionality need a new class? Should it be a subclass of something else or a new method of an existing class?
+    \item What does the additional layer of abstraction help with? Is it simplifying the code structure or convoluting it?
+\end{itemize}
+
+There are some other considerations, but these questions should start to guide you on your implementation. Understanding these considerations and building a good class structure is oftentimes more difficult than writing the code! It will take practice to gain an understanding for the specific problem and how to build the class structure around that.
+
+Classes in MATLAB carry lots of information. As a result, documenting them is quite critical for maintaining and improving their functionality. In our 6-\gls{dof} modeling, we require that all class definitions use the following header:
+\begin{figure}
+    \centering
+
+\begin{lstlisting}[style=Matlab-editor, caption = Class Header]
+% Short 2-3 line explanation of the function
+    %
+    % Required 
+    % 
+    % <a href="documentation link">Documentation</a>
+\end{lstlisting}
+
+    \label{fig:Class Header}
+\end{figure}
+
+% include information on the script headers / help for 
 
 \section{Continuous Integration and Testing}
 Continuous development is a principle that software development should occur in small pieces that are developed rapidly, rather than the more conventional approach of doing large overhauls of a code base. We find that the continuous integration approach is more useful for us, as it allows us greater flexibility in how we code and allows for features to be developed in parallel to each other.
@@ -3587,7 +3665,7 @@ This can be accomplished through the use of a program such as GitHub Actions, wh
 It should be noted that GitHub Actions has a few limitations when using the built in Linux runner on GitHub. Firstly, the repository on which the information is stored must be public. Second, the runner only works for base MATLAB and not for any of the toolboxes such as Aerospace toolbox which we use quite frequently. For this reason, we use a self-hosted runner which allows us to avoid both of these issues.
 
 \subsection{Unit Testing}
-Unit testing works in combination with continuous integration practices and the object oriented approach to provide the capability to test the functionality of MATLAB code.
+Unit testing works in combination with continuous integration practices and the object-oriented approach to provide the capability to test the functionality of MATLAB code.
 
 
 
@@ -3634,6 +3712,50 @@ And with that, we have completed the first Volume of the Flight Dynamics Bible. 
 \renewcommand{\chapterautorefname}{Appendix}
 
 \chapter{Answers to Selected Problems}
+
+\section{Chapter 2}
+\subsection*{2-1}
+\begin{enumerate}
+\begin{enumerate}
+    \item We can derive the \gls{eom} of the system using either the \gls{Lagrangian} or Newtonian methods. The Lagrangian method is detailed in \autoref{sec:energy methods}, so it will not be covered here. The \gls{eom} of the system is derived by considering the force balance of the system:
+    $$\sum \vec{F}=m\vec{a}$$
+    In this problem, motion is constrained to only the $\hat{x}$-direction. We also know the spring force is of the form:
+    $$F_S=-k(L-L_0)\hat{x}$$
+    We can substitute $F_S$ as the force, and $m\vec{a}$ remains on the RHS of the equation:
+    $$ma_x=-k(L-L_0)$$
+    If we choose $L_0$ to be the origin of the $x$-coordinate, we can rewrite the equation quite simply as:
+    $$m\ddot{x}+k{x}=0$$
+    Finally, we typically divide each term by the mass:
+    $$\ddot{x}+\frac{k}{m}{x}=0$$Plugging in the given values of $m$ and $k$ into the equation will give us the final equation:
+    $$\ddot{x}+4{x}=0$$
+    
+    \item The analytical solution of this equation is quite easy to find. There are a few methods we can take, but the easiest is to create a characteristic equation (assuming the solution to take form $x=e^{rt}$). This allows us to turn the differential equation into an algebraic equation.\footnote{A more robust method, known as the Laplace transform, will be explored in Volume III.}
+    $$r^2+4=0$$
+    We can solve this equation in terms of $r$:
+    $$r=\pm 2i$$
+    Remembering that we chose $x=e^{rt}$ as the assumed solution, we have:
+    $$x(t)=C_1e^{2it}+C_2e^{-2it}$$
+    Using the Euler identity, we may rewrite this in terms of trigonometric functions (although you are free to input this into MATLAB as is).
+    $$x(t)=A\cos{2t}+B\sin{2t}$$
+    Finally, we need initial conditions. The initial position, $x(0)=0$, and for velocity, we may use the impulse-momentum theorem:
+    $$J=m\Delta v$$
+As a result, the initial velocity must be $10 \ \mathrm{m/s}$ in the $-\hat{x}$-direction, or $\dot{x}(0)=-10$.
+
+We can use these two initial conditions to find the particular solution of the differential equation:
+$$x(t)=-5\sin(2t)$$
+This may be plotted as any function in MATLAB would be, which is shown in part C
+\item 
+    
+    
+    
+    
+    
+    
+    
+\end{enumerate}
+\end{enumerate}
+
+
 
 \chapter{Proofs and Derivations}\label{sec:ProofsAndDerivations}
 It is often useful, especially for mathematical reasoning, to see more exact derivations. We have included several of the most useful derivations in this appendix.
