@@ -3800,7 +3800,14 @@ end
 \end{enumerate}
 \end{enumerate}
 
+\section{Chapter 4 Solutions}
 
+\subsection*{4-2}
+To determine if the soldiers will be knocked over by the force of the engine, we need to convert that thrust force from being expressed in the body frame to the inertial frame. To do this, we will take our known rotation sequence and corresponding Euler angles, use them along with MATLAB’s built in function to construct the DCM, and then transpose that DCM in order to convert from body to inertial coordinates. Finally, we will take the magnitude of the components acting in the xy-plane and compare that to the known maximum allowable force.
+
+Doing all of this, we find that the force acting in the inertial xy-plane is 1574 N, which exceeds our maximum value of 1000 N. This means the soldiers will indeed go tumbling away as you go in to land. The code used to perform these calculations is shown below:
+
+\lstinputlisting[style = matlab-editor, language=Matlab, caption=Problem 4-2 Solution Code]{6DoF Explanation Scripts/Example Problems/P4_2_Script.m}\label{P4-2 Solution Code}
 
 \chapter{Proofs and Derivations}\label{sec:ProofsAndDerivations}
 It is often useful, especially for mathematical reasoning, to see more exact derivations. We have included several of the most useful derivations in this appendix.
