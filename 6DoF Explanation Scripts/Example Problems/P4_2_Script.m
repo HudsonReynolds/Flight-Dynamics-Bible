@@ -4,8 +4,7 @@
 % Author: Preston Wright
 % Last Modified: 9-6-2025 
 % 
-% Description: This script computes a frame conversion of the thrust force 
-% to determine the component acting in the inertial xy-plane.
+% Description: This script computes a frame conversion of the thrust force to determine the component acting in the inertial xy-plane.
 clear;clc;close all
 
 % Initialize known variables
