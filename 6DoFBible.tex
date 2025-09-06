@@ -171,7 +171,6 @@
 }
 \newacronym{dof}{DoF}{Degree of Freedom}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 'dedication' environment: To add a dedication paragraph at the start of book %
 % Source: http://www.tug.org/pipermail/texhax/2010-June/015184.html            %
@@ -1979,13 +1978,6 @@ So, we have 3 constraint equations in a system with 9 particles. This gives a to
 
 \subsubsection{Minimal Set of Constraints}
 
-\newglossaryentry{holonomic sys}
-{
-    name=holonomic system,
-    first = {\textit{holonomic system}},
-    description={A system that is entirely composed of holonomic constraints},
-    see={holonomic const}
-}
 So far, we have only discussed holonomic constraints, those that are related to position or on the generalized parameters, and possibly have some relation in time. When a system is a \gls{holonomic sys}, that is, purely defined by \glspl{holonomic const}, it is always possible to find a set of $\mathcal{M}$ generalized parameters to describe the particle motion. In other words, the minimum number of parameters is equivalent to the number of degrees of freedom in the system.
 
 That said, we often choose to use more parameters, particularly in the case of rotations. As we will see in Volume II, we often find it more useful to use a non-minimal set of constraints to encode rotations for reasons to avoid singularities in the solution.
@@ -1993,23 +1985,7 @@ That said, we often choose to use more parameters, particularly in the case of r
 It is also common to see a non-minimal set of constraints used when the minimal set is cumbersome and does not give an intuitive feel to the problem.
 \subsubsection{Non-Holonomic Constraints}
 
-\newglossaryentry{non holo const}
-{
-    name=non-holonomic constraint,
-    first = {\textit{non-holonomic constraint}},
-    description={A constraint that depends on more than the position of the particles in the system},
-    see={holonomic const}
-}
 The other class of constraints are those constraints that are not merely a function of the generalized coordinates. These constraints, called \glspl{non holo const}, define the set of all constraints that depend on more than just the position of particles. This is a huge class of constraints so we will not cover every type. These are also less important to our derivations so we will only briefly discuss them.
-
-\newglossaryentry{gen vel}
-{
-    name=generalized velocity,
-    first = {\textit{generalized velocity}},
-    plural = {generalized velocities},
-    firstplural = {\textit{generalized velocities}},
-    description={A free direction of movement for a vehicle. These can be translational or rotational directions}
-}
 
 The most common among these, and where we will focus our attention here, is constraints on the time derivative of the generalized coordinates. These are called \glspl{gen vel}, denoted $\dot{q}_j$. Such an example of a constraint on \glspl{gen vel} is a roller skate. A roller stake only allows a velocity in the direction of the skate and restricts velocity along the direction normal to the roller stake.
 
@@ -2146,13 +2122,6 @@ We notice that with the \gls{Lagrangian} approach, we did not need to have an un
 After the formulation of \gls{Lagrangian} Mechanics, another formulation was created by Hamilton later on. The Hamiltonian formulation, like the \gls{Lagrangian}, does not introduce any new concepts, because it is simply an alternate approach to dynamics. However, like the \gls{Lagrangian}, it makes some types of problems more simple. We present the Hamiltonian here briefly for its use case in \glspl{symplectic int}.
 
 The exact derivation of the Hamiltonian using Legendre transforms is beyond the scope of our present discussion, so we will mostly discuss the consequences of this derivation. 
-
-\newglossaryentry{gen momenta}
-{
-    name=generalized momenta,
-    first = {\textit{generalized momenta}},
-    description={A generalized coordinate that is defined as $\frac{\partial L}{\partial \dot{q}_i}$}
-}
 
 The Hamiltonian method replaces the generalized velocities with \gls{gen momenta}. The generalized momenta are a function of $q,\dot{q},$ and $t$. We express the \gls{gen momenta} as $p$. $p$ is defined to be:
 $$p(q,\dot{q},t)\equiv\dfrac{\partial L}{\partial \dot{q}_i}$$
@@ -2372,12 +2341,6 @@ Attitude Dynamics is the math describing the orientation of a vehicle in space a
 
 
 \section{Euler Angles}\label{sec:Euler Angles}
-\newglossaryentry{Euler angles}
-{
-    name=Euler angles,
-    first = {\textit{Euler angles}},
-    description={A group of three scalar values used to describe the orientation of a rigid body in space}
-}
 
 The first method to express the orientation of a vehicle in space is the use of \gls{Euler angles}. These form the basis for our understanding of attitude dynamics, being the more intuitive method. To keep this section as independent as possible, basic definitions and derivations will be included here to give you the bare bones of what is needed in the function calls to help you and your code be successful.
 
@@ -2393,13 +2356,6 @@ To start, we want a way to easily convert any arbitrary vector from being descri
 In MATLAB, there exists a function - "angle2dcm" - that creates this for us!\endnote{Note there exists another similar function - eul2rotm - that also creates a DCM; however, this function converts a vector from the body frame to the inertial frame.} By inputting the scalar values of our \gls{Euler angles} (in radians!) as well as the chosen rotation sequence, MATLAB creates the DCM as an output, allowing us to pre-multiply this matrix with our inertial vector we want to express in the \gls{body frame}. Note the function allows an input of any number of rotations to find DCMs for. This is a fun little aspect of the function; however, it is irrelevant for our use as we input our new \gls{Euler angles} every time-step during the "ode45" integration scheme. One additional thing to consider: the "angle2dcm" function returns the DCM as a transform from the \gls{inertial frame} to the \gls{body frame}. If we were to transform a vector from the body to \gls{inertial frame}, we would need to take the inverse - in this case transpose - of the given matrix.\endnote{We are allowed to use the transpose here as the DCM is an orthogonal matrix.} Further reading on this function can be seen in Mathwork's own documentation at Source \cite{mathworks_eul2quat_nodate}.
 
 \subsection{Relating Euler Rates with Angular Velocity}
-
-\newglossaryentry{Euler rates}
-{
-    name=Euler rates,
-    first={\textit{Euler rates}},
-    description={A way to describe rotational rates with orientation for 3-dimensional rotations, they are denoted by the dot of the corresponding Euler angle: ($\dot{\psi},\dot{\theta},\dot{\phi}$)}
-}
 
 As with our translational values, we want to take the integral of our rate of change of these angular parameters in order to find our new, updated Euler angles. While it might be easy to assume the values we would be integrating are the angular velocities, doing so DOES NOT return the \gls{Euler angles}. Giving a quick reason as to why: angular velocity is expressed exclusively with respect to the body frame, while our Euler angles are defined about their corresponding intermediate frame in the rotation sequence. Meaning this job for integration is left to \gls{Euler rates}, something else we need to include in the code. There exists what we affectionately call the ``B'' matrix that allows us to use \gls{Euler angles} to express a relation between \gls{Euler rates} and angular velocities. Unfortunately, there doesn't exist a MATLAB function that can calculate the ``B'' matrix, leaving us to our own devices to construct one from scratch. The heavy lifting for this is completed in Volume II, meaning we can copy the matrix derived there straight into our MATLAB script. That matrix and equation is as follows, for quick reference:
 \begin{gather}
@@ -2440,19 +2396,6 @@ Our results come out to be the following, with the gravity force expressed in th
 At this point, we would use our \gls{numerical int} scheme to approximate the next timestep's \gls{Euler angles} using the \gls{Euler rates} we just found. We won't do that here, but you can see a similar implementation with quaternions in the 6DoF itself or the Dzhanibekov example!
 
 \section{Quaternions}\label{sec:quaternions}
-\newglossaryentry{quaternion}
-{
-    name=quaternion,
-    first = {\textit{quaternion}},
-    description={An extension of the complex numbers with elements $j$ and $k$ added. The common form is expressed $q_1+q_2i+q_3j+q_4k$ (our notation) or $q_1i+q_2j+q_3k+q_4$. The algebra of quaternions is generally denoted $\mathbb{H}$}
-}
-
-\newglossaryentry{skew-symmetric matrix}
-{
-    name=skew-symmetric matrix,
-    first = {\textit{skew-symmetric matrix}},
-    description={A matrix which obeys the property that every $a_{ij}=-a_{ji}$. This can be interpreted to mean every term across the diagonal is equal in magnitude, but opposite in sign. Sometimes called an anti-symmetric matrix or anti-metric matrix}
-}
 
 To match industry/academia standards and improve the robustness of our simulation, our 6DoF model uses \glspl{quaternion}. The use of normalized hyper-complex numbers allows us to avoid losing a degree of freedom at a specific orientation of our rocket (called gimbal lock), which is what makes the simulation more robust. Just as with \gls{Euler angles}, MATLAB has an extensive suite of functions that makes the implementation of \glspl{quaternion} just as easy. 
 
@@ -2500,13 +2443,6 @@ A quick note about this script in relation to the other: the results shown above
 
 \section{3D Rotation Example: Dzhanibekov effect}\label{sec:Dzhan}
 
-\newglossaryentry{dzhan}
-{
-    name={Dzhanibekov Effect},
-    first=\textit{Dzhanibekov Effect},
-    description={A phenomenon in which rotation about an intermediate axis results in rotation about another axis. This phenomenon occurs with any body where the three PMOIs are not equal. It is easily seen with a tennis racket or a cell phone},
-    see={pmoi}
-}
 To help digest the complex nature of attitude dynamics, a full example is especially useful. One of the consequences of Euler's Equations described %eqref equation above
 above is that rotation about an intermediate axis is unstable. This effect is known as the Intermediate Axis Theorem or the \gls{dzhan}.
 
@@ -2753,17 +2689,14 @@ Define any additional quantities that you deem necessary to solve the problem.
     \item Numerically integrate the system. For this problem, you may be able to use either \gls{Euler angles} or \glspl{quaternion} if you choose your singularity point carefully. 
     \item Create a visualization of the system. Create any other plots that you deem useful.
 \end{enumerate}
-\item After your stint in modeling the Explorer 1 Satellite, NASA has asked you to come back to model a new satellite. NASA wants the satellite to be nadir-pointing at all times, and has decided to use gravity gradient stabilization to do so. 
-\item You find yourself flying a UH-1 Huey over Hamburger Hill in Vietnam, 1969. While preparing to land on your medevac mission, you glance at your inertial navigation system and are horrified to find it has been blown away by a RPG-7! You must now make the calculations necessary to determine how much of your thrust will be acting directly along the ground. Should this force exceed 1,000 N, the soldiers on the ground will be blown away. You decide to utilize a rotation sequence identical to what was used on the navigation system: a 3-2-1 sequence. With this, you determine the Euler angles to be 0.1, 0.15, and -0.1 radians, and the force of the engine is known to be 40,000 N. Will the soldiers go tumbling away as you land? A view of what you see with the reference frames imposed on it is shown below:
-
-\begin{figure}
+\item You find yourself flying a UH-1 Huey over Hamburger Hill in Vietnam circa 1969. While preparing to land on your medevac mission, you glance at your inertial navigation system and are horrified to find it has been blown away by a RPG-7! You must now make the calculations necessary to determine how much of your thrust will be acting directly along the ground. Should this force exceed 1,000 N, the soldiers on the ground will be blown away. You decide to utilize a rotation sequence identical to what was used on the navigation system: a 3-2-1 sequence. With this, you determine the Euler angles to be 0, 0.15, and -0.05 radians respectively, and the force of the engine is known to be 10,000 N. Will the soldiers go tumbling away as you land? A view of what you see with the reference frame imposed on it is shown below:
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{}
+    \includegraphics[width=0.5\linewidth]{Images/HueyProblemImage.png}
     \caption{Huey Reference Frame}
     \label{fig:HueyFrameImage}
 \end{figure}
-
-
+The reference frame shown above is identical to the inertial frame for simplicity.
 
 
 \end{enumerate}
@@ -2794,20 +2727,6 @@ Since our main goal is to understand the lift and the drag on an object, we will
     \item \Gls{angle of attack} - the angle of the object will change the apparent size in the airflow.
 \end{enumerate}
 Already, we can see that some of the terms that we see in the lift and drag equations are present above. However, we do not know in what may they are correlated and what else they depend on.
-
-\newglossaryentry{dim anal}
-{
-    name=dimensional analysis,
-    first = {\textit{dimensional analysis}},
-    description={The process of determining information from a physical equation by considering the dimensions, or units, of quantities in the equation}
-}
-
-\newglossaryentry{buck pi}
-{
-    name=Buckingham Pi Theorem,
-    first = {\textit{Buckingham Pi Theorem}},
-    description={The Buckingham Pi Theorem is a method to non-dimensionalize parameters of a system. In a system with $N$ parameters and $K$ physical dimensions, it is possible to express $P=N-K$ dimensionless groups}
-}
 
 To determine these dependencies, we can invoke \gls{dim anal} and the \gls{buck pi}. Both of these will allow us to derive dimensionless quantities that prove to be particularly useful.
 
@@ -2911,13 +2830,6 @@ Knowing the normal force and the moment about the leading edge, we can find the 
 We note that the convention for the moment about the nose is for a positive moment to denote a pitch up (this is why the negative sign is present). This is opposite the convention established by the \gls{rhr}. For all other moments used in our 6-\gls{dof} models, we use the standard \gls{rhr} convention for moments.
 
 For more information on the derivation of the equations in this section, refer to Chapters 1 and 2 of \cite{anderson_fundamentals_2017}.
-
-\newglossaryentry{axisym}
-{
-    name=axisymmetric,
-    first = {\textit{axisymettric}},
-    description={An object in which there is rotational symmetry about one or more of the axes}
-}
 
 For a rocket, we generally consider the body to be \gls{axisym} about the longitudinal axis, when the whole structure can be rotated about the axis which we define as $\hat{X}$. 
 
@@ -3031,19 +2943,7 @@ As can be seen from \autoref{fig:Euler}, large timesteps quickly lead to error i
 
 \subsection{Errors in the Euler Method}\label{sec:errors in the euler method}
 We will use the example of the Euler Method to demonstrate error in numerical integrators. These same concepts will apply when we move on to higher order integrators. 
-\newglossaryentry{trunc error}
-{
-    name=truncation error,
-    first = {\textit{truncation error}},
-    description={Error in numerical integration that comes from the inaccuracies of the integration scheme in modeling the true behavior of the function. This error is related to the number of higher order terms ignored}
-}
 
-\newglossaryentry{roundoff error}
-{
-    name=roundoff error,
-    first = {\textit{roundoff error}},
-    description={Error in numerical integration that comes from inaccuracies in the floating point precision of computers. This is worsened by a larger number of timesteps, as this error will compound}
-}
 Errors in the integration scheme come from two different sources:
 
 1. Euler integration schemes only account for linear terms because it only considers the slope of the tangent line at a point. Thus, any quadratic order terms or higher will not be accounted for. Thus, the error is proportional to the timestep squared, $\Delta t^2$.\endnote{This intuitive explanation is not entirely correct, see \cite{trench_31_2020} for a full derivation using the Taylor Series. We also note that the technically correct way to denote this is $O(\Delta t^2)$, meaning the error is of order $\Delta t^2$} We call this error \gls{trunc error}.
@@ -3087,12 +2987,6 @@ To rewrite this equation in a way that is better suited for code:
 We can note here that this method requires at least two evaluations since $k_2$ is dependent on $k_1$. However, this is often still more computationally efficient than the Explicit Euler method because larger time steps can be used with lesser error.
 
 \subsection{RK2 in Code}
-\newglossaryentry{func handle}
-{
-    name=function handle,
-    first = {\textit{function handle}},
-    description={A pointer to an instance of a function in MATLAB. A function handle essentially stores a function call in a variable in MATLAB}
-}
 Implementing the RK2 algorithm in code is slightly more complicated than implementing the explicit Euler method. To properly implement this, we will use \glspl{func handle} in MATLAB. \Glspl{func handle} act as pointers to an instance of a function. To explain what that means, we will examine the following code snippet:
 \begin{lstlisting}[style=Matlab-editor]
 f = @computeSquare;
@@ -3231,37 +3125,9 @@ So, what timestep is required to accurately model a periodic function? For our e
     \label{fig:Nyquist}
 \end{figure}
 
-\newglossaryentry{beat freq}
-{
-    name=beat frequency,
-    first = {\textit{beat frequency}},
-    description={A beat frequency is the result of constructive and destructive interference between two waves of a similar frequency. The similarity of the frequencies creates variations in the amplitude of the resultant wave}
-}
-
 In this figure, we note several important things. When our timestep is slightly less than the period of the function, we infer a lower frequency. This is seen when we use a timestep of $\Delta t=0.4s$. We can intuitively explain this as a \gls{beat freq}. We know that the solution curve has a frequency of 2 Hz, and a wave with a period of $0.4 s$ would have a frequency of 2.5 Hz. Thus, a \gls{beat freq} of 0.5 Hz would be produced. This is exactly what is seen, as the resultant solution appears as a sine wave with a frequency of 0.5 Hz (2 second period). 
 
-\newglossaryentry{bandwidth}
-{
-    name=bandwidth,
-    first = {\textit{bandwidth}},
-    description={The bandwidth of a signal is the difference between its upper and lower frequencies. In our context of numerical integration, this bandwidth refers to twice the highest frequency of a function}
-}
-
-\newglossaryentry{nyquist rate}
-{
-    name=Nyquist rate,
-    first = {\textit{Nyquist rate}},
-    description={The rate at which a signal must be sampled to be free of distortions and aliasing. This rate is typically twice the highest frequency present in the signal}
-}
-
 The same is seen when $\Delta t$ is close to but not quite double the frequency of the wave (called \gls{bandwidth} of the signal). The perceived signal has a changing amplitude with a superimposed sinusoid. This again, does not match the true signal. It is only when we sample at the \gls{nyquist rate} that a true approximation of the function is found. In general, we must sample our function at twice the highest frequency present to ensure a good approximation!
-
-\newglossaryentry{stiff}
-{
-    name=stiff,
-    first = {\textit{stiff}},
-    description={A differential equation that is hard to numerically integrate as a result of instability when larger timesteps are used. Stiffness is a property of the differential equation itself, and not the solution. Stiff systems are not completely well defined, but generally follow from this definition}
-}
 
 In this example, this criterion does not greatly affect our \gls{numerical int}. However, when we have other dynamics in the system, the need to sample at double the highest frequency of the system may be detrimental to the performance of our simulation. We call such systems that are difficult to numerically integrate \gls{stiff}. 
 
@@ -3379,12 +3245,7 @@ We use the command "eul2quat" with a specification of "ZYX" for the frame and ch
 $$\vec{q}_0=\begin{bmatrix}
     0.9975\\-0.0025\\0.0499\\0.0499
 \end{bmatrix}$$
-\newglossaryentry{rail whip}
-{
-    name=rail whip,
-    first={\textit{rail whip}},
-    description={A phenomenon where the flexibility of the launch rail causes a large moment to be exerted on the rocket during launch}
-}
+
 Lastly, we need to describe the initial angular velocity. We assume for most simulations that there is no angular velocity. For some cases, such as the simulation of \gls{rail whip}, we may choose to put an angular velocity on the rocket.
 $$\vec{\omega}_0=\begin{bmatrix}
 0\\0\\0
@@ -3784,6 +3645,15 @@ end
     
 \end{enumerate}
 \end{enumerate}
+
+
+\section{Chapter 4 Solutions}
+\subsection*{4-2}
+To determine if the soldiers will be knocked over by the force of the engine, we need to convert that thrust force from being expressed in the body frame to the inertial frame. To do this, we will take our known rotation sequence and corresponding Euler angles, use them along with MATLAB's built in function to construct the DCM, and then transpose that DCM in order to convert from body to inertial coordinates. Finally, we will take the magnitude of the components acting in the xy-plane and compare that to the known maximum allowable force. 
+
+Doing all of this, we find that the force acting in the inertial xy-plane is 1574 N, which exceeds our maximum value of 1000 N. This means the soldiers will indeed go tumbling away as you go in to land. The code used to perform these calculations is shown below: 
+
+
 
 
 
