@@ -736,13 +736,6 @@ Returning to the specific example of a 6-\gls{dof}, the directions you set your 
 
 \subsection{The Body Frame}
 
-\newglossaryentry{body frame}
-{
-    name=body frame,
-    first = {\textit{body frame}},
-    description={A reference frame that is fixed to the body of an object and follows the translations and rotations of the vehicle}
-}
-
 The second most important frame of reference is the \gls{body frame}. Typically denoted by $b$, or in our case $(\hat{X},\hat{Y},\hat{Z})$, this frame of reference is always anchored at some point in the vehicle and allows us to describe the \gls{state vector} in relation to the vehicle itself. This frame is moving and rotating with respect to the \gls{inertial frame}. For every \gls{body frame} you create – from a frame for the entire vehicle to a frame for a small electronic part – you want simplicity. This means that in aerospace, it is often the case for a general \gls{body frame} to have a basis vector pointing along the longitudinal axis of the vehicle, as well as one out a wing. A generic image of such a convention is provided in \autoref{fig:BodyFrameTypical} In addition, it means at a zero angle of rotation, every basis vector of the \gls{body frame} is parallel to the corresponding basis vector in the \gls{inertial frame}. This is imperative to rotational dynamics, as the offset of each basis vector in the \gls{body frame} will correspond to the pitch, yaw, and roll of the vehicle. But more on that in Volume II.
 
 % Either change or give credit to MATLAB ig
@@ -1301,13 +1294,7 @@ However, in general, we also have three more quantities, which are called the pr
     I_{yz}=I_{zy}=\iiint\limits_V{-yz\rho}{dV}
 \end{gather}
 For our rocket, because of the symmetry about the $\hat{X}$ axis, these quantities go to zero. However, for future implementations that may include fuel slosh and asymmetries, the products of inertia may be non-zero!
-\newglossaryentry{inertia tensor}
-{
-    name={inertia tensor},
-    first=\textit{inertia tensor},
-    description={A matrix that describes the moment of inertia along each of the axes of a body. This matrix, often denoted $I$, transforms the angular velocity, $\omega$ into an angular momentum, $H$},
-    see={moment of inertia}
-}
+
 We express our \gls{inertia tensor}, denoted $I$, as the $3\times3$ matrix which contains the moments and products of inertia.
 $$I=\begin{bmatrix}
     I_{xx}&I_{xy}&I_{xz}\\
@@ -1704,22 +1691,6 @@ The quantity $T-U$, the kinetic energy minus the potential energy, is a quantity
     L\equiv T-U
 \end{equation}
 
-\newglossaryentry{action}
-{
-    name=action,
-    first = {\textit{action}},
-    description={The time integral of energy is known as the action, which is often denoted $S$}
-}
-
-\newglossaryentry{princ of least action}
-{
-    name=principle of least action,
-    first = {\textit{principle of least action}},
-    description={A form of Hamilton's Principle that states that the action of a system should be minimized in a physical mechanical system},
-    see={action}
-}
-
-
 The time integral of the \gls{Lagrangian} is the \gls{action}, denoted $S$. This is often why Hamilton's Principle is also called the \gls{princ of least action}. 
 
 \begin{equation}
@@ -1734,13 +1705,6 @@ Expressed using Euler's differential equation, \eqref{eq: Euler's Diff eq}, we g
 \end{gather}
 
 Before we look into some examples of how to utilize these equations in practice, we should consider in what situations these will be better than the Newtonian methods.
-
-\newglossaryentry{conservative}
-{
-    name=conservative,
-    first = {\textit{conservative}},
-    description={A system or potential which is independent of the path. A closed integral in a conservative field is 0}
-}
 
 We note that in this chapter, we will only consider potential functions which are \gls{conservative}, or path independent. This does mean that frictional forces and aerodynamics are not modeled with the \gls{Lagrangian} we describe here (although they can be with the utilization of Rayleigh's dissipation function and other techniques, such as those discussed in \cite{rabei_hamiltonian_2004-1}). This is the reason we do not directly use these equations in the 6-DoF.\endnote{Much of the rotational dynamics we describe can be represented equivalently using the \gls{Lagrangian} approach, so we do use these equations in a roundabout manner. We will explore this more extensively in Volume III}
 
@@ -1869,14 +1833,6 @@ The acceleration of the particles, when Newton's Laws are applied, are a functio
 Constraint equations are fundamental to \gls{Lagrangian} mechanics. In the previous section, we very vaguely stated the need for $n$ generalized coordinates. To find a precise number, we turn our attention to constraints.
 
 For each particle, we need 3 values to define the position, so we need $3N$ generalized coordinates. 
-
-\newglossaryentry{holonomic const}
-{
-    name=holonomic constraint,
-    first = {\textit{holonomic constraint}},
-    description={A constraint on a Lagrangian system which is a function of only the position of the particles},
-    see={Lagrangian}
-}
 
 However, we often have constraints that reduce this number. Often, we see a problem that is planar or where the particles are connected in a \gls{rigid body}. These constraints will reduce the number of generalized coordinates needed. Here, we are only considering constraints on the positions of particles. Constraints on the positions of particles are known as \glspl{holonomic const}. 
 
@@ -2412,7 +2368,7 @@ The dynamics of the system can be modeled as a double pendulum with two rigid ar
 ``Quaternions came from Hamilton after his really good work had been done; and, though beautifully ingenious, have been an unmixed evil to those who have touched them in any way, including Clerk Maxwell.''
 \end{chapquote}
 
-Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. In fact, we have dedicated the entirety of Volume II to the theory behind attitude dynamics, determination, and control. Derivations for everything from simple, two-dimensional problems and single-axis rotations to \glspl{quaternion} are included in that book, as well as the more foundational principles derived using topics from abstract algebra. Following the core purpose of this volume, we will only be describing implementation of attitude dynamics using MATLAB functions. However, the entirety of Volume II contains the theory necessary to gain a more definitive understanding of what, and more importantly why, everything is happening with the code in this section.\endnote{Volume II is yet to be released, and is currently scheduled to do so late Winter 2025.}
+Attitude Dynamics is the math describing the orientation of a vehicle in space as the result of applied moments. Relying heavily on advanced mathematics, this concept is naturally more difficult to grasp. In fact, we have dedicated the entirety of Volume II to the theory behind attitude dynamics, determination, and control. Derivations for everything from simple, two-dimensional problems and single-axis rotations to \glspl{quaternion} are included in that book, as well as the more foundational principles derived using topics from abstract algebra. Following the core purpose of this volume, we will only be describing implementation of attitude dynamics using MATLAB functions. However, the entirety of Volume II contains the theory necessary to gain a more definitive understanding of what, and more importantly why, everything is happening with the code in this section.\endnote{Volume II is yet to be released, and is currently scheduled to do so late Winter.}
 
 
 \section{Euler Angles}\label{sec:Euler Angles}
@@ -2798,6 +2754,18 @@ Define any additional quantities that you deem necessary to solve the problem.
     \item Create a visualization of the system. Create any other plots that you deem useful.
 \end{enumerate}
 \item After your stint in modeling the Explorer 1 Satellite, NASA has asked you to come back to model a new satellite. NASA wants the satellite to be nadir-pointing at all times, and has decided to use gravity gradient stabilization to do so. 
+\item You find yourself flying a UH-1 Huey over Hamburger Hill in Vietnam, 1969. While preparing to land on your medevac mission, you glance at your inertial navigation system and are horrified to find it has been blown away by a RPG-7! You must now make the calculations necessary to determine how much of your thrust will be acting directly along the ground. Should this force exceed 1,000 N, the soldiers on the ground will be blown away. You decide to utilize a rotation sequence identical to what was used on the navigation system: a 3-2-1 sequence. With this, you determine the Euler angles to be 0.1, 0.15, and -0.1 radians, and the force of the engine is known to be 40,000 N. Will the soldiers go tumbling away as you land? A view of what you see with the reference frames imposed on it is shown below:
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{}
+    \caption{Huey Reference Frame}
+    \label{fig:HueyFrameImage}
+\end{figure}
+
+
+
+
 \end{enumerate}
 
 \newpage
@@ -2814,9 +2782,11 @@ Despite the innocuous appearance of this equation, calculating the aerodynamics 
 
 \section{Non-Dimensionalization}
 
-It is useful to understand why the equations for the aerodynamic forces take the form that they do, with the $\frac{1}{2}\rho V^2S$ term. Along the way, we will also discover some other important properties that influence the airflow. We will start by enumerating the various factors that could impact the drag experienced by an object. Some intuition will tell us that drag is likely affected by the following factors:
+Modern aerodynamics uses non-dimensional quantities very frequently. As a result, we should start by understanding how non-dimensionalized quantities emerge. This will help us understand why we have many equations with the term $\frac{1}{2}\rho V^2$, or why the mach number is important. Along the way, we will also discover some other important properties that influence the airflow. 
+
+Since our main goal is to understand the lift and the drag on an object, we will start by enumerating the various factors that could impact the aerodynamic forces experienced by an object. Some intuition will tell us these forces are likely affected by the following factors:
 \begin{enumerate}
-    \item Viscosity of the fluid that is being traveled through - higher viscosity creates more `stickiness' in the air that needs to be countered.
+    \item Viscosity of the fluid - higher viscosity creates more `stickiness' in the air that needs to be countered.
     \item Velocity - higher velocity creates more interactions with the fluid at any given time, so it will contribute to our drag force.
     \item Density of fluid - higher density will create more interactions per time.
     \item Characteristic size - the size of the object traveling through the fluid will increase the particle interactions per time and drag.
@@ -2851,7 +2821,7 @@ $$\Pi_1=f\left(\Pi_2, \Pi_3,\cdots \Pi_{N-K}\right)$$
 and so on for the other $\Pi$ groups.
 \end{corollary}
 For more information on \gls{buck pi}, refer to 
-\cite{wassgren_buckingham_nodate}
+\cite{wassgren_buckingham_nodate}.
 
 \begin{example}[Aerodynamic Forces]
     Using the system characteristics described before, let us use \gls{buck pi} to write the non-dimensional groups for our aerodynamic system. We start by writing the dimensions for each of the variables we enumerated:
@@ -2868,9 +2838,7 @@ $\begin{array}{ccc}
 \end{array}$
 \end{center}
 
-Applying \gls{buck pi}, we can create 4 $\Pi$ groups from the 7 variables.
-
-The solving of these $\Pi$ groups is shown in the Appendix in \autoref{Buckingham Pi Deriv} because it is quite lengthy.
+Applying \gls{buck pi}, we can create 4 $\Pi$ groups from the 7 variables. The solving of these $\Pi$ groups is shown in the Appendix in \autoref{Buckingham Pi Deriv} because it is quite lengthy.
 
 Solving the $\Pi$ groups, we get:
 \begin{gather}
@@ -2883,9 +2851,9 @@ $\Pi_1$ is a quantity known as the Reynolds number, the ratio of inertial forces
 
 From \autoref{thm: buck pi corollary}, we can also write
 $$\color{blue}\boxed{\color{black}C_x=f\left(Re,M,\alpha\right)}$$
-This is a very important condition of the theorem, showing that the force coefficient is a function of the Reynolds number, Mach number, and \gls{angle of attack}. Thus, whenever we do modeling of aerodynamics, we only need to consider Reynolds number, Mach number, and \gls{angle of attack}. This will become a cornerstone of how we model aerodynamics in our 6-\gls{dof} modeling.
 \end{example}
 
+The conclusion drawn from the \gls{buck pi} is that we can determine the force coefficients using only the $Re$, $M$, and $\alpha$. Thus, whenever we do modeling of aerodynamics, we only need to consider Reynolds number, Mach number, and \gls{angle of attack}. This is a cornerstone of how we model aerodynamics in our 6-\gls{dof} modeling.
 
 \section{Aerodynamics Terminology}
 Aerodynamics has a lot of terminology associated with it that is important to understand before we can approach modeling the aerodynamics of the system. We will mostly cover aerodynamics terminology for rockets, but the modeling done here should be transferable to aspects of aircraft systems as well.\endnote{The principles we describe are the same, but much of the modelling is simpler for rockets since they have axial symmetry in most cases. We will utilize these assumptions early on to simplify this section.}
@@ -3377,13 +3345,11 @@ The MATLAB documentation for \gls{numerical int} schemes is quite good. For non-
 \markboth{NOTES}{NOTES}
 
 \chapter{The 6-DoF}\label{sec:6DoF}
-In this section we will combine everything from the previous sections and explain how our 6-\gls{dof} model works. We will follow a similar set up to \autoref{sec:Dzhan}  here, describing the elements of the model in detail and then attaching relevant code either in-line or in the appendix.
+In this section we will combine everything from the previous sections and explain how our 6-\gls{dof} rocket model works. We will follow a similar set up to \autoref{sec:Dzhan}  here, describing the elements of the model in detail and then attaching relevant code either in-line or in the appendix.
 
 Our definitions of our frames follow from those discussed in \autoref{sec:Frame of Reference}. For the earth-centered \gls{inertial frame}, we follow the conventions discussed in \autoref{fig:InertialFrame}. Recall that the $\hat{x}$ axis points upward toward the zenith, the $\hat{y}$ axis points east along the surface, and the $\hat{z}$ axis finishes the right-handed coordinate system, pointing north.
 
-For the \gls{body frame}, we follow the convention in \autoref{fig:BodyFrameRocket}. This has $\hat{X}$ pointing through the nose of the rocket and $\hat{Y}$and $\hat{Z}$ along the transverse plane. The directionality of $\hat{Y}$ and $\hat{Z}$ is not particularly important since the rocket is axially symmetric, so we arbitrarily select the $\hat{Y}$ axis to point through one of the fins and choose $\hat{Z}$ to complete the right-handed frame.
-
-For our \gls{Euler angles}, we use a 3-2-1 rotation sequence. We define the zero angles to be when the \gls{body frame} and the earth-centered \gls{inertial frame} are coincident.
+For the \gls{body frame}, we follow the convention in \autoref{fig:BodyFrameRocket}. This has $\hat{X}$ pointing through the nose of the rocket and $\hat{Y}$and $\hat{Z}$ along the transverse plane. The directionality of $\hat{Y}$ and $\hat{Z}$ is not particularly important since the rocket is axially symmetric, so we arbitrarily select the $\hat{Y}$ axis to point through one of the fins and choose $\hat{Z}$ to complete the right-handed frame. For our \gls{Euler angles}, we use a 3-2-1 rotation sequence. We define the zero angles to be when the \gls{body frame} and the earth-centered \gls{inertial frame} are coincident.
 
 We note here that this is the section where we have the most room for improvement. We hope that you can translate your knowledge into better features for the 6-\gls{dof} as we note some of the simplifications we make in this section.
 
@@ -3394,11 +3360,11 @@ We define our original position at the origin, giving us a position vector. It i
 $$\vec{r}_0=\begin{bmatrix}
     0\\0\\0
 \end{bmatrix}$$
-We also define the initial velocity to be zero, giving a velocity vector. Since velocity is frame independent for an observer at rest with respect to our \gls{inertial frame}, this is almost always zero. We may see an initial velocity if we are modeling a sounding rocket launched with an initial speed or similar for validation of our model:
+It is typical to initialize the simulation with zero velocity. In some instances, we may add an initial velocity if we are modeling a sounding rocket launched with an initial speed or similar for validation of our model:
 $$\vec{v}_0=\begin{bmatrix}
     0\\0\\0
 \end{bmatrix}$$
-We also need the initial orientation. Here, we use \gls{Euler angles} again. We often choose to launch at a slight angle to simulate adverse affects that may push the launch vehicle slightly off-course during the initial launch. We choose to add a small angle in the $\theta$ and $\psi$ directions in this case:
+We also need the initial orientation. Here, we use \gls{Euler angles} for initialization. We often choose to launch at a slight angle to simulate adverse affects that may push the launch vehicle slightly off-course during the initial launch. We choose to add a small angle in the $\theta$ and $\psi$ directions in this case:
 \begin{equation}\label{eq: euler angles 6DoF}
     \begin{bmatrix}
     \psi\\\theta\\\phi
@@ -3438,7 +3404,7 @@ Because we define the $\hat{x}$ direction as the zenith direction in the inertia
     -mg\\0\\0
 \end{bmatrix}
 \end{equation}
-For gravity, we note that because it acts through the center of mass of the rocket, we do not have a resultant moment to worry about.
+For gravity, we note that because it acts through the center of mass of the rocket, we do not have a resultant moment to worry about.\endnote{There is a slight difference between the center of mass and the center of gravity, which may produce a very small moment. In this instance, it is so small that we do not consider it.}
 \subsubsection{Thrust}
 Thrust is also fairly simple to model. If we consider the thrust to be coincident to the longitudinal axis, the thrust is given by \eqref{eq:Ft}. For the magnitude, we consider a slightly more complex model than before. Because the rocket is changing altitude, the thrust of the engine will change as the pressure changes. The thrust of the engine, accounting for this pressure change, is given by:
 \begin{equation}
@@ -3518,6 +3484,8 @@ Sub-component validation may look like the Dzhanibekov modeling in \autoref{sec:
     \label{fig:V2 sim}
 \end{figure}
 
+\newpage
+\printendnotes
 
 \chapter{MATLAB and Coding Practices}\label{sec:MATLAB Practices}
 In this final chapter, we discuss the techniques and practices for implementing a 6-DoF in MATLAB. We will also discuss more general practices for large MATLAB code bases and methods to keep these organized. As of late June 2025, these practices are currently being implemented on our 6-DoF model. A large portion of the content in this chapter comes from what we have seen as practices adopted in industry for systems much more complex and larger than our own.
@@ -3713,7 +3681,7 @@ And with that, we have completed the first Volume of the Flight Dynamics Bible. 
 
 \chapter{Answers to Selected Problems}
 
-\section{Chapter 2}
+\section{Chapter 2 Solutions}
 \subsection*{2-1}
 \begin{enumerate}
 \begin{enumerate}
@@ -3728,7 +3696,6 @@ And with that, we have completed the first Volume of the Flight Dynamics Bible. 
     Finally, we typically divide each term by the mass:
     $$\ddot{x}+\frac{k}{m}{x}=0$$Plugging in the given values of $m$ and $k$ into the equation will give us the final equation:
     $$\ddot{x}+4{x}=0$$
-    
     \item The analytical solution of this equation is quite easy to find. There are a few methods we can take, but the easiest is to create a characteristic equation (assuming the solution to take form $x=e^{rt}$). This allows us to turn the differential equation into an algebraic equation.\footnote{A more robust method, known as the Laplace transform, will be explored in Volume III.}
     $$r^2+4=0$$
     We can solve this equation in terms of $r$:
@@ -3744,8 +3711,71 @@ As a result, the initial velocity must be $10 \ \mathrm{m/s}$ in the $-\hat{x}$-
 We can use these two initial conditions to find the particular solution of the differential equation:
 $$x(t)=-5\sin(2t)$$
 This may be plotted as any function in MATLAB would be, which is shown in part C
-\item 
-    
+\item Parts C and D are shown in the same script:
+\newpage
+\begin{lstlisting}[style=Matlab-editor, caption=Mass Spring Damper Solution]
+% PSP FLIGHT DYNAMICS:
+% Title: Problem 2-1 Script
+% Author: Hudson Reynolds
+% Last Modified:9-6-2025 
+% 
+% Description: This script runs a mass spring damper simulation. The
+% analytical solution is compared against the numerical integration.
+clear;clc;close all
+
+% Write the analytical solution:
+t = linspace(0,10,300);
+xAnal = -5*sin(2*t);
+
+% Run the ODE45 integration for the no damper scenario
+
+% pos, vel
+x0 = [0;-10];
+[t,xNum] = ode45(@(t,x)integrator(t,x), t, x0);
+
+% run the ODE45 for the damper situation:
+
+% pos, vel
+x0 = [0;-10];
+[t,xNumDamp] = ode45(@(t,x)integrator2(t,x), t, x0);
+
+% plot:
+figure
+sgtitle('Mass Spring Damper Simulation');
+subplot(2,1,1)
+plot(t,xAnal)
+hold on;
+plot(t, xNum(:,1), '--');
+title('Undamped MSD')
+xlabel('Time (s)');
+ylabel('Position (m)');
+legend('Analytical Solution', 'Numerical Solution', 'Location','best');
+hold off;
+yLims = ylim;
+
+
+subplot(2,1,2)
+plot(t,xNumDamp(:,1))
+ylim(yLims)
+title('Damped MSD')
+xlabel('Time (s)');
+ylabel('Position (m)');
+
+
+function out = integrator(t,x)
+vel = x(2);
+accel = -4*x(1);
+
+out = [vel;accel];
+end
+
+function out = integrator2(t,x)
+vel = x(2);
+accel = -4*x(1) - x(2);
+
+out = [vel;accel];
+end
+\end{lstlisting}
     
     
     
@@ -3821,7 +3851,7 @@ So, we have $F=m\ddot{x}_i$.
 \end{corollary}
 
 \chapter{Code}\label{Appendix:code}
-This chapter contains lengthier segments of example code from either the 6-\gls{dof} itself or a proof/example relating to it. Since the code is cumbersome to show in full, we have opted to link to the GitHub repository instead. The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this .pdf and .tex document:
+This chapter contains lengthier segments of example code from either the 6-\gls{dof} itself or a proof/example relating to it. Since the code is cumbersome to show in full, we have opted to link to the GitHub repository instead. The code for the 6-\gls{dof} can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or accessed via GitHub with the QR code. This GitHub also contains the most up-to-date version of this book in .pdf and .tex format:
 
 \begin{figure}[ht]
     \centering
