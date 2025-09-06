@@ -1,0 +1,13 @@
+% PSP FLIGHT DYNAMICS:
+% Title: Problem 2-1 Script
+% Author: Hudson Reynolds
+% Last Modified:9-6-2025 
+% 
+% Description: This script runs a mass spring damper simulation. The
+% analytical solution is compared against the numerical integration.
+
+% Write the analytical solution:
+t = linspace(0,10,300);
+x = -10*sin(2*t);
+
+% Write
