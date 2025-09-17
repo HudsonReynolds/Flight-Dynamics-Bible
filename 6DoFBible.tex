@@ -169,8 +169,6 @@
     first = {\textit{Degree of Freedom}},
     description={A free direction of movement for a vehicle. These can be translational or rotational directions}
 }
-\newacronym{dof}{DoF}{Degree of Freedom}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 'dedication' environment: To add a dedication paragraph at the start of book %
@@ -289,7 +287,7 @@
 \textsc{Preston Wright} \\ \textit{Co-Author}
 }
 
-\date{August 2025 \\ \newline \large{\textbf{Second Edition}}}
+\date{September 2025 \\ \newline \large{\textbf{Second Edition}}}
 
 
 
@@ -307,6 +305,7 @@
 % add more proofs for relevant sections
 % finish the OOP section
 %
+
 \pagenumbering{roman}
 
 \pagestyle{empty}
@@ -345,9 +344,6 @@
 \color{red} Things to include in 2nd edition:
 
 \begin{itemize}
-    \item Improve parachute modeling (multibody)
-    \item Improve readabillity of 6-DoF
-    \item Update Confluence
     \item Finish OOP section
     \item     Practice Problems
     
@@ -389,7 +385,7 @@ For those who have requisite knowledge but want information on implementation of
 
 For those interested solely in Attitude Dynamics, \autoref{sec:attitude dynamics}, Volume II, and Part I of Volume III (Particularly the section on Lie Theory) are suggested. If the reader's interests are in spacecraft dynamics in general, Part II of Volume III is additionally suggested.
 
-For those interested in control system design and analysis, we recommend \autoref{sec: Newtonian Dynamics}, \autoref{sec:energy methods}, Part V of Volume II, and Volume III (with an emphasis on Part III).
+For those interested in control system design and analysis, we recommend \autoref{sec: Newtonian Dynamics}, \autoref{sec:energy methods}, Part V and VI of Volume II, and Volume III (with an emphasis on Part III).
 
 For those interested in holding an integral role on PSP Flight Dynamics team (such as Responsible Engineer / Subject Matter Expert or Team Lead), we suggest thorough reading and understanding of all three Volumes and practical skills in implementation into MATLAB.
 
@@ -613,7 +609,7 @@ The notation here is important to understand. In future AAE classes at Purdue, t
 It is helpful to think about these quantities as vectors, because we can add them together to achieve a resultant.\endnote{More formally, we define these vectors as existing a linear space, where multiplicative and additive properties are preserved. This formal definition allows us to apply this to any arbitrarily number of dimensions. For our uses, this will usually be up to 3 dimensions.} In the 1-dimensional case this is quite trivial since all vectors lie along the $\hat{y}$ unit vector, but this will become increasingly important as we move to higher dimensions.
 
 \subsection{Numerical Integration in the 1-DoF}\label{sec: Numerical Integration in the 1DoF}
-\newacronym{eom}{EOM}{Equation of Motion}
+
 Now we will move into something that you not have seen before. Given all the forces, we apply Newton’s 2\textsuperscript{nd} Law, $\sum{\vec{F}}=m\vec{a}$ , to arrive at an expression for the acceleration, known as an \gls{eom}, as shown in \eqref{eq2}. Doing so might look something like this:
 \begin{gather}
 F_T \cdot [1-u(t-t_b)]-\frac{1}{2}\rho_{\infty}V_{\infty}^2SC_D-mg=m\vec{a}\label{eq1} \\
@@ -694,8 +690,6 @@ A frame of reference is an \gls{orthonormal} set within three-dimensional space.
 \subsection{The Inertial Frame}
 
 The first and most important frame of reference is the \gls{inertial frame}. Typically denoted by $e$ or $i$, or in our case $(\hat{x},\hat{y},\hat{z})$, this motionless frame is the one that allows for the use of Newton’s second law in the first place, as the frame itself has ``zero'' translational and rotational movement.\endnote{An \gls{inertial frame} can have some constant velocity and still be inertial. Of course, the earth has some velocity around the sun and with respect to the distant stars which we can approximate as constant for our time scales and thus ignore.} We say “zero” as this motion must be negligible in relation to the vehicle of interest. For example, our specific 6-\gls{dof} sets the \gls{inertial frame} to be anchored within the Earth on the launch pad. And while we are well aware the Earth is moving and rotating through space at a non-zero rate, this motion is negligible relative to the motion of our vehicle which remains close to Earth within the atmosphere for a short period of time. Therefore, we can assume that the Earth acts appropriately as an \gls{inertial frame} of reference, and Newton’s second law is valid for this frame. 
-
-\newacronym{rhr}{RHR}{right hand rule}
 
 Returning to the specific example of a 6-\gls{dof}, the directions you set your basis vectors to point in are mostly left to the coder’s discretion. If your chosen directions retain the \gls{orthonormal} nature of a frame of reference, as well as obeying the \gls{rhr}, the choice is all yours. Within the example we are following, our \gls{inertial frame}’s origin is anchored within the launch pad as previously stated. The first inertial basis vector points up perpendicular to the Earth’s surface, the second inertial basis vector points due East, while the third inertial basis vector follows the right-hand rule and points due North. An image for quick reference is provided in \autoref{fig:InertialFrame}:
 
@@ -1308,13 +1302,13 @@ $$I=\begin{bmatrix}
     0&0&I_{zz}
 \end{bmatrix}$$
 
-In fact, we can always find axes such that the products of inertia are zero. These are called the \gls{principle axes} and are important in other applications, such as structures \cite{baker_statics_2020}. For our rocket, it just happens that these \gls{principle axes} are the ones we have chosen to define as our \gls{body frame}. The \gls{moment of inertia} along these \gls{principle axes} are solutions to the eigenvalue problem $I\vec{\omega}=I^*\vec{\omega}$, where $I^*$ is a scalar. Essentially, we are finding a matrix $I$ such that the output is just a scalar multiple of the input, $\omega$. We can see that having this property will greatly simplify our results. This is another reason why we like to perform many calculations in the \gls{body frame}.
+In fact, we can always find axes such that the products of inertia are zero. These are called the \gls{principal axes} and are important in other applications, such as structures \cite{baker_statics_2020}. For our rocket, it just happens that these \gls{principal axes} are the ones we have chosen to define as our \gls{body frame}. The \gls{moment of inertia} along these \gls{principal axes} are solutions to the eigenvalue problem $I\vec{\omega}=I^*\vec{\omega}$, where $I^*$ is a scalar. Essentially, we are finding a matrix $I$ such that the output is just a scalar multiple of the input, $\omega$. We can see that having this property will greatly simplify our results. This is another reason why we like to perform many calculations in the \gls{body frame}.
 
 Using the \gls{inertia tensor}, a matrix form of \eqref{eq:Iw}  is written as:
 \begin{equation}\label{eq:IwVec}
     \vec{H}=I\vec{\omega}
 \end{equation}
-In the simplification using the \gls{principle axes}, we often refer to the terms $I_{xx}$, $I_{yy}$, and $I_{zz}$ simply as $I_x$, $I_y$, and $I_z$. There are called the \glspl{pmoi}.
+In the simplification using the \gls{principal axes}, we often refer to the terms $I_{xx}$, $I_{yy}$, and $I_{zz}$ simply as $I_x$, $I_y$, and $I_z$. There are called the \glspl{pmoi}.
 
 \subsection{Parallel Axis Theorem}
 Similar to the way in which we described the \gls{moment of inertia} of a particle to be $mr^2$, we can describe the change in \gls{moment of inertia} of a body due to the offset of its axis.
@@ -1335,11 +1329,11 @@ We can express equation \eqref{eq:Euler 2nd Law} in terms of the \gls{body frame
 \begin{equation}\label{eq:bke}
 {}^i\frac{dH^o}{dt}={}^b\frac{dH^o}{dt}+{}^e\vec{\omega}^b\times H^o
 \end{equation}
-In the case of \gls{principle axes}, \eqref{eq:IwVec} can be simplified to yield:
+In the case of \gls{principal axes}, \eqref{eq:IwVec} can be simplified to yield:
 $${}^iH^o=I_x\omega_x\hat{b}_1+I_y\omega_y\hat{b}_2+I_z\omega_z\hat{b}_3$$
 Plugging this result into \eqref{eq:bke}, we get the following:
 $${}^i\frac{dH^o}{dt}={}^b\frac{d}{dt}\left(I_x\omega_x\hat{b}_1+I_y\omega_y\hat{b}_2+I_z\omega_z\hat{b}_3\right)+{}^e\vec{\omega}^b\times \left(I_x\omega_x\hat{b}_1+I_y\omega_y\hat{b}_2+I_z\omega_z\hat{b}_3\right)$$
-Where ${}^e\vec{\omega}^b$ is $\omega_x\hat{b}_1+\omega_y\hat{b}_2+\omega_z\hat{b}_3$. The algebraic manipulation and vector math here is left as an exercise for the reader. Collecting the final terms, our final expression is:
+Where ${}^e\vec{\omega}^b$ is $\omega_x\hat{b}_1+\omega_y\hat{b}_2+\omega_z\hat{b}_3$. Assuming a rigid body along with a principal axis system, we say the time derivative of our inertia tensor is zero. The algebraic manipulation and vector math here is left as an exercise for the reader. Collecting the final terms, our final expression is:
 $${}^iH^o=\left[I_x\dot{\omega}_x+\left(I_z-I_y\right)\right]\hat{b}_1+\left[I_y\dot{\omega}_y+\left(I_x-I_z\right)\right]\hat{b}_2+\left[I_z\dot{\omega}_z+\left(I_y-I_x\right)\right]\hat{b}_3$$
 Equating this with the moments in the \gls{body frame} that were found in \autoref{sec:moments} as ${}^bM^o=M_x\hat{b}_1+M_y\hat{b}_2+M_z\hat{b}_3$, we arrive at the final form of our equations for Euler rotations\endnote{Very observant readers may notice that this form of the equation is technically incorrect, since our center of rotation, $O$, will change throughout the flight as the center of mass changes position. Moreover, the moments will change as fuel is drained, so another derivative should exist. Thus, we will have some small effects that are not accounted for in this equation. For our purposes here, these are ignored for simplicity of presentation. However, a more general approach that implements this may be used in the future if slosh modeling is implemented.}:
 \begin{gather}\label{eq: moment equations}
@@ -1465,7 +1459,6 @@ After the spin stabilization maneuver is done to inject the satellite into its f
 \end{enumerate}
 
 \section{Further Reading}
-\newacronym{bke}{BKE}{Basic Kinematic Equation}
 
 We assume that most readers are broadly familiar with the topics discussed in AAE 203. Understanding the application of the \gls{bke} (otherwise known as derivative transport theorem) is fundamental to the understanding of dynamics. More information about basic dynamics in general can be found in \cite{kasdin_engineering_2011}. For Newtonian dynamics, refer to Chapter 1 and 2. Euler rotation equations are discussed in Chapter 4. This book uses different notation (notably, $\vec{r}^{\ op}$ is normally denoted as $\vec{r}_{p/o}$) but can help solidify this knowledge.
 
@@ -2769,11 +2762,11 @@ Define any additional quantities that you deem necessary to solve the problem.
     \item Create a visualization of the system. Create any other plots that you deem useful.
 \end{enumerate}
 \item After your stint in modeling the Explorer 1 Satellite, NASA has asked you to come back to model a new satellite. NASA wants the satellite to be nadir-pointing at all times, and has decided to use gravity gradient stabilization to do so. 
-\item You find yourself flying a UH-1 Huey over Hamburger Hill in Vietnam, 1969. While preparing to land on your medevac mission, you glance at your inertial navigation system and are horrified to find it has been blown away by a RPG-7! You must now make the calculations necessary to determine how much of your thrust will be acting directly along the ground. Should this force exceed 1,000 N, the soldiers on the ground will be blown away. You decide to utilize a rotation sequence identical to what was used on the navigation system: a 3-2-1 sequence. With this, you determine the Euler angles to be 0.1, 0.15, and -0.1 radians, and the force of the engine is known to be 40,000 N. Will the soldiers go tumbling away as you land? A view of what you see with the reference frames imposed on it is shown below:
+\item You find yourself flying a UH-1 Huey over Hamburger Hill in Vietnam, 1969. While preparing to land on your medevac mission, you glance at your inertial navigation system and are horrified to find it has been blown away by a RPG-7! You must now make the calculations necessary to determine how much of your thrust will be acting directly along the ground. Should this force exceed 1,000 N, the soldiers on the ground will be blown away. You decide to utilize a rotation sequence identical to what was used on the navigation system: a 3-2-1 sequence. With this, you determine the Euler angles to be 0, 0.15, and -0.05 radians, and the force of the engine is known to be 10,000 N. Will the soldiers go tumbling away as you land? A view of what you see with the reference frames imposed on it is shown below:
 
-\begin{figure}
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{}
+    \includegraphics[width=0.5\linewidth]{Images/HueyProblemImage.png}
     \caption{Huey Reference Frame}
     \label{fig:HueyFrameImage}
 \end{figure}
@@ -2952,7 +2945,7 @@ The main tool that we use presently is RasAero. This tool allows us to input the
 
 More information on RasAero can be found at \cite{rogers_rasaero_2019}. The documentation on this page does a better job explaining the software than we could here in a short summary. Our implementation uses the .csv export files from RasAero in MATLAB.
 \subsection{Other Computational Models}
-\newacronym{cfd}{CFD}{Computational Fluid Dynamics}
+
 It is worth noting that other computational models exist. RasAero does have shortcomings in modeling some of the aspects of the rocket geometry, so other methods such as \gls{cfd} are also options to be explored. However, in the current state of our model, we have not looked into \gls{cfd} methods very heavily for direct use in MATLAB. These are in the preliminary stages of investigation and will likely be explored more heavily in future editions of this text.
 
 % \section{Wind Modeling}
@@ -3433,14 +3426,10 @@ Using this code, we can convert the thrust from the \gls{body frame} into the ea
 \subsubsection{Lift and Drag}
 Our other two forces follow in a similar manner. The quantities of lift and drag are heavily discussed in \autoref{sec: aerodynamics}, so we will keep them succinct here. The directions of lift and drag in the earth frame are described by \eqref{eq:Lift} and \eqref{eq:drag}. To convert these forces into the \gls{body frame}, we use the function call "RotationMatrix(force, quat, 0)". The specification of "0" in the function converts a force in the earth frame into one in the \gls{body frame}. We need the \gls{body frame} force for computing the moments in the \gls{body frame}, as discussed in \autoref{sec:rotations in the body frame}.
 \subsubsection{Parachute Forces}
-The other force that sometimes acts on our rocket is a parachute force. This acts as another body with drag that is activated in the post-apogee regime. This drag has the same form as the aerodynamic drag, $\frac{1}{2}\rho_{\infty} V_{\infty}^2SC_D$ with the drag acting opposite the \gls{freestream} velocity. In code, this looks like:
-\begin{lstlisting}[style=Matlab-editor]
-forceMag = 0.5 * totCd * vertArea * rho * norm(vel)^2;
-paraDragForce = forceMag .* (-vel ./ norm(vel)); 
-\end{lstlisting}
-This force is only active when the vertical velocity is negative, so this is controlled by an "if/else" structure as: "if vel(1) < 0". 
 
-The parachute dynamics can be far more complicated that this, but currently we do not model this added complexity. 
+The other force that sometimes acts on our rocket is the drag force imparted by the parachute(s). A parachute acts as another body, constrained to the vehicle body which it interacts with. To create this multibody simulation, all parachute drag forces are calculated in a separate function "calculateParachuteForce.m". The form of the drag equation for the parachute is identical to the aerodynamic drag: $\frac{1}{2}\rho_{\infty} V_{\infty}^2SC_D$. The only difference between the two is the reference area and drag coefficients. For the latter, we use an experimentally determined value. For the former; however, we have to estimate the area of the fully inflated parachute. Luckily, it has been shown that the equation for the circle with a deform value scale factor of approximately 0.70 is adequate to model the reference area of the parachute. 
+
+In addition, it is necessary to consider the time delay of inflation, as the parachute will exponentially inflate as it is deployed. This means the equation for the area in our drag calculation is the following: $S=0.7\pi (\frac{1}{2}D)^2(1-e^{-.5t_{Drogue}})$. After the drag calculation, it is applied to the opposite of the freestream velocity. This force is only active when the vertical velocity is negative, so this is controlled by an "if/else" structure as: "if vel(1) < 0". In addition, our vehicle has both a drogue and main chute. As such, another if/else structure controls the deployment of the main chute at a specified altitude. The parachute dynamics are far more complicated than this, but currently we do not model this added complexity. 
 
 Currently, there are no other forces that act in our 6DoF model. Internal forces and vibrations are not currently modeled, as we assume a completely rigid vehicle.
 \subsection{Moments}
@@ -3503,13 +3492,19 @@ Sub-component validation may look like the Dzhanibekov modeling in \autoref{sec:
 \printendnotes
 
 \chapter{MATLAB and Coding Practices}\label{sec:MATLAB Practices}
-In this final chapter, we discuss the techniques and practices for implementing a 6-DoF in MATLAB. We will also discuss more general practices for large MATLAB code bases and methods to keep these organized. As of late June 2025, these practices are currently being implemented on our 6-DoF model. A large portion of the content in this chapter comes from what we have seen as practices adopted in industry for systems much more complex and larger than our own.
+In this final chapter, we discuss the techniques and practices for implementing a 6-DoF in MATLAB. We will also discuss more general practices for large MATLAB code bases and methods to keep these organized. As of Fall 2025, these practices are currently being implemented on our 6-DoF model. A large portion of the content in this chapter comes from what we have seen as practices adopted in industry for systems much more complex and larger than our own.
 
 That being said, as our system grows in complexity, following these practices becomes increasingly important for organization. If the reader is working on their own large code base or contribute to our code base, it is a good idea to follow these practices as well to stay organized.
 
 \section{Object Oriented Programming in MATLAB}
 
-\newacronym{oop}{OOP}{Object Oriented Programming}
+\color{red}
+
+Public and private methods / properties
+
+argument 
+
+\color{black}
 
 Up until now, we have mainly been using a procedural approach to programming. The procedural approach uses multiple interacting functions to run the code. Each function takes in inputs and outputs. Together, these functions work together to run the code and built the final output. In most introductory coding classes, this is the type of programming that is taught.
 
@@ -3521,7 +3516,7 @@ If it has not already become apparent, the 6-\gls{dof} model described so far is
 
 \Gls{oop}, like any skill in coding, is best understood with practice. As a starting point, we highly recommend \cite{tearle_object-oriented_nodate}, which gives a guided introduction to \gls{oop} in MATLAB. It may take several repititions and read-throughs to become familiar with the terminology of \gls{oop}.
 
-\subsection{Objects, Properties, and Methods}
+\subsection{Objects, Properties, and Classes}
 
 \subsubsection{Objects}
 
@@ -3595,9 +3590,40 @@ A class often has a \textit{constructor} method, which constructs an object of t
 
 In this code, the function "Sensor" is a class constructor method of the file "Sensor.m". The class constructor takes user input for parameters such as a "name", and "samplingRate" for the sensor, which are assigned within the function. These are then assigned to the properties of the object of the same name. If we were to call
 
-Another useful property of classes which is demonstrated  here is input validation. Input validation allows us to ensure that the input into a class or one of its methods is of a certain type. In this example, the "name" can only be a "string" of size 1 (scalar).
+Another useful property of classes which is demonstrated  here is input validation. Input validation allows us to ensure that the input into a class or one of its methods is of a certain type. In this example, the "name" can only be a "string" of size 1 (scalar). Input validation allows us to build robust functions that only allow proper data to be passed through.
 
-% example of a class constructor
+\subsection{Methods}
+Methods are the backbone of \gls{oop}, and allow us to manipulate our objects and change their attributes in useful ways. In MATLAB, methods are somewhat distinct from functions and have some special features that we can use. 
+
+Most methods require that the first input to the method is an object of the class. This is required because methods are designed to only work on objects of that class. In MATLAB, there are two ways which a method of an object can be called. The first way is to input the object as the first input of the method:
+
+"Plotter(app)"
+
+The second way which this can be done is with the `dot indexing notation` which looks like:
+
+"app.Plotter"
+
+Both of these are used interchangeably when calling a method, but when you write a method, you \textit{must} use the first notation:
+
+"out = Plotter(app, input1, input2, etc.)"
+
+Aside from the requirement of an object as the first input, methods are written in the same way that standard functions are written in MATLAB. Further information about methods can be found in the MATLAB onramp.
+
+\subsubsection{Static Methods}
+Sometimes, we do not want to have to call a class constructor method or create an object of a certain class to employ a method. In this case, we can use a \textit{static method}. A static method allows us to call a method without the object as an input.
+
+A static method is associated with a class, but does not require a specific instance of that class to be run. Static methods are written by appending "Methods (static)" in the class:
+
+\begin{lstlisting}[style=Matlab-Editor]
+classdef MyClass
+   methods(Static)
+       function p = pi(tol)
+           [n d] = rat(pi,tol);
+           p = n/d;
+       end
+   end
+end
+\end{lstlisting}
 
 \subsection{Overloading and Precedence}
 One special feature of \gls{oop} is that it allows us to change the behavior of the default MATLAB functions when applied on certain objects. For example, overloading allows the user to change the functionality of the "plot" or "disp" functions when they are acting on a user defined object.
@@ -3638,8 +3664,6 @@ Classes in MATLAB carry lots of information. As a result, documenting them is qu
 
 \section{Continuous Integration and Testing}
 Continuous development is a principle that software development should occur in small pieces that are developed rapidly, rather than the more conventional approach of doing large overhauls of a code base. We find that the continuous integration approach is more useful for us, as it allows us greater flexibility in how we code and allows for features to be developed in parallel to each other.
-
-\newacronym{ci}{CI}{continuous integration}
 
 In practice, this style of implementation can be difficult because it can be hard to check that each piece of code that is added to the database is properly written and constructed. To tackle this, \gls{ci} development employs automatic checks for the code to ensure quality standards and that the code being pushed has no errors. 
 

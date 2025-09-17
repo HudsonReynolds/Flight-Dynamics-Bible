@@ -20,7 +20,7 @@ bMatrix = [1, tan(theta)*sin(phi), tan(theta)*cos(phi); ...
 % Calculate the DCM. Remember we're using a 3-2-1 rotation sequence for this problem, so input angles in this order!
 DCM = angle2dcm(psi,theta,phi,"ZYX");
 
-% Matrix multiply the DCM with the inertial gravity vector to find the body frame representation of the gravity vector. Multiply the thrust vector by the transpose (inverse) of the DCM to obtian the thrust vector in the inertial frame
+% Matrix multiply the DCM with the inertial gravity vector to find the body frame representation of the gravity vector. Multiply the thrust vector by the transpose (inverse) of the DCM to obtain the thrust vector in the inertial frame
 gravityBody = DCM*gravityInertial;
 thrustInertial = (DCM')*thrustBody;
 
