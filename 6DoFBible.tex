@@ -305,7 +305,6 @@
 % add more proofs for relevant sections
 % finish the OOP section
 %
-
 \pagenumbering{roman}
 
 \pagestyle{empty}
@@ -341,20 +340,20 @@
 
 \include{GlossaryTerms}
 
-\color{red} Things to include in 2nd edition:
+% \color{red} Things to include in 2nd edition:
 
-\begin{itemize}
-    \item Finish OOP section
-    \item     Practice Problems
+% \begin{itemize}
+%     \item Finish OOP section
+%     \item     Practice Problems
     
-3rd edition:
-    \item Later:
-    \item Rework aerodynamics and atmosphere modeling
-    \item CFD?
+% 3rd edition:
+%     \item Later:
+%     \item Rework aerodynamics and atmosphere modeling
+%     \item CFD?
 
     
-\end{itemize}
-\color{black}
+% \end{itemize}
+% \color{black}
 \chapter*{Preface}\label{sec:preface}
 \markboth{PREFACE}{PREFACE}
 Preston and I began working on the Flight Dynamics sub-team in the fall of 2023. From May 2024 to January 2025, we focused our efforts on creating a 6-\gls{dof} model from scratch. During this time, we learned a lot about the mathematics and physics involved in creating such a model. We were often faced with frustration with different conventions and poor explanations of certain topics, all of which were exacerbated by the difficulty of what we were learning. This made much of the material intractable. In this document, we hope to provide detailed explanations of all the necessary concepts in one place to make this journey easier for those who may need it in the future. 
@@ -2784,13 +2783,20 @@ Define any additional quantities that you deem necessary to solve the problem.
 \begin{chapquote}{Werner Heisenberg}
 ``When I meet God, I am going to ask him two questions: Why relativity? And why turbulence? I really believe he will have an answer for the first.''
 \end{chapquote}
-In \autoref{sec: 3DoF Case} we discussed the 4 fundamental forces on a vehicle and how we define their directions. In that section we did not define the magnitude of the aerodynamic forces, $\vec{F}_L$ and $\vec{F}_D$. The magnitude of these forces are quite difficult to calculate and require the most approximation to do correctly. The governing equation for calculating the magnitude of our aerodynamics is $\frac{1}{2}\rho_{\infty}V^2_{\infty}SC_X$, where $C_X$ is either $C_L$, $C_D$, $C_N$, or $C_A$.
 
-Despite the innocuous appearance of this equation, calculating the aerodynamics of our system is deceptively hard because the calculation of $C_X$ is very complicated. In fact, without real data, any calculation that we made of these values will just be an approximation.\endnote{Even with wind tunnel data, it is still likely that some approximations need to be made. Aerodynamics in general has no definite answers.} That being said, there are approaches we can take which will get us close enough to true values to prove useful.
+Aerodynamics is a topic of great concern to us, as drag is one of the primary forces experienced by our rocket. In \autoref{sec: 3DoF Case} we discussed the 4 fundamental forces on a vehicle and how we define their directions. In that section we did not define the magnitude of the aerodynamic forces, $\vec{F}_L$ and $\vec{F}_D$. The goal of aerodynamics, put shortly, is to calculate these values to the best of our ability.
+
+There is a large amount of analysis that can be done in order to understand the lift and drag that act on our vehicle. These aerodynamic phenomena -- especially as we look into modeling transonic and supersonic rocket systems -- can be very complicated. In order to keep this section relatively comprehensible, we have decided to only cover a few basic concepts. Some fairly basic modeling can get us 80\% of the way to good aerodynamics. The last 20\% requires very complex modeling which are beyond the scope of this first volume.
+
+We may start our discussion by introducing one of the most fundamental ideas in fluid dynamics: non-dimensionalization. Aerodynamics very often uses non-dimensional quantities, so we may start our exploration of aerodynamics here.
 
 \section{Non-Dimensionalization}
 
-Modern aerodynamics uses non-dimensional quantities very frequently. As a result, we should start by understanding how non-dimensionalized quantities emerge. This will help us understand why we have many equations with the term $\frac{1}{2}\rho V^2$, or why the mach number is important. Along the way, we will also discover some other important properties that influence the airflow. 
+If you have studied any aerodynamics, you have likely seen the equations for lift or drag:
+$$\frac{1}{2}\rho_{\infty}V^2_{\infty}SC_X$$
+This coefficient, $C_X$, is a non-dimensional quantity. It describes the force generated via lift or drag, but the value itself has no dimension. A large portion of aerodynamics is devoted to figuring out how we can calculate these non-dimensional values!
+
+Before we start with calculations of these values, we should  understanding how non-dimensionalized quantities emerge, and which ones are important for aerodynamics. This will help us understand why we have many equations with the term $\frac{1}{2}\rho V^2$, or why the mach number is important. Along the way, we will also discover some other important properties that influence the airflow. 
 
 Since our main goal is to understand the lift and the drag on an object, we will start by enumerating the various factors that could impact the aerodynamic forces experienced by an object. Some intuition will tell us these forces are likely affected by the following factors:
 \begin{enumerate}
@@ -2834,34 +2840,35 @@ For more information on \gls{buck pi}, refer to
 \begin{example}[Aerodynamic Forces]
     Using the system characteristics described before, let us use \gls{buck pi} to write the non-dimensional groups for our aerodynamic system. We start by writing the dimensions for each of the variables we enumerated:
 
-\begin{center}
-$\begin{array}{ccc}
-     \text{Variable} & \text{Dimension}
-     &  \\ \rho & \frac{M}{L^3}
-     &  \\ V    & \frac{L}{T}
-     &  \\ S    & L
-     &  \\\mu &  \frac{M}{LT}
-     &  \\a & \frac{L}{T}
-     & \\\alpha & -
-\end{array}$
-\end{center}
+$$\begin{array}{ccc}
+     \textbf{Variable} & \textbf{Dimension} & \textbf{Description}\\
+      \rho & \frac{M}{L^3} & \text{Air Density}\\
+     V    & \frac{L}{T} & \text{Velocity}\\
+         L & \text{Characteristic Length}\\
+     \mu &  \frac{M}{LT} & \text{Viscocity}\\
+     a & \frac{L}{T} & \text{Speed of Sound}\\
+     \alpha & - &\text{Angle of Attack}
+\end{array}$$
 
 Applying \gls{buck pi}, we can create 4 $\Pi$ groups from the 7 variables. The solving of these $\Pi$ groups is shown in the Appendix in \autoref{Buckingham Pi Deriv} because it is quite lengthy.
 
 Solving the $\Pi$ groups, we get:
 \begin{gather}
-    \Pi_1=\frac{\rho VS}{\mu}\\
+    \Pi_1=\frac{\rho VC}{\mu}\\
     \Pi_2=\frac{V}{a}\\
-    \Pi_3=\frac{F}{\rho V^2S}\\
+    \Pi_3=\frac{F}{\rho V^2C}\\
     \Pi_4=\alpha
 \end{gather}
 $\Pi_1$ is a quantity known as the Reynolds number, the ratio of inertial forces to viscous forces. $\Pi_2$ is the Mach number, the ratio of velocity to the speed of sound of the fluid. $\Pi_3$ is the force coefficient that we have described earlier. $\Pi_4$ is the relation for the \gls{angle of attack}, which is just itself since $\alpha$ is unitless.
 
-From \autoref{thm: buck pi corollary}, we can also write
+From \autoref{thm: buck pi corollary}, we can also say that the force coefficient must be a function of the other $\Pi$ groups:
 $$\color{blue}\boxed{\color{black}C_x=f\left(Re,M,\alpha\right)}$$
 \end{example}
 
 The conclusion drawn from the \gls{buck pi} is that we can determine the force coefficients using only the $Re$, $M$, and $\alpha$. Thus, whenever we do modeling of aerodynamics, we only need to consider Reynolds number, Mach number, and \gls{angle of attack}. This is a cornerstone of how we model aerodynamics in our 6-\gls{dof} modeling.
+
+\section{Lift and Drag}
+Determining the lift and drag of the our rocket is the main purpose of aerodynamics for our applications. 
 
 \section{Aerodynamics Terminology}
 Aerodynamics has a lot of terminology associated with it that is important to understand before we can approach modeling the aerodynamics of the system. We will mostly cover aerodynamics terminology for rockets, but the modeling done here should be transferable to aspects of aircraft systems as well.\endnote{The principles we describe are the same, but much of the modelling is simpler for rockets since they have axial symmetry in most cases. We will utilize these assumptions early on to simplify this section.}
@@ -2906,7 +2913,7 @@ We can expand \eqref{eq:LDMatrix} to give two scalar equations:
 \end{gather}
 So, if we know the distribution of pressure over our body, we have shown that we can find the resultant aerodynamic forces acting on our body. As briefly described in \autoref{sec:moments}, another important parameter to find is our center of pressure.
 \subsection{Center of Pressure}
-Simply stated, the center of pressure is the location at which all the aerodynamic forces acting on a body produce no resultant moment. This location is particularly useful for our case because we can assume that the lift and drag forces act through the center of pressure rather than assuming that lift and drag act as force distributions. This will make our future calculations much simpler, so we would like to know the center of pressure and how to calculate it.
+Simply stated, the center of pressure is the location at which all the aerodynamic forces acting on a body produce no resultant moment. This location is particularly useful for our case because we can assume that the lift and drag forces act through the center of pressure rather than calculating lift and drag using a distributed load. This will make our future calculations much simpler, so we would like to know the center of pressure and how to calculate it.
 
 To find the location where the center of pressure occurs, we can take the moment about any point first. Often, we choose to take the moment about the nose of the rocket (called the leading edge when referring to a wing), since we define the origin here. This integral has a similar form to the normal and axial force integrals except that we multiply the force by the distance from the nose. For more information on why this is done, refer to \cite{gundersen_understanding_2020}. Writing out this integral, we get:
 \begin{gather}
@@ -2916,9 +2923,7 @@ Knowing the normal force and the moment about the leading edge, we can find the 
 \begin{gather}
     \color{blue}\boxed{\color{black}x_{cp}=\frac{-M_{LE}'}{N'}}
 \end{gather}
-We note that the convention for the moment about the nose is for a positive moment to denote a pitch up (this is why the negative sign is present). This is opposite the convention established by the \gls{rhr}. For all other moments used in our 6-\gls{dof} models, we use the standard \gls{rhr} convention for moments.
-
-For more information on the derivation of the equations in this section, refer to Chapters 1 and 2 of \cite{anderson_fundamentals_2017}.
+We note that the standard convention in aerodynamics for the moment about the nose is for a positive moment to denote a pitch up. This is opposite the convention established by the \gls{rhr}. For this reason, we choose to use a more standard sign convention in this equation. For more information on the derivation of the equations in this section, refer to Chapters 1 and 2 of \cite{anderson_fundamentals_2017}.
 
 \newglossaryentry{axisym}
 {
@@ -2937,13 +2942,23 @@ Another hurdle to overcome when describing the aerodynamics of our system is to 
 \end{lstlisting}
 This gives us a standard value of $\rho_{\infty}$ and $a_{\infty}$ to use. However, the value of can vary by up to 10\% depending on the weather conditions \cite{svickova_air_2020}. Similarly, the Mach number has a strong dependence on temperature $\left(M=\sqrt{\gamma RT}\right)$, so the free-stream Mach number may also be different by 10-20\% of standard values. Further derivation of this mach relation can be found in \cite{filmer_fluid_nodate}.
 
-All of this is to say that using "atmosisa" gives us a good baseline model of the atmosphere, but is not the final say in atmospheric modeling. For now, we use "atmosisa" in our modeling because we can live with this variation in our model. However, it may be useful in the future to use other sources of atmospheric data that give location- and time-specific data.
+All of this is to say that using "atmosisa" gives us a good baseline model of the atmosphere, but is not the final say in atmospheric modeling. Thus it is useful to use other sources of atmospheric data that give location- and time-specific data.
+\subsection{Live Weather Data}
+Getting live weather information is useful in improving upon the uncertainty in the calculations provided by the "atmosisa" model. To do so, our model uses information from the API here \cite{openmeteo_openmeteo_nodate}. Another benefit of such live weather data is that it allows us to compute wind at the surface level and at many pressure levels (up to $22 \mathrm{\ km}$ in height). 
+
+Generally, MATLAB alone cannot perform requests to the API, so that task is performed by a python script. In this case, we use the MATLAB-Python interface to import the data from the Python script into the MATLAB environment. More information about this MATLAB Python interfacing can be found at \cite{mathworks_using_nodate}.
+
+Sometimes, we can only get weather data for close to the surface from real time or historic measurements. In this case, it is often a good approximation to use the standard atmosphere model provided by something like "atmosisa" offset to match the temperature and pressure measured.
+
+
+
 \section{Computational Aerodynamics}\label{sec:computational aero}
 In the case of our rocket, we encounter a variety of flight regimes from subsonic to high supersonic. Because of this variety, hand calculations of our aerodynamics can become very complicated. As a result, we choose to use computational tools to compute the aerodynamics of our rocket.
 \subsection{RasAero}
 The main tool that we use presently is RasAero. This tool allows us to input the geometry of the rocket and will output the \gls{drag coeff} as a function of the Mach number. This is less than perfect, as we lose some of the dependence on Reynolds number. Additionally, the dependence on \gls{angle of attack} is quite course (only measurements every 2$\degree$. That being said, RasAero has been used to model many rocket systems around the same scale as our rocket with an average error in apogee of $3.47\%$ and $80\%$ of the flights within $\pm10\%$ of the true apogee. For us, this is an acceptable compromise so that we can focus on flight dynamics modeling rather than aerodynamics.
 
 More information on RasAero can be found at \cite{rogers_rasaero_2019}. The documentation on this page does a better job explaining the software than we could here in a short summary. Our implementation uses the .csv export files from RasAero in MATLAB.
+
 \subsection{Other Computational Models}
 
 It is worth noting that other computational models exist. RasAero does have shortcomings in modeling some of the aspects of the rocket geometry, so other methods such as \gls{cfd} are also options to be explored. However, in the current state of our model, we have not looked into \gls{cfd} methods very heavily for direct use in MATLAB. These are in the preliminary stages of investigation and will likely be explored more heavily in future editions of this text.
@@ -3470,7 +3485,7 @@ So, taking all of these together, we have the derivative of our \gls{state vecto
     \end{bmatrix}
 \end{equation}
 \subsection{6-DoF Code}
-We take this integrated \gls{state vector} along with the initial conditions and integrate them using "ode45". The two most important scripts in this process are the "MainRK4.m" and "RK4Integrator.m" MATLAB scripts. Because these MATLAB scripts are quite long, we have chosen not to include them in the appendix. Instead, a link to the GitHub is given where the scripts can be found. The full code can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or in Appendix \ref{Appendix:code}.
+We take this integrated \gls{state vector} along with the initial conditions and integrate them using "ode45". The most important script in this process is the "RK4Integrator.m" MATLAB script. Because this MATLAB script is quite long, we have chosen not to include it in the appendix. Instead, a link to the GitHub is given where the scripts can be found. The full code can be found at \cite{reynolds_hudsonreynoldsflight-dynamics-bible_nodate} or in Appendix \ref{Appendix:code}.
 
 \section{Validation of 6-DoF}
 The validation of our 6-\gls{dof} model is achieved through modeling other rocket systems that have flown to check the validity of our model and modeling other physical phenomena. Validation can range from very simple to far more complex depending on the system that is being validated. For us, validation falls under two main categories:
@@ -3492,29 +3507,23 @@ Sub-component validation may look like the Dzhanibekov modeling in \autoref{sec:
 \printendnotes
 
 \chapter{MATLAB and Coding Practices}\label{sec:MATLAB Practices}
-In this final chapter, we discuss the techniques and practices for implementing a 6-DoF in MATLAB. We will also discuss more general practices for large MATLAB code bases and methods to keep these organized. As of Fall 2025, these practices are currently being implemented on our 6-DoF model. A large portion of the content in this chapter comes from what we have seen as practices adopted in industry for systems much more complex and larger than our own.
+In this final chapter, we discuss the techniques and practices for implementing a 6-DoF in MATLAB. We will also discuss more general practices for large MATLAB code bases and methods to keep these organized. As of Fall 2025, these practices have been implemented in our 6-DoF model, allowing for a full generalization of our rocket creation. A large portion of the content in this chapter comes from what we have seen as practices adopted in industry for systems much more complex and larger than our own.
 
 That being said, as our system grows in complexity, following these practices becomes increasingly important for organization. If the reader is working on their own large code base or contribute to our code base, it is a good idea to follow these practices as well to stay organized.
 
 \section{Object Oriented Programming in MATLAB}
 
-\color{red}
-
-Public and private methods / properties
-
-argument 
-
 \color{black}
 
-Up until now, we have mainly been using a procedural approach to programming. The procedural approach uses multiple interacting functions to run the code. Each function takes in inputs and outputs. Together, these functions work together to run the code and built the final output. In most introductory coding classes, this is the type of programming that is taught.
+Up until now, we have mainly been describing a procedural approach to programming. The procedural approach uses multiple interacting functions to run the code. Each function takes in inputs and outputs. Together, these functions work together to run the code and built the final output. Each function is distinct from one another, and operate with only the information that we choose to pass into the function. In most introductory coding classes, this is the type of programming we learn.
 
-This is a very good method for writing short segments of code, but for larger databases that need to have greater code reusability, there are better approaches. One such approach that is particularly powerful is \gls{oop}.\endnote{There exists some debate whether \gls{oop} is a superior method of coding. Of course, the true answer is nuanced and depends on the application. Object-Oriented programming, when done poorly, can make code quite unreadable. However, proper implementation of \gls{oop} can be extremely useful. See \cite{brian_will_object-oriented_2016}  for more information.} 
+This is a very good method for writing short segments of code, but for larger databases that need to have greater code reusability, there are better approaches. One such approach that is particularly powerful is \gls{oop}.\endnote{There exists some debate whether \gls{oop} is a superior method of coding as compared to functional programming. Of course, the true answer is nuanced and depends on the application. Object-Oriented programming, when done poorly, can make code quite unreadable. However, proper implementation of \gls{oop} can be extremely useful. See \cite{brian_will_object-oriented_2016}  for more information on this debate.} 
 
 In \gls{oop}, the basis of our code is \textit{objects}. These objects hold information of all types, whether that be numeric, string, or time data. The most important aspect of \gls{oop} is that it allows us to make user interaction with a large code base simpler, and also allows us to reuse large parts of the code.
 
 If it has not already become apparent, the 6-\gls{dof} model described so far is fairly simple in the grand scheme of things. We are modeling a single rocket and most of the subsystems are simplified. What happens if we want to model a huge rocket system with different systems, sensors, measurements, errors, and so on? In this case, we need a better scheme for organization that makes the process simpler for the end user. \Gls{oop} is one method to achieve such organization that we use for our model.
 
-\Gls{oop}, like any skill in coding, is best understood with practice. As a starting point, we highly recommend \cite{tearle_object-oriented_nodate}, which gives a guided introduction to \gls{oop} in MATLAB. It may take several repititions and read-throughs to become familiar with the terminology of \gls{oop}.
+\Gls{oop}, like any skill in coding, is best understood with practice. As a starting point, we highly recommend \cite{tearle_object-oriented_nodate}, which gives a guided introduction to \gls{oop} in MATLAB. It may take several repetitions and readings to become familiar with the terminology of \gls{oop}, so try not to become discouraged by the huge influx of new concepts here!
 
 \subsection{Objects, Properties, and Classes}
 
@@ -3522,7 +3531,27 @@ If it has not already become apparent, the 6-\gls{dof} model described so far is
 
 The basis of the \gls{oop} approach are, as the name suggests, objects. Objects hold much more information than standard variables. Typically, a variable contains only one piece of information, such as a string, an integer, or a floating point number. These variables have a value / values, and a type. Aside from this, they contain no other information. An object, on the other hand, can contain as much information as we want it to! 
 
-An object is a reuseable part of code that has certain attributes and functions associated within it. An object may be a "rocket", and it has features such as "propellant type", "mass", and "thrust", to name a few. The rocket might also have some functions associated with it, such as "SimulateFlight", which would simulate the rocket flight based on all the given inputs.
+An object is a reusable part of code that has certain attributes and functions associated within it. An object may be a "rocket", and it has features such as "propellant type", "mass", and "thrust", to name a few. The rocket might also have some functions associated with it, such as "SimulateFlight", which would simulate the rocket flight based on all the given inputs.
+
+The addition of these new features make objects particularly powerful for complex systems. Now, we can assign real world attributes to an object and handle it in code much more simply. Let's consider a scenario in the functional programming case.
+
+Suppose we have a ball and we want to simulate it bouncing. Some parameters we might want to consider are the radius, the coefficient of restitution, and the color (so it looks nice). In functional programming, we might have something like:
+
+
+\begin{figure}[ht]
+    \centering
+\begin{lstlisting}[style=Matlab-editor, caption=Procedural Programming Ball Example]
+% attributes of a ball
+radius = 0.1; %[m]
+restitutionCoeff = 0.8;
+color = [0,0,1];
+\end{lstlisting}
+    \label{fig:ball procedural}
+\end{figure}
+
+If we only simulate one ball, this is of course no hassle. There is no reason to complicate things more than this. However, if we want to simulate multiple balls and track each parameter separately, we can see how this would quickly get out of hand. A much better approach would have these properties by intrinsic to each ball.
+
+To accomplish this, we will now discuss how we can programmatically create these objects and construct whichever features we desire with classes.
 
 \subsubsection{Classes}
 
@@ -3592,6 +3621,27 @@ In this code, the function "Sensor" is a class constructor method of the file "S
 
 Another useful property of classes which is demonstrated  here is input validation. Input validation allows us to ensure that the input into a class or one of its methods is of a certain type. In this example, the "name" can only be a "string" of size 1 (scalar). Input validation allows us to build robust functions that only allow proper data to be passed through.
 
+You may notice that this class constructor is a "method". These "methods"  are functions that are associated with that specific type of object. In this example, the "Sensor" function can only be performed on an object of the class "Sensor". Most of the programming involved with classes will pertain to these methods themselves.
+
+Before we dive too deep into these methods, we should describe the different types of classes that exist in MATLAB and where we might want to use them:
+
+\subsubsection{Default Classes}
+A default class, like the ones shown above, require that we create an object before we can perform operations on it. These classes list the attributes associated with the object in their properties and have methods for the object.
+
+\subsubsection{Abstract Classes}
+Sometimes, we want to create classes that are broad and describe multiple different things. In our case, we might have something like a "RocketComponent", where every single rocket component should have a name, position, mass, and material. However, this "RocketComponent" doesn't really exist on its own. Instead, we need to define more features for an individual component. A "PropulsionSystem", for example, will have all the attributes of the "RocketComponent" but should also include the thrust and burn time of the system!
+
+For this reason, we create Abstract classes like the "RocketComponent" which do nothing by themselves, but instead describe abstract features that apply to a multitude of different subclasses. An instance of an abstract class cannot be created. Normally, we say that our other classes should \textit{inherit} the properties of the abstract class. In MATLAB, we can do this with the following at the top of the class definition:
+
+"classdef PropulsionSystem < RocketComponent"
+
+This command creates the "PropulsionSystem" with all the properties of the "RocketComponent" abstract class inherited. We can inherit from any other class that we would like, even MATLAB built in functions.
+
+\subsubsection{Constant Classes}
+There are some classes that should not change. Typically, we use these classes to hold constant values or other immutable variables in our program. For this case, we use a constant class, which stores these values and allows them to be accessed globally across our program.
+
+Having discussed the variety of classes we want to create, we can now discuss the methods which operate upon our objects.
+
 \subsection{Methods}
 Methods are the backbone of \gls{oop}, and allow us to manipulate our objects and change their attributes in useful ways. In MATLAB, methods are somewhat distinct from functions and have some special features that we can use. 
 
@@ -3628,13 +3678,7 @@ end
 \subsection{Overloading and Precedence}
 One special feature of \gls{oop} is that it allows us to change the behavior of the default MATLAB functions when applied on certain objects. For example, overloading allows the user to change the functionality of the "plot" or "disp" functions when they are acting on a user defined object.
 
-% talk about precedence and how overloading is achieved
-
-\subsection{Subclasses and Superclasses}
-Classes have the feature that they can share portions of their code with other classes. When a class takes it's base code from another class, this is referred to as \textit{inheritance}. The class which is inheriting is the \textit{subclass}, and the class which is being inherited from is the \textit{superclass}.
-
-The construct of the subclass and superclass is use
-
+MATLAB gives the highest precedence to methods that are defined in classes, so a locally defined "plot" method will take priority over the built-in MATLAB "plot" when it is defined for that object.
 
 \subsection{Standards for Classes}
 Class structure in MATLAB is very powerful. If it is used inappropriately, though, it can make coding much more difficult. When you are building a class within MATLAB, you should consider the following:
@@ -3645,22 +3689,7 @@ Class structure in MATLAB is very powerful. If it is used inappropriately, thoug
 
 There are some other considerations, but these questions should start to guide you on your implementation. Understanding these considerations and building a good class structure is oftentimes more difficult than writing the code! It will take practice to gain an understanding for the specific problem and how to build the class structure around that.
 
-Classes in MATLAB carry lots of information. As a result, documenting them is quite critical for maintaining and improving their functionality. In our 6-\gls{dof} modeling, we require that all class definitions use the following header:
-\begin{figure}
-    \centering
-
-\begin{lstlisting}[style=Matlab-editor, caption = Class Header]
-% Short 2-3 line explanation of the function
-    %
-    % Required 
-    % 
-    % <a href="documentation link">Documentation</a>
-\end{lstlisting}
-
-    \label{fig:Class Header}
-\end{figure}
-
-% include information on the script headers / help for 
+Classes in MATLAB carry lots of information. As a result, documenting them is quite critical for maintaining and improving their functionality. It is suggested that you comment each method of the class, as well as the top level class, especially when the user interacts directly with that class.
 
 \section{Continuous Integration and Testing}
 Continuous development is a principle that software development should occur in small pieces that are developed rapidly, rather than the more conventional approach of doing large overhauls of a code base. We find that the continuous integration approach is more useful for us, as it allows us greater flexibility in how we code and allows for features to be developed in parallel to each other.
@@ -3672,8 +3701,9 @@ This can be accomplished through the use of a program such as GitHub Actions, wh
 It should be noted that GitHub Actions has a few limitations when using the built in Linux runner on GitHub. Firstly, the repository on which the information is stored must be public. Second, the runner only works for base MATLAB and not for any of the toolboxes such as Aerospace toolbox which we use quite frequently. For this reason, we use a self-hosted runner which allows us to avoid both of these issues.
 
 \subsection{Unit Testing}
-Unit testing works in combination with continuous integration practices and the object-oriented approach to provide the capability to test the functionality of MATLAB code.
+Unit testing works in combination with continuous integration practices and the object-oriented approach to provide the capability to test the functionality of MATLAB code. Unit testing works in collaboration with other validation methods, such as the full model validation that we discussed previously. Unit testing allows us to test individual pieces of code and ensure that it gives us desired outputs. 
 
+Unit testing is built into MATLAB and can be automatically integrated with continuous integration pipelines. More information can be found at \cite{noauthor_unit_nodate, noauthor_ways_nodate}.
 
 
 \section{Data Visualization}
@@ -3722,9 +3752,8 @@ And with that, we have completed the first Volume of the Flight Dynamics Bible. 
 
 \section{Chapter 2 Solutions}
 \subsection*{2-1}
-\begin{enumerate}
-\begin{enumerate}
-    \item We can derive the \gls{eom} of the system using either the \gls{Lagrangian} or Newtonian methods. The Lagrangian method is detailed in \autoref{sec:energy methods}, so it will not be covered here. The \gls{eom} of the system is derived by considering the force balance of the system:
+\subsubsection{A}
+We can derive the \gls{eom} of the system using either the \gls{Lagrangian} or Newtonian methods. The Lagrangian method is detailed in \autoref{sec:energy methods}, so it will not be covered here. The \gls{eom} of the system is derived by considering the force balance of the system:
     $$\sum \vec{F}=m\vec{a}$$
     In this problem, motion is constrained to only the $\hat{x}$-direction. We also know the spring force is of the form:
     $$F_S=-k(L-L_0)\hat{x}$$
@@ -3735,7 +3764,9 @@ And with that, we have completed the first Volume of the Flight Dynamics Bible. 
     Finally, we typically divide each term by the mass:
     $$\ddot{x}+\frac{k}{m}{x}=0$$Plugging in the given values of $m$ and $k$ into the equation will give us the final equation:
     $$\ddot{x}+4{x}=0$$
-    \item The analytical solution of this equation is quite easy to find. There are a few methods we can take, but the easiest is to create a characteristic equation (assuming the solution to take form $x=e^{rt}$). This allows us to turn the differential equation into an algebraic equation.\footnote{A more robust method, known as the Laplace transform, will be explored in Volume III.}
+
+    \subsubsection{B}
+    The analytical solution of this equation is quite easy to find. There are a few methods we can take, but the easiest is to create a characteristic equation (assuming the solution to take form $x=e^{rt}$). This allows us to turn the differential equation into an algebraic equation.\footnote{A more robust method, known as the Laplace transform, will be explored in Volume III.}
     $$r^2+4=0$$
     We can solve this equation in terms of $r$:
     $$r=\pm 2i$$
@@ -3750,7 +3781,7 @@ As a result, the initial velocity must be $10 \ \mathrm{m/s}$ in the $-\hat{x}$-
 We can use these two initial conditions to find the particular solution of the differential equation:
 $$x(t)=-5\sin(2t)$$
 This may be plotted as any function in MATLAB would be, which is shown in part C
-\item Parts C and D are shown in the same script:
+\subsubsection{C \& D}
 \newpage
 \begin{lstlisting}[style=Matlab-editor, caption=Mass Spring Damper Solution]
 % PSP FLIGHT DYNAMICS:
@@ -3816,13 +3847,7 @@ out = [vel;accel];
 end
 \end{lstlisting}
     
-    
-    
-    
-    
-    
-\end{enumerate}
-\end{enumerate}
+
 
 \section{Chapter 4 Solutions}
 
