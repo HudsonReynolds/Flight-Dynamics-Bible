@@ -4019,7 +4019,7 @@ The benefit of adding these in as a function pass through instead of being compu
 \section{Numerical Integration Considerations}\label{sec:other numerical ints}
 Numerical integration requires that we understand when our algorithms may fail or perform inadequately. In this section, we will investigate sources of failure and how we can use different algorithms or adjustments to fix such issues.
 \subsection{More on Error}
-We briefly discuss the error of the integration schemes in each of the previous sections. However, it is useful to see examples of these to solidify understanding. 
+We briefly discuss the error of the integration schemes in each of the previous sections. However, it is useful to see examples of these to solidify understanding and show the differences in real application.
 
 Using the same example differential equation from \autoref{sec:errors in the euler method} as $\frac{dy}{dt}=2t$, we can show the approximation for Explicit Euler, RK2, and RK4. This is shown in \autoref{fig:Numerical Comparison}.
 \begin{figure}[ht]
@@ -4028,15 +4028,15 @@ Using the same example differential equation from \autoref{sec:errors in the eul
     \caption{Comparison of Numerical Integration Schemes for $y'=2t$}
     \label{fig:Numerical Comparison}
 \end{figure}
-
-\begin{exercise}{Numerical Integration}
+As we can see from this example, even with a fairly large timestep of $\Delta t=0.5s$, the RK4 perfectly matches the true curve. For this differential equation, there are no terms of higher order than quadratic, so the RK4 will perfectly match the solution curve. RK2 shows a larger error, and the Euler integrator shows an even greater error.
+\begin{exercise}[Numerical Integration Practice]
 Access the code in the GitHub for this example, located at: 
 
-\texttt{6DoF Explanation Scripts\textbackslash Numerical Integration Examples\textbackslash NumericalIntegratorError.m} 
+\texttt{Scripts\textbackslash Numerical Integration\textbackslash Error.m} 
 
 \begin{enumerate}
-    \item Adjust the step size of the simulation. Try decreasing the step size until each integrator has a final error of less than 1\%. How does the convergance time of each integrator compare?
-    \item Try a different function for integration. You can adjust this by changing the function:
+    \item Adjust the step size of the simulation. Try decreasing the step size until each integrator has a final error of less than 1\%. How small does $\Delta t$ need to be for each integrator?
+    \item Try some different function for integration. You can adjust this by changing the function:
 \begin{matlabscript}{}
 function[out] = YDot(t,Y)
 out = 2 * t;
@@ -4046,8 +4046,6 @@ Try a few different functions, and compare the analytical solutions against the 
 
 \end{enumerate}
 \end{exercise}
-
-As we can see from this example, even with a fairly large timestep of $\Delta t=0.5s$, the RK4 perfectly matches the true curve. For this differential equation, there are no terms of higher order than quadratic, so the RK4 will perfectly match the solution curve.
 
 The difference in these \gls{numerical int} schemes will become more apparent when modeling the behavior of different differential equation systems. Systems containing higher order terms will be better modeled by the higher order integration schemes, unsurprisingly. The true use of these methods is when analytical solutions to the differential equations are hard or impossible to obtain. That being said, we still want to know characteristics of our system so we can appropriately select integration parameters.
 
@@ -4066,7 +4064,7 @@ The default values for $\texttt{RelTol}$ and $\texttt{AbsTol}$ are $\texttt{1e-3
 $$\text{LTE} \leq \text{RelTol} \times |y|$$
 The same is done for the absolute tolerance, but there is no consideration for the magnitude of the state. It simply ensures that the LTE is below the absolute tolerance threshold:
 $$\text{LTE} \leq \text{AbsTol}$$
-Lowering these tolerances will often give higher accuracy solutions for most ODEs, but come swith the tradeoff of computational accuracy. Unless accuracy near floating point precision is required, the default tolerances are usually adequete.
+Lowering these tolerances will often give higher accuracy solutions for most ODEs, but comes with the tradeoff of computational accuracy. Unless accuracy near floating point precision is required, the default tolerances are usually adequate.
 
 \subsection{Sampling and Stiffness}\label{sampling and stiffness}
  To begin our discussion of sampling and stiffness, we can take the differential equation $\frac{dy}{dt}=\cos(4\pi t)$ with the initial condition of $y(0)=0$. This function is periodic in nature, so it will be good for our demonstration here. In this first example, we will keep the same timestep of $\Delta t=0.5s$. As is seen in \autoref{fig:Numerical Int Periodic}, this timestep is the same as the period of the sinusoidal solution of this differential equation. When this is the case, we can see that the solutions diverge from the original periodic function greatly for all of the integration schemes (aside from the RK2, although this is only the case when the period is exactly the same as the timestep). This occurs because we are not sampling the function at a high enough frequency to capture its periodic nature.
