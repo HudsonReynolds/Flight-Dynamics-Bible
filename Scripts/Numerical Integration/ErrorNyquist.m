@@ -25,12 +25,7 @@ end
 tspanCurve = linspace(0,tEnd, 1000);
 
 %figure plotting:
-hfig = figure;  % save the figure handle in a variable
-fname = 'Numerical Integrator Nyquist 1';
-
-picturewidth = 20; % set this parameter and keep it forever
-hw_ratio = 0.75; % feel free to play with this ratio
-set(findall(hfig,'-property','FontSize'),'FontSize',18) % adjust fontsize to your document
+figure;
 
 plot(t, y, '.', LineStyle='-', MarkerSize= 12)
 hold on
@@ -38,22 +33,11 @@ plot(t, yRK2, '.', LineStyle='-', MarkerSize= 12)
 plot(t, yRK4, '.', LineStyle='-', MarkerSize= 12)
 plot(tspanCurve, 1/(4*pi)*sin(4*pi*tspanCurve), LineWidth=1)
 
-legend('Explicit Euler', 'RK2', 'RK4', '$y=\frac{1}{4\pi}sin(4\pi t)$', 'Location', 'northwest')
+legend('Explicit Euler', 'RK2', 'RK4', '$y=\frac{1}{4\pi}\sin(4\pi t)$', 'Location', 'northwest')
 
-%title('Explicit Euler Numerical Approximation')
 xlabel('$t$')
 ylabel('$y(t)$')
 
-grid on
-axis tight
-
-set(findall(hfig,'-property','Box'),'Box','off') % optional
-set(findall(hfig,'-property','Interpreter'),'Interpreter','latex') 
-set(findall(hfig,'-property','TickLabelInterpreter'),'TickLabelInterpreter','latex')
-set(hfig,'Units','centimeters','Position',[3 3 picturewidth hw_ratio*picturewidth])
-pos = get(hfig,'Position');
-set(hfig,'PaperPositionMode','Auto','PaperUnits','centimeters','PaperSize',[pos(3), pos(4)])
-print(hfig,fname,'-dpng','-r400')
 
 % Part II:
 
@@ -73,12 +57,7 @@ int2 = rk4Integrate(dtList(2), tList2);
 int3 = rk4Integrate(dtList(3), tList3);
 
 %figure plotting:
-hfig = figure;  % save the figure handle in a variable
-fname = 'Numerical Integrator Nyquist 2';
-
-picturewidth = 20; % set this parameter and keep it forever
-hw_ratio = 0.9; % feel free to play with this ratio
-set(findall(hfig,'-property','FontSize'),'FontSize',18) % adjust fontsize to your document
+figure;
 
 plot(tList1, int1, '.', LineStyle='-', MarkerSize= 12, LineWidth=1)
 hold on
@@ -87,23 +66,10 @@ plot(tList3, int3, '.', LineStyle='-', MarkerSize= 12, LineWidth=1)
 
 plot(tspanCurve, 1/(4*pi)*sin(4*pi*tspanCurve), LineWidth=1.5)
 
-legend('$\Delta t=0.4s$', '$\Delta t=0.26s$', '$\Delta t=0.1s$','$y=\frac{1}{4\pi}sin(4\pi t)$', 'Location', 'northwest')
+legend('$\Delta t=0.4s$', '$\Delta t=0.26s$', '$\Delta t=0.1s$','$y=\frac{1}{4\pi}\sin(4\pi t)$', 'Location', 'northwest')
 
-%title('Explicit Euler Numerical Approximation')
 xlabel('$t$')
 ylabel('$y(t)$')
-
-grid on
-axis tight
-
-set(findall(hfig,'-property','Box'),'Box','off') % optional
-set(findall(hfig,'-property','Interpreter'),'Interpreter','latex') 
-set(findall(hfig,'-property','TickLabelInterpreter'),'TickLabelInterpreter','latex')
-set(hfig,'Units','centimeters','Position',[3 3 picturewidth hw_ratio*picturewidth])
-pos = get(hfig,'Position');
-set(hfig,'PaperPositionMode','Auto','PaperUnits','centimeters','PaperSize',[pos(3), pos(4)])
-print(hfig,fname,'-dpng','-r400')
-
 
 % functions
 
