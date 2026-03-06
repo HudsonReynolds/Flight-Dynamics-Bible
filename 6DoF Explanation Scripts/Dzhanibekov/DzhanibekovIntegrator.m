@@ -10,27 +10,20 @@ function [out] = DzhanibekovIntegrator(time, input)
 %
 % Inputs: 
 % time - current simulation time [s]
-% input - Array of position, velocity, rotational velocity, and quaternions
-%         [m|m/s|rad/s|unitless] 
+% input - Array of angular velocity and quaternions
+%         [rad/s|unitless] 
 %
 % Outputs:
-% out = derivative of state vector [m/s|m/s^2|rad/s^2|unitless^2]
+% out = derivative of state vector [rad/s^2|unitless^2]
 
-pos = [input(1);input(2);input(3)];
 
-vel = [input(4);input(5);input(6)];
+omega = [input(1); input(2); input(3)];
 
-omega = [input(7); input(8); input(9)];
-
-quat = [input(10); input(11); input(12); input(13)];
+quat = [input(4); input(5); input(6); input(7)];
 
 %bodyVectorEarth = RotationMatrix(bodyVector, quat, 1); % Body vector in inertial frame
 
-accel = zeros(3,1);
-
-
 %% Moments:
-% just putting in values based on a cylinder moment of inertia for now.
 Jxx = 0.09;
 Jyy = 0.01;
 Jzz = 0.03;
@@ -57,6 +50,6 @@ B = [0, -wx, -wy, -wz;
 
 quatRates = 0.5 * B * quat;
 
-out = [vel;accel;alpha;quatRates];
+out = [alpha;quatRates];
 
 end

@@ -28,10 +28,7 @@ time = 17.95;
 tspan = 0:dt:time;
 
 % initialize the state vector
-% position (x,y,z)
-pos = [0;0;0];
-% velocity (xdot,ydot,zdot)
-vel = [0;0;0];
+
 % initial angle(z angle, y angle, x angle)
 angleVector = [0;0;0];
 % initial rotation rate(x rate, y rate, z rate)
@@ -39,17 +36,15 @@ omega = [0.02;0.02;pi];
 %initalize the quaternion based on the euler angle input:
 quatVector = eul2quat(angleVector.', "ZYX").';
 % initial state vector
-Init = [pos;vel;omega;quatVector];
+Init = [omega;quatVector];
 
 
 % run the RK4:
 [timeArray, out] = ode45(@(time,input)DzhanibekovIntegrator(time,input), tspan, Init);
 
 % parse rk4 outputs:
-posArray = [out(:,1), out(:,2), out(:,3)];
-velArray = [out(:,4), out(:,5), out(:,6)];
-omega = [out(:,7), out(:,8), out(:,9)];
-quatArray = [out(:,10), out(:,11), out(:,12), out(:,13)];
+omega = [out(:,1), out(:,2), out(:,3)];
+quatArray = [out(:,4), out(:,5), out(:,6), out(:,7)];
     
 
 %% Plotting:
@@ -63,7 +58,5 @@ ylabel("Euler Parameters")
 legend('q0', 'q1', 'q2', 'q3');
 
 % run the rotation visualizer script
-playbackSpeed = 1;
 quatArray = quatArray';
-posArray = posArray';
-RotationsVisualizer(posArray, quatArray, timeArray, time, dt, playbackSpeed, 1);
+RotationsVisualizer(quatArray, timeArray, 0);

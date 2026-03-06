@@ -24,13 +24,18 @@ end
 % tspan for the original function:
 tspanCurve = linspace(0,tEnd, 100);
 
+figure;
+plot(t,y, '.', LineStyle='-', MarkerSize= 12)
+hold on
+plot(tspanCurve,tspanCurve.^2)
+xlabel('$t$')
+ylabel('$y(t)$')
+legend('Explicit Euler', '$y=t^2$', 'Location', 'northwest')
+title('Explicit Euler Solution vs. True Solution')
+
+
 %figure plotting:
-hfig = figure;  % save the figure handle in a variable
-fname = 'Numerical Integrator Comparison Figure';
-picturewidth = 20;
-hw_ratio = 0.75;
-
-
+figure;
 plot(t, y, '.', LineStyle='-', MarkerSize= 12)
 hold on
 plot(t, yRK2, '.', LineStyle='-', MarkerSize= 12)
@@ -39,18 +44,9 @@ plot(tspanCurve, tspanCurve.^2, LineWidth=1.5)
 
 legend('Explicit Euler', 'RK2', 'RK4', '$y=t^2$', 'Location', 'northwest')
 
-%title('Explicit Euler Numerical Approximation')
 xlabel('$t$')
 ylabel('$y(t)$')
 title('Comparison of Runge-Kutta Integration Orders')
-
-grid on
-axis tight
-
-set(hfig,'Units','centimeters','Position',[3 3 picturewidth hw_ratio*picturewidth])
-pos = get(hfig,'Position');
-set(hfig,'PaperPositionMode','Auto','PaperUnits','centimeters','PaperSize',[pos(3), pos(4)])
-print(hfig,fname,'-dpng','-r600')
 
 % functions
 
