@@ -4024,11 +4024,28 @@ We briefly discuss the error of the integration schemes in each of the previous 
 Using the same example differential equation from \autoref{sec:errors in the euler method} as $\frac{dy}{dt}=2t$, we can show the approximation for Explicit Euler, RK2, and RK4. This is shown in \autoref{fig:Numerical Comparison}.
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\linewidth]{Images/Numerical Integrator Comparison Figure.png}
+    \includegraphics[width=\linewidth]{Images/ComparisonNumInt.png}
     \caption{Comparison of Numerical Integration Schemes for $y'=2t$}
     \label{fig:Numerical Comparison}
 \end{figure}
-The code that runs this example is shown in \autoref{Appendix:code} in the Appendix. This code is a good example for understanding the syntax for using RK2 and RK4.
+
+\begin{exercise}{Numerical Integration}
+Access the code in the GitHub for this example, located at: 
+
+\texttt{6DoF Explanation Scripts\textbackslash Numerical Integration Examples\textbackslash NumericalIntegratorError.m} 
+
+\begin{enumerate}
+    \item Adjust the step size of the simulation. Try decreasing the step size until each integrator has a final error of less than 1\%. How does the convergance time of each integrator compare?
+    \item Try a different function for integration. You can adjust this by changing the function:
+\begin{matlabscript}{}
+function[out] = YDot(t,Y)
+out = 2 * t;
+end
+\end{matlabscript}
+Try a few different functions, and compare the analytical solutions against the integrator. You can also try some which you don't know the analytical solution too. How might you try to quantify error for these?
+
+\end{enumerate}
+\end{exercise}
 
 As we can see from this example, even with a fairly large timestep of $\Delta t=0.5s$, the RK4 perfectly matches the true curve. For this differential equation, there are no terms of higher order than quadratic, so the RK4 will perfectly match the solution curve.
 
