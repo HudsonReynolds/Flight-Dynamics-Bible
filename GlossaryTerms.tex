@@ -177,6 +177,159 @@
     see={action}
 }
 
+\newglossaryentry{non holo const}
+{
+    name=non-holonomic constraint,
+    first = {\textit{non-holonomic constraint}},
+    description={A constraint that depends on more than the position of the particles in the system},
+    see={holonomic const}
+}
+
+\newglossaryentry{gen vel}
+{
+    name=generalized velocity,
+    first = {\textit{generalized velocity}},
+    plural = {generalized velocities},
+    firstplural = {\textit{generalized velocities}},
+    description={A free direction of movement for a vehicle. These can be translational or rotational directions}
+}
+
+\newglossaryentry{conservative}
+{
+    name=conservative,
+    first = {\textit{conservative}},
+    description={A system or potential which is independent of the path. A closed integral in a conservative field is 0}
+}
+
+\newglossaryentry{dzhan}
+{
+    name={Dzhanibekov Effect},
+    first=\textit{Dzhanibekov Effect},
+    description={A phenomenon in which rotation about an intermediate axis results in rotation about another axis. This phenomenon occurs with any body where the three PMOIs are not equal. It is easily seen with a tennis racket or a cell phone},
+    see={pmoi}
+}
+
+\newglossaryentry{dim anal}
+{
+    name=dimensional analysis,
+    first = {\textit{dimensional analysis}},
+    description={The process of determining information from a physical equation by considering the dimensions, or units, of quantities in the equation}
+}
+
+\newglossaryentry{quaternion}
+{
+    name=quaternion,
+    first = {\textit{quaternion}},
+    description={An extension of the complex numbers with elements $j$ and $k$ added. The common form is expressed $q_1+q_2i+q_3j+q_4k$ (our notation) or $q_1i+q_2j+q_3k+q_4$. The algebra of quaternions is generally denoted $\mathbb{H}$}
+}
+
+\newglossaryentry{bandwidth}
+{
+    name=bandwidth,
+    first = {\textit{bandwidth}},
+    description={The bandwidth of a signal is the difference between its upper and lower frequencies. In our context of numerical integration, this bandwidth refers to twice the highest frequency of a function}
+}
+
+\newglossaryentry{rail whip}
+{
+    name=rail whip,
+    first={\textit{rail whip}},
+    description={A phenomenon where the flexibility of the launch rail causes a large moment to be exerted on the rocket during launch}
+}
+
+\newglossaryentry{beat freq}
+{
+    name=beat frequency,
+    first = {\textit{beat frequency}},
+    description={A beat frequency is the result of constructive and destructive interference between two waves of a similar frequency. The similarity of the frequencies creates variations in the amplitude of the resultant wave}
+}
+
+\newglossaryentry{func handle}
+{
+    name=function handle,
+    first = {\textit{function handle}},
+    description={A pointer to an instance of a function in MATLAB. A function handle essentially stores a function call in a variable in MATLAB}
+}
+
+\newglossaryentry{axisym}
+{
+    name=axisymmetric,
+    first = {\textit{axisymettric}},
+    description={An object in which there is rotational symmetry about one or more of the axes}
+}
+
+\newglossaryentry{stiff}
+{
+    name=stiff,
+    first = {\textit{stiff}},
+    description={A differential equation that is hard to numerically integrate as a result of instability when larger timesteps are used. Stiffness is a property of the differential equation itself, and not the solution. Stiff systems are not completely well defined, but generally follow from this definition}
+}
+
+\newglossaryentry{nyquist rate}
+{
+    name=Nyquist rate,
+    first = {\textit{Nyquist rate}},
+    description={The rate at which a signal must be sampled to be free of distortions and aliasing. This rate is typically twice the highest frequency present in the signal}
+}
+
+\newglossaryentry{skew-symmetric matrix}
+{
+    name=skew-symmetric matrix,
+    first = {\textit{skew-symmetric matrix}},
+    description={A matrix which obeys the property that every $a_{ij}=-a_{ji}$. This can be interpreted to mean every term across the diagonal is equal in magnitude, but opposite in sign. Sometimes called an anti-symmetric matrix or anti-metric matrix}
+}
+
+\newglossaryentry{Euler rates}
+{
+    name=Euler rates,
+    first={\textit{Euler rates}},
+    description={A way to describe rotational rates with orientation for 3-dimensional rotations, they are denoted by the dot of the corresponding Euler angle: ($\dot{\psi},\dot{\theta},\dot{\phi}$)}
+}
+
+\newglossaryentry{Euler angles}
+{
+    name=Euler angles,
+    first = {\textit{Euler angles}},
+    description={A set of three scalar values used to describe the orientation of a rigid body in space}
+}
+
+\newglossaryentry{holonomic sys}
+{
+    name=holonomic system,
+    first = {\textit{holonomic system}},
+    description={A system that is entirely composed of holonomic constraints},
+    see={holonomic const}
+}
+
+\newglossaryentry{holonomic const}
+{
+    name=holonomic constraint,
+    first = {\textit{holonomic constraint}},
+    description={A constraint on a Lagrangian system which is a function of only the position of the particles},
+    see={Lagrangian}
+}
+
+\newglossaryentry{buck pi}
+{
+    name=Buckingham Pi Theorem,
+    first = {\textit{Buckingham Pi Theorem}},
+    description={The Buckingham Pi Theorem is a method to non-dimensionalize parameters of a system. In a system with $N$ parameters and $K$ physical dimensions, it is possible to express $P=N-K$ dimensionless groups}
+}
+
+\newglossaryentry{trunc error}
+{
+    name=truncation error,
+    first = {\textit{truncation error}},
+    description={Error in numerical integration that comes from the inaccuracies of the integration scheme in modeling the true behavior of the function. This error is related to the number of higher order terms ignored}
+}
+
+\newglossaryentry{roundoff error}
+{
+    name=roundoff error,
+    first = {\textit{roundoff error}},
+    description={Error in numerical integration that comes from inaccuracies in the floating point precision of computers. This is worsened by a larger number of timesteps, as this error will compound}
+}
+
 \newacronym{oop}{OOP}{Object-Oriented Programming}
 \newacronym{eom}{EOM}{Equation of Motion}
 \newacronym{rhr}{RHR}{right hand rule}
