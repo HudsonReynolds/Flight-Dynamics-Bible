@@ -872,6 +872,23 @@ For our current model, the \gls{body frame} of our 6-\gls{dof} has its origin in
     \label{fig:BodyFrameRocket}
 \end{figure}
 
+\subsection{The Wind Frame}
+
+The final important frame of reference is the \gls{wind frame}. Much like the body frame, this frame of reference is fixed at some point within the vehicle. Unlike the body frame, it is not defined using the geometry of the vehicle, rather it is initialized with respect to the freestream velocity. As such, the first basis vector of this frame of reference is aligned with the velocity of the vehicle itself. A typical representation of the wind frame on an aircraft is shown below:
+
+
+
+
+
+
+The wind frame is certainly less intuitive than the body frame. 
+
+
+they are offset from one another by the angle of attack and sideslip. 
+
+
+
+
 \section{Derivative Transport}
 The last issue that we tackle when different reference frames get involved is the fact that objects are moving around and accelerating. We can create various reference frames, but to correctly apply Newton's second law, we must use our inertial frame as the original reference!
 
@@ -1451,7 +1468,7 @@ One thing to note is that some quantities are more easily defined with respect t
 
 The last thing that we note in this section is that our forces and moments are coupled. This means that the aerodynamic forces are a function of the orientation of the vehicle, so the moments and forces must be solved as a system.
 \subsection{State Vector}
-Let us briefly discuss the concept of a \gls{state vector}. The \gls{state vector} is a column vector that contains information on the current state of our system. In the example of our 3-\gls{dof}, we will include the position, velocity, rotation, and rotation rate of the system in the \gls{state vector}. Given the state vector, we can completely determine the future behavior of our system. In the 3-\gls{dof} case, our state vector may look like: \endnote{The order of the state vector does not particularly matter, so long as we are consistent with the location of the elements. Typically, it is common to write all vectors first and then their derivatives, but there is no hard rule. We follow this convention in our discussion.}
+Let us briefly discuss the concept of a \gls{state vector}. The \gls{state vector} is a column vector that contains information on the current state of our system. The state vector tells us everything we need to know to predict the future of our system. In the example of our 3-\gls{dof}, we will include the position, velocity, rotation, and rotation rate of the system in the \gls{state vector}. Given this state vector for a 3-\gls{dof}, we can completely determine the future behavior of the system. The state vector is not unique. In the 3-\gls{dof} case, our state vector may look like: \endnote{The order of the state vector does not particularly matter, so long as we are consistent with the location of the elements. Typically, it is common to write all vectors first and then their derivatives, but there is no hard rule. We follow this convention in our discussion.}
 $$\textbf{X}=\begin{bmatrix}
     x\\y\\\theta\\\dot{x}\\\dot{y}\\\dot{\theta}
 \end{bmatrix}$$
@@ -1473,29 +1490,36 @@ We also have the relationship between angular momentum, $\vec{H}$, and the \gls{
 \begin{equation}\label{eq:Iw}
     {}^i\vec{H}={}^i(I\vec{\omega})
 \end{equation}
-You will notice that our \gls{moment of inertia} here is defined with respect to the \gls{inertial frame}. As a result, when our body changes orientation, the \gls{moment of inertia} will be expressed differently! Often however, it is more helpful to define this \gls{moment of inertia} in terms of our \gls{body frame}. We will go through this derivation of the \gls{moment of inertia} below.
+This equation is an exact analogy to the linear momentum, $\vec{p}=m\vec{v}$. Through this analogy, we see that $I$ is roughly equivalent to $m$. It tells us how much resistance there is to rotation. You may also notice that our \gls{moment of inertia} here is defined with respect to the \gls{inertial frame}. As a result, when our body changes orientation, the \gls{moment of inertia} will be expressed differently! Often however, it is more helpful to define this \gls{moment of inertia} in terms of our \gls{body frame}. We can soon rewrite this equation so that $I$ can be expressed in body coordinates. For now, let's define $I$ more rigorously.
+
 \subsection{Moment of Inertia and Inertia Tensor}\label{moment of inertia}
 The \gls{moment of inertia} of a body is a measure of its resistance to rotational acceleration. It is in essence, the rotational analogue of mass (mass is a measure of resistance to linear acceleration, by the same line of reasoning). Since we need the \gls{moment of inertia} to describe our relationship for angular momentum in \eqref{eq:Iw}, it is useful for us to see its derivation here.
 
 We can start by showing that the mass of a region can be found by integrating the density over its volume. Mathematically, we show this as:
 $$\iiint\limits_V{\rho}{dV}$$
+A brief aside: To be very explicit and precise, we should expand this $dV$ as $dxdydz$ and note that $\rho$ is a function of $x,y,z$ coordinates. Written in full, this integral is:
+$$\iiint\limits_V{\rho(x,y,z)}{dxdydz}$$
+From here, we'll go back to the $dV$ notation, but remember that we are really doing an integral over all three coordinates.
+
 Similarly, we know that the \gls{moment of inertia} of a particle is $mr^2$, which is it's mass multiplied with the length of the moment arm, $r$, squared. This is often referred to as the `second moment' of mass. By integrating this second moment, we have:
 $$\iiint\limits_V{\rho}{r^2}{dV}$$
-It is useful to define the \gls{moment of inertia} along each direction. We can rewrite $r$ in terms of $x$, $y$, and $z$ for each of the component directions:\endnote{We use the fact here that $r^2=x^2+y^2+z^2$.}
+This is the equivalent of $I=\sum mr^2$ in the continuous limit. We can thus apply the integral equation for distributed bodies, like a rocket.
+
+It is useful to define the \gls{moment of inertia} along each body axis direction. We can rewrite $r$ in terms of $x$, $y$, and $z$ for each of the component directions:\endnote{We use the fact here that $r^2=x^2+y^2+z^2$.}
 \begin{gather}\label{eq:moi}
     I_{xx}=\iiint\limits_V{\rho}{\left(y^2+z^2\right)}{dV}\\
     I_{yy}=\iiint\limits_V{\rho}{\left(x^2+z^2\right)}{dV}\\
     I_{zz}=\iiint\limits_V{\rho}{\left(x^2+y^2\right)}{dV}
 \end{gather}
-For our rocket, we will find that these are the only quantities that we need to define. We also take define these quantities with respect to the center of mass since this is the point about which free rotations occur.
+For our rocket, we will find that these are the only quantities that we need to define. We also take define these quantities with respect to the center of mass since this is the point about which free rotations occur. Our coordinate system should have the origin at the center of mass for these calculations!
 
-However, in general, we also have three more quantities, which are called the products of inertia. This is defined by the product of two of our elements, such as $xy$. This will have the same dimensions as the quantity $r^2$, so it can be applied in a similar way to the \gls{moment of inertia}. The products of inertia are defined as follows:
+In general, we also have three more quantities, which are called the products of inertia. These are defined by the product of two of our elements, such as $xy$. This will have the same dimensions as the quantity $r^2$, so it can be applied in a similar way to the \gls{moment of inertia}. The products of inertia are defined as follows:
 \begin{gather}
     I_{xy}=I_{yx}=\iiint\limits_V{-xy\rho}{dV}\\
     I_{xz}=I_{zx}=\iiint\limits_V{-xz\rho}{dV}\\
     I_{yz}=I_{zy}=\iiint\limits_V{-yz\rho}{dV}
 \end{gather}
-For our rocket, because of the symmetry about the $\hat{X}$ axis, these quantities go to zero. However, for future implementations that may include fuel slosh and asymmetries, the products of inertia may be non-zero!
+For most rockets, because of the symmetry about the $\hat{X}$ axis, these quantities go to zero. However, more complex models may include fuel slosh or mass asymmetries. In that case, the products of inertia are not zero and must be calculated.
 
 We express our \gls{inertia tensor}, denoted $I$, as the $3\times3$ matrix which contains the moments and products of inertia.\endnote{This quantity is called a tensor because the elements of the matrix transform in a specific way under a coordinate transformation. The inertia tensor itself never changes, just the way in which we represent it.}
 $$I=\begin{bmatrix}
@@ -1503,23 +1527,21 @@ $$I=\begin{bmatrix}
     I_{yx}&I_{yy}&I_{yz}\\
     I_{zx}&I_{zy}&I_{zz}
 \end{bmatrix}$$
-For our rocket, we get the simplification that:
+For a simple axisymmetric rocket, we get the simplification that:
 $$I=\begin{bmatrix}
     I_{xx}&0&0\\
     0&I_{yy}&0\\
     0&0&I_{zz}
 \end{bmatrix}$$
 
-In fact, we can always find axes such that the products of inertia are zero. These are called the \gls{principal axes} and are important in many applications, including such as structures.\footnote{See \cite{baker_statics_2020}.} For our rocket, it just happens that these \gls{principal axes} are the ones we have chosen to define as our \gls{body frame}. The \gls{moment of inertia} along these \gls{principal axes} are solutions to the eigenvalue problem $I\vec{\omega}=I^*\vec{\omega}$, where $I^*$ is a scalar. Essentially, we are finding a matrix $I$ such that the output is just a scalar multiple of the input, $\omega$. We can see that having this property will greatly simplify our results. This is another reason why we like to perform many calculations in the \gls{body frame}. Using the \gls{inertia tensor}, a matrix form of \eqref{eq:Iw}  is written as:
+In fact, we can always find axes such that the products of inertia are zero. These are called the \gls{principal axes} and are important in many applications, including structures.\footnote{See \cite{baker_statics_2020}.} For our rocket, it just happens that these \gls{principal axes} are the ones we have chosen to define as our \gls{body frame}. The \gls{moment of inertia} along these \gls{principal axes} are solutions to the eigenvalue problem $I\vec{\omega}=I^*\vec{\omega}$, where $I^*$ is a scalar. Essentially, we are finding a matrix $I$ such that the output is just a scalar multiple of the input, $\omega$. We can see that having this property will greatly simplify our results. This is another reason why we like to perform many calculations in the \gls{body frame}. Using the \gls{inertia tensor}, a matrix form of \eqref{eq:Iw}  is written as:
 \begin{equation}\label{eq:IwVec}
     \vec{H}=I\vec{\omega}
 \end{equation}
 In the simplification using the \gls{principal axes}, we often refer to the terms $I_{xx}$, $I_{yy}$, and $I_{zz}$ simply as $I_x$, $I_y$, and $I_z$. These are called the \glspl{pmoi}.
 
 \subsection{Parallel Axis Theorem}
-Similar to the way in which we described the \gls{moment of inertia} of a particle to be $mr^2$, we can describe the change in \gls{moment of inertia} of a body due to the offset of its axis.
-
-We accomplish this with the \gls{par axis thm}, which relates the moment and products of inertia through different axes of rotation. To use \gls{par axis thm}, we simply take the known \gls{moment of inertia} and add $mr^2$ along that component direction. This looks like:
+Similar to the way in which we described the \gls{moment of inertia} of a particle to be $mr^2$, we can describe the change in \gls{moment of inertia} of a body due to the offset of its axis. We accomplish this with the \gls{par axis thm}, which relates the moment and products of inertia through different axes of rotation. To use \gls{par axis thm}, we simply take the known \gls{moment of inertia} and add $mr^2$ along that component direction. This looks like:
 $$I_{x'x'}=I_{xx}+m\left(y^2+z^2\right)$$
 This is similarly computed for the other axes, with the $r$ always being the axis that is not the one we are computing the \gls{moment of inertia} of. We can think of this intuitively because we are translating the center along the two axes perpendicular to the one describing the \gls{moment of inertia}.
 
@@ -3181,7 +3203,9 @@ You find yourself flying a UH-1 Huey over Hamburger Hill in Vietnam, 1969. While
 \end{exercise}
 
 \begin{exercise}[Building a 6-DoF: Part II]
-With some knowledge of attitude dynamics, we're ready to tackle the second part of our 6-DoF rocket simulation.
+With some knowledge of attitude dynamics, we're ready to tackle the second part of our 6-DoF rocket simulation. We'll introduce some aerodynamic forces and calculate how these effect the attitude of the rocket.
+
+
 \end{exercise}
 
 \newpage
@@ -3195,7 +3219,7 @@ With some knowledge of attitude dynamics, we're ready to tackle the second part 
 
 Aerodynamics is a topic of great concern to us, as lift and drag are two of the primary forces experienced by our rocket. In \autoref{sec: 3DoF Case} we discuss the 4 fundamental forces on a vehicle and how we define their directions. In that section we did not define the magnitude of the aerodynamic forces, $\vec{F}_L$ and $\vec{F}_D$. The goal of aerodynamics, put shortly, is to calculate these values to the best of our ability.
 
-There is a great amount of theory and analysis that can be done in order to calculate these aerodynamic forces acting on a vehicle. These aerodynamic phenomena -- especially for transonic and supersonic rocket systems -- can be very complicated. In order to keep this section relatively comprehensible, we have decided to only cover a few basic concepts. Some fairly basic modeling can get us $80\%$ of the way to good aerodynamics. The last $20\%$ requires very complex modeling which are beyond the scope of this first volume. We may start our discussion by introducing one of the most fundamental ideas in fluid dynamics: non-dimensionalization. Aerodynamicists very often uses non-dimensional quantities, so we may start our exploration of aerodynamics here. 
+There is a great amount of theory and analysis that can be done in order to calculate these aerodynamic forces acting on a vehicle. These aerodynamic phenomena -- especially for transonic and supersonic rocket systems -- can be very complicated. In order to keep this section relatively comprehensible, we have decided to only cover a few basic concepts. Some fairly basic modeling can get us $80\%$ of the way to good aerodynamics. The last $20\%$ requires very complex modeling which are beyond the scope of this first volume. We may start our discussion by introducing one of the most fundamental ideas in fluid dynamics: non-dimensionalization. Aerodynamicists very often use non-dimensional quantities, so we may start our exploration of aerodynamics here. 
 
 \section{Non-Dimensionalization}
 
@@ -3216,7 +3240,7 @@ Since our main goal is to understand the lift and the drag on an object, we will
     \item Speed of sound - the properties of the fluid will depend on the speed of sound in the fluid.
     \item \Gls{angle of attack} - the angle of the object will change the apparent size in the airflow.
 \end{enumerate}
-Already, we can see that some of the terms that we see in the lift and drag equations are present above. However, we do not know in what may they are correlated to each other and what else they depend on! To determine these dependencies, we can invoke \gls{dim anal}. In particular, we can use a specific type of \gls{dim anal} known as the \gls{buck pi}. This will allow us to derive dimensionless quantities that prove to be particularly useful in aerodynamics.\footnote{For more information and practice problems on \gls{buck pi}, refer to 
+Already, we can see that some of the terms that we see in the lift and drag equations are present above. However, we do not know in what way they are correlated to each other and what else they depend on! To determine these dependencies, we can invoke \gls{dim anal}. In particular, we can use a specific type of \gls{dim anal} known as the \gls{buck pi}. This will allow us to derive dimensionless quantities that prove to be particularly useful in aerodynamics.\footnote{For more information and practice problems on \gls{buck pi}, refer to 
 \cite{wassgren_buckingham_nodate}.}
 
 \begin{theorem}[Buckingham Pi Theorem]
@@ -3276,7 +3300,7 @@ Aerodynamics has a lot of jargon and ideas associated with it that is important 
 
 \subsection{Lift and Drag}\label{Lift and Drag}
 
-Aerodynamic forces are sometimes treated as mysterious in nature. In fact, you can ask many engineers where lift comes from and you will often be presented with a very convoluted (or incorrect) answer. While a few pages of text won't give you an extraordinary deep understanding, it should be enough to understand lift and drag with sufficient depth for rocket modeling -- and maybe dispel a few of the false ideas surrounding them.
+Aerodynamic forces are sometimes treated as mysterious in nature. In fact, you can ask many engineers where lift comes from and you will often be presented with a very convoluted (or incorrect) answer. While a few pages of text won't give you an extraordinarily deep understanding, it should be enough to understand lift and drag with sufficient depth for rocket modeling -- and maybe dispel a few of the false ideas surrounding them.
 
 The first thing to note is that what we call lift and drag are just a convenient way of representing a vector sum of components. We've seen before that:
 $$\vec{F}_R=\vec{F}_L+\vec{F}_D$$
@@ -3356,6 +3380,7 @@ We can expand \eqref{eq:LDMatrix} to give two scalar equations:
         L'=N'\cos\alpha-A'\sin\alpha\\
         D'=A'\cos\alpha+N'\sin\alpha
 \end{gather}
+In 3D, we can do a similar transformation using a DCM like we discuss in \autoref{sec:attitude dynamics}. To do so, we would come up with a DCM that translates between the wind frame (where $L'$ and $D'$ are) and the body frame ($N'$ and $A'$).
 
 So, if we know the distribution of pressure over our body, we have shown that we can find the resultant aerodynamic forces acting on our body. There we have it, knowing the pressure distribution we can easily calculate lift and drag.
 
@@ -3370,11 +3395,11 @@ To come up with a theoretical model for our lift and drag, we need to understand
     \item At our scales, we treat air as a continuous medium.
 \end{enumerate}
 
-These two assumptions are empirical in nature. There is no `proof' that I can give you that shows these are true. It's simply what we observe. From these two ideas, we can come up with some simple models of aerodynamics. These models give us a good basis for understanding what our computational models are doing under the hood and how we can come up with approximate models.
+These three assumptions are empirical in nature. There is no `proof' that I can give you that shows these are true. It's simply what we observe. From these three ideas, we can come up with some simple models of aerodynamics. These models give us a good basis for understanding what our computational models are doing under the hood and how we can come up with approximate models.
 
 Let's start with the first condition. This condition implies that our flow has some kind of layer where the air gets up to speed. It starts at zero velocity and it will eventually reach some external velocity. We call this region where the flow is rapidly changing the `boundary layer'. Depicted diagrammatically, the boundary layer looks like:
 
-\begin{figure}
+\begin{figure}[H]
     \centering
 
 
@@ -3472,12 +3497,18 @@ This is known as Laplace's equation and it tells us how our flow works when thin
 
 To actually solve problems with Laplace's equation, there's one more fact that we need to know. When flow hits a surface, it shouldn't go through. In this inviscid model, we'll allow the flow to slip past the surface though. We have a condition called \textit{flow tangency}, which tells us that at a surface:
 $$\vec{v}\cdot\hat{n}=0$$
-where $\hat{n}$ is the surface normal. We won't get too carried away with potential flows here. There's a good website which shows the equations and a visualization of such flows at \cite{noauthor_potential_2026}.
+where $\hat{n}$ is the surface normal.
+
+Before we move on, let's notice one thing about potential flow. Potential flow can calculate the lift on our object. It predicts the fact that the velocity (and thus pressure) is lower on the upper side of a wing. The flow tangency condition gives us problems, though. Because the flow slips past the surface and doesn't `stick' to it, there's no way that potential flow will ever give us a measurement of drag. This is known as \textit{D'Alembert's Paradox}.
+
+Because of this, we have to use some other techniques to solve for the drag. We don't discuss specifics here, but we often use the boundary layer we saw earlier to find approximations for the drag on the vehicle.
+
+We won't get too carried away with potential flows here. There's a good website which shows the equations and a visualization of such flows at \cite{noauthor_potential_2026}.
 
 That was quite a bit of new terminology that we just introduced, so let's hit the big ideas again:
 \textbf{
 \begin{enumerate}
-    \item We can get a good estimate of lift using an irrotational `potential' flow.
+    \item We can get a good estimate of lift using an irrotational potential flow.
     \item Potential flow cannot give us drag.
     \item We can confine all of our flow rotation and drag to a small `boundary layer'.
     \item Potential flows add in superposition because they are a scalar field.
@@ -3550,7 +3581,7 @@ Knowing the normal force and the moment about the leading edge, we can move our 
 We can write this moment balance to find how far along the $\hat{x}$ axis we need to go before the moment is zero:\endnote{We assume that the center of pressure is directly along the $\hat{x}$ axis and there is no component in $\hat{y}$. Because rockets are so narrow and symmetric, this is a fine assumption.}
 
 $$M'_{LE}=r\times F_R$$
-Notice that the axial force does not contribute to the moment, so we only need to consider the axial force:
+Notice that the axial force does not contribute to the moment, so we only need to consider the normal force:
 $$M'_{LE}=x_{cp}N'$$
 One last thing, aerodynamicists have adopted a very backwards convention for moments. In aerodynamics, a moment that pitches the vehicle up is positive. As a result, we have to flip the sign of our moment in this equation. Solving, we find the center of pressure location as:
 \begin{gather}
@@ -3731,7 +3762,7 @@ When our flow is faster than $M=0.3$ to about $M=0.75$, we can utilize a transfo
 $$C_L=\frac{C_{L_0}}{\sqrt{1-M^2}}$$
 Where $C_{L_0}$ is the lift coefficient in the incompressible regime. We can do the same for the moment coefficient:
 $$C_M=\frac{C_{M_0}}{\sqrt{1-M^2}}$$
-Notice that we under this transformation, the center of pressure stays the same regardless of Mach number. We know from experiments and simulation that this is \textit{not} true.  This transformation is just an approximation of the true aerodynamics and it's important to keep in mind that such relations are approximate.
+Notice that under this transformation, the center of pressure stays the same regardless of Mach number. We know from experiments and simulation that this is \textit{not} true.  This transformation is just an approximation of the true aerodynamics and it's important to keep in mind that such relations are approximate.
 
 \subsubsection{Transonic Flow}
 
@@ -3739,7 +3770,7 @@ These equations do a fairly good job of adjusting the lift and moment acting on 
 
 \subsubsection{Supersonic flow}
 
-One things are moving faster than the speed of sound, our aerodynamics become quite a bit simpler again. In this regime, the flow past our vehicle is faster than the speed at which information propagates through the fluid (the speed of sound in that fluid). As a result, our flow characteristics are quite unintuitive. Luckily, we still have some analytical expressions we can use to quantify the lift and drag in this regime. We'll detail the results of supersonic linear theory here, which tells us that:
+Once things are moving faster than the speed of sound, our aerodynamics become quite a bit simpler again. In this regime, the flow past our vehicle is faster than the speed at which information propagates through the fluid (the speed of sound in that fluid). As a result, our flow characteristics are quite unintuitive. Luckily, we still have some analytical expressions we can use to quantify the lift and drag in this regime. We'll detail the results of supersonic linear theory here, which tells us that:
 $$C_L=\frac{4\alpha}{\sqrt{M^2-1}}$$
 Drag is more complicated. In supersonic aerodynamics, we have something called \textit{wave drag}, which is the result of supersonic pressure waves acting on the vehicle. This gives us an additional drag on top of the drag from the shear stress of the fluid. We can approximate this drag with the following formula:
 $$C_{D_W}=\frac{4}{\sqrt{M^2-1}}\left[\alpha^2+K_2+K_3\right]$$
@@ -3770,10 +3801,10 @@ This gives us a standard value of $\rho_{\infty}$ and $a_{\infty}$ to use. Howev
 
 All of this is to say that using "atmosisa" gives us a good baseline model of the atmosphere, but is not the final say in atmospheric modeling. Thus it is useful to use other sources of atmospheric data that give location- and time-specific data.
 \subsection{Live Weather Data}
-Getting live weather information is useful in improving upon the uncertainty in the calculations provided by the "atmosisa" model. 
-To do so, our model uses information from the $\texttt{open-meteo}$ API \cite{openmeteo_openmeteo_nodate}, though several types of services like this exist. Another benefit of such live weather data is that it allows us to compute wind at the surface level and at many pressure levels (up to $22 \mathrm{\ km}$ in height). 
+Getting live weather information is useful in improving upon the uncertainty in the calculations provided by the "atmosisa" or other standard atmosphere models. 
+To do so, using live or historic weather data is a good option. Our model uses information from the $\texttt{open-meteo}$ API \cite{openmeteo_openmeteo_nodate}, though several types of services like this exist. Another benefit of such live weather data is that it allows us to compute wind at the surface level and at many pressure levels (up to $22 \mathrm{\ km}$ in height). 
 
-Generally, MATLAB alone cannot perform requests to the API, so that task is performed by a Python script. In this case, we use the MATLAB-Python interface to import the data from the Python script into the MATLAB environment. More information about this MATLAB Python interfacing can be found at \cite{mathworks_using_nodate}.
+Generally, MATLAB alone cannot perform requests to an API, so that task is performed by a Python script. In this case, we can use the MATLAB-Python interface to import the data from the Python script into the MATLAB environment. More information about this MATLAB Python interfacing can be found at \cite{mathworks_using_nodate}.
 
 Sometimes, we can only get weather data for close to the surface from real time or historic measurements. In this case, it is often a good approximation to use the standard atmosphere model provided by something like "atmosisa" offset to match the temperature and pressure measured. A suitable comparison is shown in \autoref{fig:live atmos}. While temperature can change quite drastically, pressure and density profiles vary little from the standard atmosphere if they are aligned to be equal at the first ground level geopotential height.
 
@@ -3795,14 +3826,18 @@ More information on RasAero can be found at \cite{rogers_rasaero_2019}. The docu
 
 \subsection{Other Computational Models}
 
-It is worth noting that other computational models exist. RasAero does have shortcomings in modeling some of the aspects of the rocket geometry, so other methods such as \gls{cfd} are also options to be explored. However, in the current state of our model, we have not looked into \gls{cfd} methods very heavily for direct use in MATLAB. These are in the preliminary stages of investigation and will likely be explored more heavily in future editions of this text.
+It is worth noting that other computational models exist. RasAero does have shortcomings in modeling some of the aspects of the rocket geometry. For fast simulation, one other option is OpenRocket \cite{noauthor_openrocket_2026}.
+
+Both OpenRocket and RasAero use empirical correlations and some basic aerodynamic theory for their models, which lets them compute aerodynamics quickly. This is good for early design, as we want to rapidly change parameters and see a rough indiciation of how this will impact the vehicle parameters.
+
+Once a design is more locked down, more high fidelity aerodynamic models can be created. One popular option is \gls{cfd}. These methods directly solve the partial differtial equations of fluid dynamics. However, these tools are often difficult to set up and require extensive knowledge to get good results.
 
 % \section{Wind Modeling}
 % Add our wind modelling stuff here (might actually want to model wind first lmao)
 \section{Key Ideas}
 \begin{enumerate}
     \item When we model a system such as our rocket, we can capture most of the phenomena by capturing data at different $Re$, $M$, and $\alpha$. This is true for \gls{cfd}, wind tunnel modeling, or analytical approaches.
-    \item We can use the center of pressure to determine the aerodynamic stability of a rocket. The stability caliber gives us a good measure of static stability.
+    \item We can use the distance between the center of pressure and center of mass to determine the aerodynamic stability of a rocket. The stability caliber gives us a good measure of static stability.
     \item While analytical solutions are hard to attain in aerodynamics, we can use computational tools to estimate aerodynamic parameters of our vehicle.
 \end{enumerate}
 
@@ -3813,7 +3848,7 @@ This chapter has several notable gaps because we cannot cover all aspects of flu
 \section{Practice Problems}
 
 \begin{exercise}
-You are flying home one day in your P-51 Mustang (pictured in \autoref{fig:p51} for your viewing pleasure). At cruise, your aircraft is 10,000 ft above sea level.
+You are flying in your P-51 Mustang (pictured in \autoref{fig:p51} for your viewing pleasure). At cruise, your aircraft is 10,000 ft above sea level.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\linewidth]{Images/P-51-361.jpg}
@@ -3821,12 +3856,12 @@ You are flying home one day in your P-51 Mustang (pictured in \autoref{fig:p51} 
     \label{fig:p51}
 \end{figure}
 \begin{enumerate}
-    \item What is the density of air at this altitude? Use standard tables and MATLAB/Python.
+    \item What is the density of air at this altitude? Use both standard tables and MATLAB/Python.
     \item Your wings provide a $C_L$ of 0.3 at cruising speed. Your plane has a mass of 4,000 kg and a planform area of $21.8 \mathrm{\ m}^2$. Find the speed necessary to maintain level light at this altitude.
-    \item Your airplane is equipped with  unguided HVAR rockets. As a daring pilot, you want to model the aerodynamics of this rocket so you can launch it at your friend's house with astounding accuracy (\textit{that} will teach them to never steal your mini corn dogs again).
+    \item Your airplane is equipped with  unguided HVAR rockets. As a daring pilot, you want to model the aerodynamics of this rocket so you can launch it with astounding accuracy.
     
     Using your best engineering judgment of the nose cone shape and any other parameters you cannot find, model the HVAR rocket in RasAero.
-    \item As it turns out, shooting rockets at Canadian civilians is illegal (I know, right?). The Royal Canadian Air Force F/A-18's are on your tail now and you will be shot down in 15 minutes unless you can make it to US airspace. You are 160 km from the airspace boundary. You push your throttles to max to book it back home. At full throttle, your Merlin V12 produces 1676 hp (1250 kw). Your aircraft has a $C_D$ of 0.017. At the same altitude of 10,000 ft, find the maximum flight speed. Will you make it back to American airspace in time?
+    \item  The Luftwaffe are on your tail now and you will be shot down in 15 minutes unless you can make it to Allied airspace. You are 160 km from the airspace boundary. You push your throttles to max to book it back home. At full throttle, your Merlin V12 produces 1676 hp (1250 kw). Your aircraft has a $C_D$ of 0.017. At the same altitude of 10,000 ft, find the maximum flight speed. Will you make it back to friendly airspace in time?
 
 \end{enumerate}
 \end{exercise}
@@ -3834,11 +3869,17 @@ You are flying home one day in your P-51 Mustang (pictured in \autoref{fig:p51} 
 \begin{exercise}[Building a 6-DoF: Part III]
 We'll continue our project and introduce aerodynamics into the mix. Remember that our rocket has a length of $1 \text{ m}$ and a diameter of $0.05 \text{ m}$. Now, we'll introduce a \textit{Von Karman} nosecone of length $0.2 \text{ m}$.
 
-We'll also introduce 3 radially symmetric fins with a symmetric NACA 0012 airfoil. These fins have a span of $0.05 \text{ m}$, a root chord of $0.1 \text{ m}$, a tip chord of $0.04 \text{ m}$, a sweep of $0.04 \text{ m}$. The fins are placed at the back of the rocket body. The thickness is determined by the airfoil.
+We'll also introduce 3 radially symmetric fins with a symmetric NACA 0012 airfoil. These fins have a span of $0.05 \text{ m}$, a root chord of $0.1 \text{ m}$, a tip chord of $0.04 \text{ m}$, a sweep of $0.04 \text{ m}$. The fins are placed at the back of the rocket body. The thickness is determined by the airfoil.  The rocket should look like:
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{RocketImage.pdf}
+    \caption{Layout of Rocket}
+    \label{fig:rocket layout}
+\end{figure}
 
+Using RasAero or another program, determine the aerodynamic coefficients as a function of the Mach number and angle of attack. In your simulation, implement some code logic that finds the closest Mach number value and pulls the aerodynamic coefficients associated with that. For the angle of attack, RasAero only gives values in $2\degree$ increments. Interpolate between the table values to get a better estimate. You should also update the center of pressure as a function of Mach number and angle of attack at each time step.
 
-Using RasAero or 
 \end{exercise}
 
 
@@ -4024,8 +4065,22 @@ end
 \end{matlabscript}
 Often, we use a function in MATLAB called $\texttt{ode45}$ to perform RK4 integration. This function has the benefit that it will change the step size to produce high accuracy when needed and decrease computation time otherwise.
 
-An understanding of the operation of $\texttt{ode45}$ is best motivated by an example. We include an example of a Lorenz Attractor in the Appendix \autoref{Appendix:code} as an example of $\texttt{ode45}$. We recommend reading through this code and running it, as well as changing parameters to see how it affects the outputs.
-\subsection{ODE45 Usage}
+\begin{exercise}[Lorenz Attractor]
+An understanding of the operation of $\texttt{ode45}$ is best motivated by an example. In the GitHub, find the script:
+
+\texttt{Scripts\textbackslash Lorenz Attractor\textbackslash LorenzAttractor.m}
+
+The system in question is a Lorenz attractor. This system has the following set of differential equations:
+\begin{align}
+\dot{x}&=\sigma(y-x)\\
+\dot{y}&=x(\rho-z)-y\\
+\dot{z}&=xy-\beta z
+\end{align}
+
+This example shows a simple set of ODEs integrated using $\texttt{ode45}$. We recommend reading through this code and running it, as well as changing parameters to see how it affects the outputs. 
+\end{exercise}
+
+\subsection{ode45 \& solve\_ivp Usage}
 While examples are helpful, it is useful to see the inner workings of $\texttt{ode45}$ for a new user.  "ode45" relies on the \glspl{func handle} that we mentioned earlier. "ode45" takes as inputs the integration function, time span, and initial \gls{state vector}.
 
 "ode45" only takes integration functions that are a function of time and the state variable, or "(t,x)" in MATLAB notation. If we have an integration function that is a function of more than just these two variables, we need to pass them through using \glspl{func handle}. We can do this in the following manner:
@@ -4036,13 +4091,25 @@ While examples are helpful, it is useful to see the inner workings of $\texttt{o
 [t,y] = ode45(@(t,x) integrator(t,x,a,b), x0, tspan, opt)
 \end{matlabscript}
 
-\begin{pythonscript}{}
-np.integrate_ivp()
-\end{pythonscript}
-
 In this example, we have a function that performs our \gls{numerical int}, called "integrator", the output of which will be the derivative of our \gls{state vector}. We want "ode45" to see this function and only input "(t,x)", so we put that in a \gls{func handle} at the front. After the \gls{func handle}, we are free to pass in any other variables, such as "a" and "b". These will simply be read in as constants in the "ode45" integration scheme.
 
 The benefit of adding these in as a function pass through instead of being computed in "ode45" will become apparent when we discuss code optimization in \autoref{sec: code optimization}. This also keeps our code hierarchy cleaner and more easily modifiable.
+
+We can do the same thing in Python using the \texttt{scipy} package.
+\begin{pythonscript}{}
+from scipy.integrate import solve_ivp
+
+t_span = (0, 5)
+t_eval = np.linspace(0, 5, 100)
+
+sol = solve_ivp(integrator, t_span, x0, t_eval)
+\end{pythonscript}
+
+We can define our integrator function like:
+\begin{pythonscript}{}
+def integrator(t, y):
+    return -2 * y
+\end{pythonscript}
 
 \section{Numerical Integration Considerations}\label{sec:other numerical ints}
 Numerical integration requires that we understand when our algorithms may fail or perform inadequately. In this section, we will investigate sources of failure and how we can use different algorithms or adjustments to fix such issues.
@@ -4052,10 +4119,12 @@ We briefly discuss the error of the integration schemes in each of the previous 
 Using the same example differential equation from \autoref{sec:errors in the euler method} as $\frac{dy}{dt}=2t$, we can show the approximation for Explicit Euler, RK2, and RK4. This is shown in \autoref{fig:Numerical Comparison}.
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\linewidth]{Images/ComparisonNumInt.png}
+    \includegraphics[width=0.85\linewidth]{Images/ComparisonNumInt.png}
     \caption{Comparison of Numerical Integration Schemes for $y'=2t$}
     \label{fig:Numerical Comparison}
 \end{figure}
+
+
 As we can see from this example, even with a fairly large timestep of $\Delta t=0.5s$, the RK4 perfectly matches the true curve. For this differential equation, there are no terms of higher order than quadratic, so the RK4 will perfectly match the solution curve. RK2 shows a larger error, and the Euler integrator shows an even greater error.
 \begin{exercise}[Numerical Integration Practice]
 Access the code in the GitHub for this example, located at: 
@@ -4133,7 +4202,25 @@ On the converse side, for systems that require very high precision, such as orbi
 In addition to these \gls{numerical int} schemes, there are a variety of integration schemes which are based on energy conservation. These types of integrators are called \glspl{symplectic int}. These types of integrators use the energy methods we discussed in \autoref{sec:energy methods} to ascertain their solutions. A \gls{symplectic int} uses the Hamiltonian to formulate the integrator. A similar operation can be done to reduce the \gls{Lagrangian} to two first order equations, in a system known as a\textit{ variational} integrator.
 
 \subsubsection{Use Case of Symplectic Integrators}
-MATLAB does not have built-in functions for these integrators, scripts to do so can be written or found online. The best use case for these algorithms is for systems with a Hamiltonian or Lagrangian description that need to be integrated over a long time span (such as a deep space orbit). Because these integrators conserve energy, they will better preserve the characteristics of these systems over long times as compared to RK integrators. Further discussion is in Volume III.
+MATLAB does not have built-in functions for these integrators, but scripts to do so can be written or found online. The best use case for these algorithms is for systems with a Hamiltonian or Lagrangian description that need to be integrated over a long time span (such as a deep space orbit). Because these integrators conserve energy, they will better preserve the characteristics of these systems over long times as compared to RK integrators. In two body orbits, we prefer to use symplectic integrators because they preserve the exact solution up to numerical precision. Further discussion is in Volume III.
+
+\subsubsection{Sympletic Euler Integrator}
+One last note about symplectic schemes. When we're doing a basic Euler numerical integration of acceleration, we have typically done:
+\begin{matlabscript}{Standard Euler Integrator}
+v(i+1) = v(i) + a*dt;
+p(i+1) = p(i) + v(i)*dt;
+\end{matlabscript}
+
+The \textit{sympletic Euler integrator} is slightly different:
+
+\begin{matlabscript}{Symplectic Euler Integrator}
+v(i+1) = v(i) + a*dt;
+p(i+1) = p(i) + v(i+1)*dt;
+\end{matlabscript}
+
+As it turns out, this second option with the small change that we use $\texttt{v(i+1)}$ performs much better because it respects the symplectic structure.\endnote{If you know some classical mechanics, these equations preserve the volume of a Hamiltonian flow better, such that the volume stays approximantly constant in the phase space. A standard Euler integrator does not do this.}
+
+
 
 \section{Numerical Integration Optimization}\label{sec: code optimization}
 
@@ -4173,11 +4260,15 @@ However, other operations, such as "atmosisa", should not comprise a large porti
 
 \section{Key Ideas}
 \begin{enumerate}
-    \item \Gls{numerical int} schemes of higher order can better approximate systems. Generally, a higher order will require more up front computation but will be more accurate and will take fewer steps to achieve a given accuracy.
-    \item When numerically integrating functions with high frequencies or rapid changes, we need to be mindful of stiffness of the system and ensure to sample at at least the \gls{bandwidth} of the signal.
+    \item \Gls{numerical int} schemes of higher order can better approximate systems. Generally, a higher order will require more up front computation but will be more accurate and will take fewer steps to achieve a given accuracy. 4th or 5th order schemes are typically a good balance for rocket dynamics.
+    \item When numerically integrating functions with high frequencies or rapid changes, we need to be aware of the stiffness of the system and ensure that we sample at least the \gls{bandwidth} of the signal.
     \item Keep in mind what you need to calculate inside the integrator and what should be passed through. Calculations inside the integrator are very time expensive!
 \end{enumerate}
-
+\newpage
+\section{Practice Problems}
+\begin{exercise}[Building a 6-DoF: Part IV]
+If you haven't already, update your 6-\gls{dof} simulation to use $\texttt{ode45}$ (MATLAB) or $\texttt{solve\_ivp}$ (Python) for better numerical integration. You can also try implementing a custom RK4 algorithm as discussed in the text.
+\end{exercise}
 \newpage
 \printendnotes[large]
 \markboth{NOTES}{NOTES}
