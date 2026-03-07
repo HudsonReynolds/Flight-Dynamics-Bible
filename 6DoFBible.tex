@@ -874,22 +874,25 @@ For our current model, the \gls{body frame} of our 6-\gls{dof} has its origin in
 
 \subsection{The Wind Frame}
 
-The final important frame of reference is the \gls{wind frame}. Much like the body frame, this frame of reference is fixed at some point within the vehicle. Unlike the body frame, it is not defined using the geometry of the vehicle, rather it is initialized with respect to the freestream velocity. As such, the first basis vector of this frame of reference is aligned with the velocity of the vehicle itself. A typical representation of the wind frame on an aircraft is shown below:
+The final important frame of reference is the \gls{wind frame}. Much like the body frame, this frame of reference is fixed at some point within the vehicle. Unlike the body frame, it is not defined using the geometry of the vehicle, rather it is initialized with respect to the freestream velocity. As such, the first basis vector of this frame of reference is aligned with this quantity itself. When referenced in this text, the wind frame axes will be the body frame axes subscripted with a $w$ (i.e. $(\hat{X}_w, \hat{Y}_w, \hat{Z}_w)$) A typical representation of the wind frame on an aircraft is shown below:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\linewidth]{Images/WindFrameTypical.png}
+    \includegraphics[width=0.7\linewidth]{Images/WindFrameTypical.png}
     \caption{Typical Wind Frame Orientation}
-    \label{fig:placeholder}
+    \label{fig:WindFrameTypical}
 \end{figure}
 
+The wind frame is certainly less intuitive than the body frame. After all, the only necessity is that of a single basis vector pointing along the direction of the freestream velocity. Where should we point the remaining two basis vectors? To solve this problem, we choose to define the wind frame in relation to the body frame. By rotating about $\hat{Y}$ and $\hat{Z}$ axes to point $\hat{X}$ in the direction of $V_\infty$, we can create the wind frame in an ordered manner. In addition, the amount by which we rotate about the $\hat{Y}$ and $\hat{Z}$ axis are the angle of attack and sideslip of the vehicle respectively, denoted by $\alpha$ and $\beta$. An image depicting the translation of the body frame into the wind frame is depicted below:
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{Images/WindBodyOffset.png}
+    \caption{Wind and Body Frame Relation}
+    \label{fig:WindBodyOffset}
+\end{figure}
 
-
-The wind frame is certainly less intuitive than the body frame. 
-
-
-they are offset from one another by the angle of attack and sideslip. 
+The most notable contribution of the wind frame is providing a reference frame through which we can easily determine the aerodynamic forces on a vehicle: both drag and lift. 
 
 
 
@@ -3510,10 +3513,77 @@ Let's notice one thing about potential flow. Potential flow can calculate the li
 
 Because of this, we have to use some other techniques to solve for the drag. We often use the boundary layer we saw earlier to find approximations for the drag on the vehicle.
 
-In this book, we won't come up with models for drag. Most of the models for drag are empirical in nature
+In this book, we won't come up with models for drag. Most of the models for drag are empirical in nature and depend on application. Instead, we'll talk about some general principles and how to understand the drag plots you get out of computational software.
+
+When we're dealing with rockets, there are three main types of drag which are dominant. 
+
+\subsubsection{Skin Friction Drag}
+Skin friction drag is the type of drag that we've already discussed. When air moves past our rocket, the viscosity causes it to stick to the surface. At low speeds, this type of drag is predominant. Rivets or protrusions from the surface can greatly increase the skin friction drag of the rocket. The quality of the surface also has a large impact on skin friction drag.
+
+\subsubsection{Pressure Drag}
+Pressure drag is a blanket term that we apply to drag that arises from the general shape of our object. We're not so concerned about fluid sticking to the surface, but how large disruptions in the flow create pressure gradients that slow down our vehicle.
+
+\begin{figure}
+    \centering
 
 
-Those models are mostly empirical and d
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+
+%Straight Lines [id:da5064445796347833] 
+\draw [line width=1.5]    (91,140) -- (221,140) ;
+%Straight Lines [id:da706787644428647] 
+\draw [line width=1.5]    (91,250) -- (221,250) ;
+%Straight Lines [id:da6438537022844506] 
+\draw [line width=1.5]    (220,250) -- (220,140) ;
+%Straight Lines [id:da7663118843205221] 
+\draw    (280,160) -- (220,160) ;
+%Straight Lines [id:da23854044564568921] 
+\draw    (280,230) -- (220,230) ;
+%Straight Lines [id:da9094795071806311] 
+\draw    (320,210) -- (280,230) ;
+%Straight Lines [id:da4241326700355371] 
+\draw    (320,180) -- (280,160) ;
+%Straight Lines [id:da13557870105684255] 
+\draw    (380,230) -- (320,210) ;
+%Straight Lines [id:da279373172833731] 
+\draw    (380,160) -- (320,180) ;
+%Straight Lines [id:da883532532699491] 
+\draw    (380,160) -- (380,230) ;
+%Straight Lines [id:da12725671745422207] 
+\draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (100,120) -- (197,120) ;
+\draw [shift={(200,120)}, rotate = 180] [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ;
+%Shape: Arc [id:dp3765552418120144] 
+\draw  [draw opacity=0] (245,120) .. controls (253.28,120) and (260,126.72) .. (260,135) .. controls (260,143.28) and (253.28,150) .. (245,150) .. controls (240.11,150) and (235.76,147.66) .. (233.02,144.03) -- (245,135) -- cycle ; \draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (245,120) .. controls (253.28,120) and (260,126.72) .. (260,135) .. controls (260,143.28) and (253.28,150) .. (245,150) .. controls (241.18,150) and (237.7,148.57) .. (235.05,146.22) ; \draw [shift={(233.02,144.03)}, rotate = 30.93] [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ; 
+%Straight Lines [id:da16175470758112542] 
+\draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (230,120) -- (245,120) ;
+%Shape: Arc [id:dp3845509148385249] 
+\draw  [draw opacity=0] (245,270) .. controls (253.28,270) and (260,263.28) .. (260,255) .. controls (260,246.72) and (253.28,240) .. (245,240) .. controls (240.11,240) and (235.76,242.34) .. (233.02,245.97) -- (245,255) -- cycle ; \draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (245,270) .. controls (253.28,270) and (260,263.28) .. (260,255) .. controls (260,246.72) and (253.28,240) .. (245,240) .. controls (241.18,240) and (237.7,241.43) .. (235.05,243.78) ; \draw [shift={(233.02,245.97)}, rotate = 329.07] [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ; 
+%Straight Lines [id:da1881089107920143] 
+\draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (230,270) -- (245,270) ;
+%Straight Lines [id:da7275790061984042] 
+\draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (100,270) -- (197,270) ;
+\draw [shift={(200,270)}, rotate = 180] [fill={rgb, 255:red, 74; green, 144; blue, 226 }  ,fill opacity=1 ][line width=0.08]  [draw opacity=0] (8.93,-4.29) -- (0,0) -- (8.93,4.29) -- cycle    ;
+%Straight Lines [id:da6564828491189604] 
+\draw    (230,80) -- (220,130) ;
+%Straight Lines [id:da8567250257405646] 
+\draw [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,draw opacity=1 ]   (270,130) -- (320,120) ;
+
+% Text Node
+\draw (239,72) node [anchor=north west][inner sep=0.75pt]   [align=left] {Flow Seperation};
+% Text Node
+\draw (331,112) node [anchor=north west][inner sep=0.75pt]  [color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ] [align=left] {Recirculation};
+
+
+\end{tikzpicture}
+
+    
+    \caption{Base Drag on the rear of a rocket}
+    \label{fig:placeholder}
+\end{figure}
+
 
 \subsection{Summary}
 That was quite a bit of new terminology that we just introduced, so let's hit the big ideas again:
