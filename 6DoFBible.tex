@@ -876,7 +876,12 @@ For our current model, the \gls{body frame} of our 6-\gls{dof} has its origin in
 
 The final important frame of reference is the \gls{wind frame}. Much like the body frame, this frame of reference is fixed at some point within the vehicle. Unlike the body frame, it is not defined using the geometry of the vehicle, rather it is initialized with respect to the freestream velocity. As such, the first basis vector of this frame of reference is aligned with the velocity of the vehicle itself. A typical representation of the wind frame on an aircraft is shown below:
 
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Images/WindFrameTypical.png}
+    \caption{Typical Wind Frame Orientation}
+    \label{fig:placeholder}
+\end{figure}
 
 
 
@@ -3497,14 +3502,20 @@ This is known as Laplace's equation and it tells us how our flow works when thin
 
 To actually solve problems with Laplace's equation, there's one more fact that we need to know. When flow hits a surface, it shouldn't go through. In this inviscid model, we'll allow the flow to slip past the surface though. We have a condition called \textit{flow tangency}, which tells us that at a surface:
 $$\vec{v}\cdot\hat{n}=0$$
-where $\hat{n}$ is the surface normal.
+where $\hat{n}$ is the surface normal. We won't get too carried away with potential flows here. There's a good website which shows the equations and a visualization of such flows at \cite{noauthor_potential_2026}.
 
-Before we move on, let's notice one thing about potential flow. Potential flow can calculate the lift on our object. It predicts the fact that the velocity (and thus pressure) is lower on the upper side of a wing. The flow tangency condition gives us problems, though. Because the flow slips past the surface and doesn't `stick' to it, there's no way that potential flow will ever give us a measurement of drag. This is known as \textit{D'Alembert's Paradox}.
+\subsubsection{Drag}
 
-Because of this, we have to use some other techniques to solve for the drag. We don't discuss specifics here, but we often use the boundary layer we saw earlier to find approximations for the drag on the vehicle.
+Let's notice one thing about potential flow. Potential flow can calculate the lift on our object. It predicts the fact that the velocity (and thus pressure) is lower on the upper side of a wing. The flow tangency condition gives us problems, though. Because the flow slips past the surface and doesn't `stick' to it, there's no way that potential flow will ever give us a measurement of drag. This is known as \textit{D'Alembert's Paradox}.
 
-We won't get too carried away with potential flows here. There's a good website which shows the equations and a visualization of such flows at \cite{noauthor_potential_2026}.
+Because of this, we have to use some other techniques to solve for the drag. We often use the boundary layer we saw earlier to find approximations for the drag on the vehicle.
 
+In this book, we won't come up with models for drag. Most of the models for drag are empirical in nature
+
+
+Those models are mostly empirical and d
+
+\subsection{Summary}
 That was quite a bit of new terminology that we just introduced, so let's hit the big ideas again:
 \textbf{
 \begin{enumerate}
@@ -3515,9 +3526,9 @@ That was quite a bit of new terminology that we just introduced, so let's hit th
     \item The pressure right outside the boundary layer is almost the same as at the surface.
 \end{enumerate}
 }
-At this point, we'll stop with potential flow theory in this book. Things become a bit more complicated with flows that are compressible, but we can still use a modification of this theory to model those flows. For our purposes here, a conceptual understanding of potential flow is more important than solving problems with it.
+At this point, we'll stop with potential flow and aerodynamics theory in this book. Things become a bit more complicated with flows that are compressible, but we can still use a modification of potential flow theory to model those flows. For our purposes here, a conceptual understanding of potential flow is more important than solving problems with it.
 
-For most of our applications we can use computation tools to determine the velocity field and pressure distribution on an object. Some of these models will directly utilize the potential flow which we've just discussed.\endnote{Some of the other models used in computational fluid dynamics directly solve the Navier-Stokes equations, or some modification of them.} With a pressure and velocity distribution, we can understand the lift and drag on an object.
+For most of our applications we can use computation tools to determine the velocity field and pressure distribution on an object. Some of these models will directly utilize the potential flow which we've just discussed.\endnote{Some of the other models used in computational fluid dynamics directly solve the Navier-Stokes equations, or some modification of them.} With a pressure and velocity distribution, we can understand the lift on an object. With some empirical relations and knowledge of boundary layers, we can understand drag.
 
 \subsection{Center of Pressure and Stability}
 
