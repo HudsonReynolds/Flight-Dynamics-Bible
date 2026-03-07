@@ -1554,7 +1554,7 @@ We can rearrange this to a form that is more useful for us (although somewhat le
 \end{gather}
 These sets of equations are especially powerful because they allow us to numerically integrate the angular velocity. Our moments can be found using Newtonian dynamics and the \glspl{pmoi} are quantities that are easily found using the integrals described above in \autoref{moment of inertia}. We will use these angular velocity derivatives extensively to describe the time rate of change of the attitude of the rocket.
 
-\section{Examples}
+\section{Applying Rotation Equations}
 We've just laid out a large amount of material, so it is best to show a few examples to get the gist of things.
 
 \begin{example}[Explorer 1 Satellite]
@@ -1631,7 +1631,7 @@ $$\begin{bmatrix}
     0&0&5.3590
 \end{bmatrix} \ \mathrm{kg{\cdot}m^2}$$
 \subsubsection{Spin Stabilization}
-NASA wants to spin-stabilize the satellite along the $\hat{x}$-direction with a final rotation rate of $2\pi \ \mathrm{rad/s}$. We will assume that the impulse is provided by two motors acting as a couple. The spin motors will also separate the satellite from the launch vehicle, so they are inclined $10\degree$ from horizontal to give the satellite a small forward momentum. So, we will calculate:
+NASA wants to spin-stabilize the satellite along the $\hat{x}$ direction with a final rotation rate of $2\pi \ \mathrm{rad/s}$. We will assume that the impulse is provided by two motors acting as a couple. The spin motors will also separate the satellite from the launch vehicle, so they are inclined $10\degree$ from horizontal to give the satellite a small forward momentum. So, we will calculate:
 \begin{itemize}
     \item The total impulse needed to bring the satellite to a final rotation rate of $2\pi \ \mathrm{rad/s}$ 
     \item The average thrust if a 0.5 s burn is desired.
@@ -1661,9 +1661,8 @@ After the spin stabilization maneuver is done to inject the satellite into its f
 \section{Practice Problems}
 
 \begin{exercise}[Mass Spring EOM]\label{exer: mass spring}
-On a nice Wednesday evening during one of your strolls through campus, you are kidnapped by a business major, who will only let you free if you can fix the vibration of the squeaky door at their frat house.
 
-You can consider the door hinge as a mass-spring system constrained to motion along the $\hat{x}$-direction. The spring has an equilibrium length of $L_0$ and a spring constant of $k=4 \ \mathrm{N/m}$ with a mass of $1 \ \mathrm{kg}$. At time $t_0$, the length is $L_0$. An instantaneous impulse of $10 \ \mathrm{N\cdot s}$ is applied to the hinge in the $-\hat{x}$-direction by a misguided ping-pong ball hitting the door. This is shown diagrammatically in \autoref{fig:mass spring}. Assume that the system is at rest in the equilibrium position at $t_0$.
+The bottom of your door has a spring door stopper. Mesmesized by the motion and sound of this device, you decide you want to model it. You can approximate the door stopper as a mass-spring system constrained to motion along the $\hat{x}$-direction. The spring has an equilibrium length of $L_0$, a spring constant $k=4 \ \mathrm{N/m}$, and mass of $1 \ \mathrm{kg}$. At time $t_0$, the system is at rest with $L=L_0$. An instantaneous impulse of $10 \ \mathrm{N\cdot s}$ is applied to the hinge in the $-\hat{x}$-direction by your hand.
 \begin{figure}[H]
     \centering
     
@@ -1671,7 +1670,7 @@ You can consider the door hinge as a mass-spring system constrained to motion al
 
 \tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
 
-\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-0.95,xscale=0.95]
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-0.94,xscale=0.94]
 %uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
 
 %Rounded Rect [id:dp7768881234617668] 
@@ -1757,10 +1756,9 @@ You can consider the door hinge as a mass-spring system constrained to motion al
     \label{fig:mass spring}
 \end{figure}
 \begin{enumerate}
-    \item Consider the system to be frictionless. Derive the \glspl{eom} for the system in both of the component directions.
-    \item Find the analytical solution of the system from the \gls{eom} you derived. Graph the solution.
-    \item Numerically integrate the \glspl{eom} ascertain the position and velocity as a function of time. Graph the solution. How does it compare to the analytical solution? You may want to refer to \autoref{sec:numerical integration schemes} for other \gls{numerical int} methods.
-    \item Consider the system with some frictional force that is proportional to the velocity, with a proportionality constant of $c=1\mathrm{\frac{kg}{s}}$. This frictional force opposes the motion of the system. Repeat step c with this new system. How does the friction change the system?
+    \item Consider the system to be frictionless. Derive the \glspl{eom} for the system in both the $\hat{x}$ and $\hat{y}$ directions. Find the analytical solution to the EOM.
+    \item Numerically integrate the \glspl{eom} to ascertain the position and velocity as a function of time. Graph the solution and compare it to the analytical solution. You may want to refer to \autoref{sec:numerical integration schemes} for \gls{numerical int} methods.
+    \item Consider the system with a frictional force that is proportional to the velocity, with a proportionality constant of $c=1\mathrm{\frac{kg}{s}}$. Repeat part 2 with this new system. How does the friction change the system?
 \end{enumerate}
 \end{exercise}
 
@@ -1815,8 +1813,21 @@ You can consider the door hinge as a mass-spring system constrained to motion al
 \begin{enumerate}
     \item Assuming 3-\gls{dof}, derive the \gls{eom} for the satellite motion assuming that gravity is the only force acting on the satellite and the earth is a point mass. \textit{Hint: You may want to use a different coordinate system.}
     \item You find a satellite in orbit with a height of 400 km. You also measure the inclination of the orbit as it passes overhead as $25\degree$. Assuming a circular orbit, what is the magnitude of the velocity and the component velocities in $\hat{x}$ and $\hat{y}$ as it passes overhead?
-    \item Using your equations of motion, develop a MATLAB script to propagate the equations of motion for 90 minutes.
+    \item Using your equations of motion, develop a MATLAB script to propagate the equations of motion for 90 minutes. Plot the result in Cartesian coordinates and include the earth with the appropriate radius in the plot.
 \end{enumerate}
+\end{exercise}
+
+\begin{exercise}[Building a 6-DoF: Part I]
+We'll start an exercise in this chapter which will continue through the rest of the chapters -- building a simple 6-DoF model from scratch. For this chapter, we'll start with some simple modeling. For these 6-DoF exercises, we won't provide answers. You should validate these models yourself like you would in the real world.
+
+\begin{enumerate}
+    \item Start by considering a particle with mass $10 \mathrm{\ kg}$. To start, consider the particle is launched under just the influence of gravity. For this problem and subsequent parts, use the ENU convention for the inertial frame.
+
+Consider the particle to start at position $\vec{r}=[0,0,0]^T$ and velocity $\vec{v}=[30,20,60]^T \text{ m/s}$. Simulate the trajectory numerically and plot the result. Compare this with the analytical solution.
+\item Now, include a drag which acts opposite the velocity of the rocket. You can consider the quantity $\frac{1}{2}\rho V^2SC_D$ to be a constant with value of $0.2$ for now. Compare the results with the first part.
+\item We won't start modeling the rotational dynamics of the rocket just yet, but we'll set up the basics. Instead of the rocket being a point mass, now consider the rocket to be a cylinder of uniform density with an initial mass of $2 \text{ kg}$, a length of $1 \text{ m}$ and a diameter of $0.05 \text{ m}$. For the first $8 \sec$, the rocket burns $0.1 \text{ kg/s}$ of fuel. The exhaust velocity is $800 \text{ m/s}$ and the nozzle is perfectly expanded. Compute the thrust of the engine, the trajectory with the addition of the thrust, and the inertia matrix of the rocket in it's body frame.
+\end{enumerate}
+
 \end{exercise}
 
 \newpage
@@ -2026,7 +2037,7 @@ The time integral of the \gls{Lagrangian} is the \gls{action}, denoted $S$. This
     S=\int_{t_1}^{t_2}{L}{dt}
 \end{equation}
 
-So, our \gls{action} takes the form of the \gls{functional} from the calculus of variations. From Hamilton's principle, this \gls{functional} must be minimized to yield an extremal action.\endnote{We make no statement about whether action is maximized or minimized. In classical physics, there isn't really a satisfying answer to this. To answer that question, we would have to turn to quantum field theory and the path-integral formulation. More information on this is provided in Volume III.} So, we sometimes see the compact form of Hamilton's Principle as:
+So, our \gls{action} takes the form of the \gls{functional} from the calculus of variations. From Hamilton's principle, this \gls{functional} must be minimized to yield an extremal action.\endnote{We make no statement about whether action is maximized, minimized, or simply stationary. Sometimes we just say that the action is minimized as a sort of short hand, but that doesn't \textit{need} to be true. In classical physics, there isn't really a satisfying answer to which of the extremal conditions is met. To answer that question, we would have to turn to quantum field theory and the path-integral formulation which generalize the action principle. More information on this is provided in Volume III.} So, we sometimes see the compact form of Hamilton's Principle as:
 $$\delta S=0$$
 We recognized that the form of the equation was the same as before, which means that we can use \gls{Euler Equation} to solve it. Expressed using Euler's differential equation, \eqref{eq: Euler's Diff eq}, we get the \glspl{euler lagrange}:
 \begin{gather}\label{eq: Euler-Lagrange}
@@ -2519,9 +2530,9 @@ We choose our generalized coordinate, $\theta$. This system has no dependence on
 $$\frac{d}{dt}(I\dot{\theta})=\vec{M}^o$$
 We recognize that $I\dot{\theta}$ is the angular momentum, $\vec{H}$. We have thus shown that:
 $$\vec{M}=\frac{^id\vec{H}}{dt}$$
-From here, we can continue and derive the Euler rigid body equations using the \gls{Lagrangian}. 
+Stated this way, it seems a more obvious fact. Much like a force is the rate of change of momentum, a torque/moment should be the rate of change of an angular moentum. From here, we can continue and derive the Euler rigid body equations using the \gls{Lagrangian}. 
 \subsection{Torque Free Equations}
-We showed earlier in \autoref{sec: rigid body constraints} that we can describe a \gls{rigid body} system with 6 generalized parameters, three of which are angles. We may use those to derive the torque free Euler rigid body equations.
+We showed earlier in \autoref{sec: rigid body constraints} that we can describe a \gls{rigid body} system with 6 generalized parameters, three of which are angles. We may use those three angles to derive the torque free Euler rigid body equations.
 
 In the case of no applied torque, the derivations of \glspl{Euler Equation} become surprisingly simple. We can assume that the change in height of the \gls{rigid body} is irrelevant for pure rotation, so the \gls{Lagrangian} is simply the kinetic energy of the object. We can suppose that we are also in a coordinate system where the translational kinetic energy is 0. This gives us the same \gls{Lagrangian}  as before:
 \begin{equation}\label{eq:rigid body KE}
@@ -2725,6 +2736,9 @@ The dynamics of the system can be modeled as a double pendulum with two rigid ar
 \markboth{NOTES}{NOTES}
 
 \chapter{Basic Attitude Dynamics}\label{sec:attitude dynamics}
+
+\textcolor{red}{Add 3 Euler Angle plots, example DCM, Using Euler to construct DCM}
+
 \begin{chapquote}{Lord Kelvin, 1892}
 ``Quaternions came from Hamilton after his really good work had been done; and, though beautifully ingenious, have been an unmixed evil to those who have touched them in any way, including Clerk Maxwell.''
 \end{chapquote}
@@ -3164,6 +3178,10 @@ You find yourself flying a UH-1 Huey over Hamburger Hill in Vietnam, 1969. While
     \caption{Huey Reference Frame}
     \label{fig:HueyFrameImage}
 \end{figure}
+\end{exercise}
+
+\begin{exercise}[Building a 6-DoF: Part II]
+With some knowledge of attitude dynamics, we're ready to tackle the second part of our 6-DoF rocket simulation.
 \end{exercise}
 
 \newpage
@@ -3813,6 +3831,16 @@ You are flying home one day in your P-51 Mustang (pictured in \autoref{fig:p51} 
 \end{enumerate}
 \end{exercise}
 
+\begin{exercise}[Building a 6-DoF: Part III]
+We'll continue our project and introduce aerodynamics into the mix. Remember that our rocket has a length of $1 \text{ m}$ and a diameter of $0.05 \text{ m}$. Now, we'll introduce a \textit{Von Karman} nosecone of length $0.2 \text{ m}$.
+
+We'll also introduce 3 radially symmetric fins with a symmetric NACA 0012 airfoil. These fins have a span of $0.05 \text{ m}$, a root chord of $0.1 \text{ m}$, a tip chord of $0.04 \text{ m}$, a sweep of $0.04 \text{ m}$. The fins are placed at the back of the rocket body. The thickness is determined by the airfoil.
+
+
+
+Using RasAero or 
+\end{exercise}
+
 
 \newpage
 \printendnotes[large]
@@ -4091,9 +4119,9 @@ The same is seen when $\Delta t$ is close to but not quite double the frequency 
 
 When we want to run a long term simulation where high frequency components are also present, the need to sample at double the highest frequency of the system is detrimental to the performance of the simulation. We call such systems that are difficult to numerically integrate \gls{stiff}.\endnote{This is not the only case in which our system dynamics will be stiff. Some differential equations also have dynamics that only rapidly change at critical values, which can contribute to stiffness as well.}
 
-\Gls{stiff} systems make \gls{numerical int} challenging not only because of increased simulation time, but also because of aforementioned \gls{trunc error}. In a 6-\gls{dof} model such as ours, this is important if vibrational modeling is considered. As an example, slosh modeling and parachute modeling (which are not deeply discussed here, but may be important aspects of a rocket 6-\gls{dof}) are often based on mass-spring-damper systems.
+\Gls{stiff} systems make \gls{numerical int} challenging not only because of increased simulation time, but also because of aforementioned \gls{trunc error}. A simulation which requires many more timesteps will inheritly be less accurate due to roundoff error in the estimate. In a 6-\gls{dof} model such as ours, this is important if vibrational modeling is considered. As an example, slosh modeling and parachute modeling (which are not deeply discussed here, but may be important aspects of a rocket 6-\gls{dof}) are often based on mass-spring-damper systems.
 
-It is best practice to try and decouple the simulation of high-frequency vibrations from the flight dynamics of the system. Sometimes this may be unavoidable, such as aircraft with large amounts of wing flexure where aerodynamics and elastic deformation are heavily coupled. However, this decoupling should be attempted whenever possible. This problem is very complicated and is the subject of much ongoing research! \footnote{More information about such dynamics can be found in \cite{shyy_recent_2010}.}
+It is best practice to try and decouple the simulation of high frequency vibrations from the flight dynamics of the system. Sometimes this may be unavoidable, such as aircraft with large amounts of wing flexure where aerodynamics and elastic deformation are heavily coupled. However, this decoupling should be attempted whenever possible. This problem is very complicated and is the subject of much ongoing research! \footnote{More information about such dynamics can be found in \cite{shyy_recent_2010}.}
 \section{Other Integration Schemes}
 While "ode45" works very well for most use cases with \gls{numerical int}, there are cases where other integration schemes should be considered. We will mainly discuss the implementations that exist in MATLAB. More information about such systems can be found at \cite{mathworks_choose_2024} and \cite{mathworks_summary_2024}.
 
@@ -4321,10 +4349,10 @@ Sub-component validation may look like the Dzhanibekov modeling in \autoref{sec:
 \newpage
 \printendnotes[large]
 
-\chapter{MATLAB Coding Practices}\label{sec:MATLAB Practices}
-In this final chapter, we discuss the techniques and practices for implementing a 6-DoF in MATLAB. We will also discuss more general practices for large MATLAB code bases and methods to keep these organized. As of Fall 2025, these practices have been implemented in our 6-DoF model, allowing for a full generalization of our rocket creation. A large portion of the content in this chapter comes from what we have seen as practices adopted in industry for systems much more complex and larger than our own.
+\chapter{Simulation Architecture}\label{sec:MATLAB Practices}
+In this final chapter, we discuss the techniques and practices for implementing a 6-DoF simulation in MATLAB and how we may structure such a simulation. We will also discuss more general practices for large MATLAB code bases and methods to keep these organized. As of Fall 2025, these practices have been implemented in our 6-DoF model, allowing for a full generalization of our rocket creation. A large portion of the content in this chapter comes from what we have seen as practices adopted in industry for systems much more complex and larger than our own.
 
-As our system grows in complexity, following these practices becomes increasingly important for organization. If the reader is working on their own large code base or contribute to our code base, it is a good idea to follow these practices as well to stay organized. In this chapter, we will focus on MATLAB implementation, but similar things may be done in Python or other object-oriented languages.
+As your system grows in complexity, following these practices becomes increasingly important for organization. If the reader is working on their own large code base or contribute to our code base, it is a good idea to follow these practices as well to stay organized. In this chapter, we will focus on MATLAB implementation, but similar things may be done in Python or other object-oriented languages.
 
 \section{Object Oriented Programming}
 
@@ -4421,7 +4449,7 @@ A class often has a \textit{constructor} method, which constructs an object of t
 \end{matlabscript}
 
 
-In this code, the function "Sensor" is a class constructor method of the file "Sensor.m". The class constructor takes user input for parameters such as a "name", and "samplingRate" for the sensor, which are assigned within the function. These are then assigned to the properties of the object of the same name. If we were to call $\texttt{Sensor(`Sensy', 0.01, 0.2)}$, we would get a $\texttt{Sensor}$ object with the properties defined in the function.
+In this code, the function "Sensor" is a class constructor method of the file "Sensor.m". The class constructor takes user input for parameters such as a "name", and "samplingRate" for the sensor, which are assigned within the function. These are then assigned to the properties of the object of the same name. If we were to make the function call `$\texttt{Sensor(`Sensy', 0.01, 0.2)}$', we would get a $\texttt{Sensor}$ object with the properties defined in the function.
 
 Another useful property of classes which is demonstrated  here is input validation. Input validation allows us to ensure that the input into a class or one of its methods is of a certain type. In this example, the "name" can only be a "string" of size 1 (scalar). Input validation allows us to build robust functions that only allow proper data to be passed through.
 
