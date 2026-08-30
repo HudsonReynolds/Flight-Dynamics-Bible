@@ -21,12 +21,10 @@ omega = [input(1); input(2); input(3)];
 
 quat = [input(4); input(5); input(6); input(7)];
 
-%bodyVectorEarth = RotationMatrix(bodyVector, quat, 1); % Body vector in inertial frame
-
 %% Moments:
-Jxx = 0.09;
-Jyy = 0.01;
-Jzz = 0.03;
+Jxx = 0.02;
+Jyy = 0.003;
+Jzz = 0.027;
 
 J = [Jxx,0,0;0,Jyy,0;0,0,Jzz];
 

@@ -32,7 +32,7 @@ tspan = 0:dt:time;
 % initial angle(z angle, y angle, x angle)
 angleVector = [0;0;0];
 % initial rotation rate(x rate, y rate, z rate)
-omega = [pi;0.05;0.05];
+omega = [pi;0.02;0];
 %initalize the quaternion based on the euler angle input:
 quatVector = eul2quat(angleVector.', "ZYX").';
 % initial state vector
@@ -40,7 +40,7 @@ Init = [omega;quatVector];
 
 
 % run the RK4:
-[timeArray, out] = ode45(@(time,input)DzhanibekovIntegrator(time,input), tspan, Init);
+[timeArray, out] = ode45(@(time,input)DzhanibekovIntegrator(time,input, I), tspan, Init);
 
 % parse rk4 outputs:
 omega = [out(:,1), out(:,2), out(:,3)];

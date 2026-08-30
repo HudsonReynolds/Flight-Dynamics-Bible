@@ -1,59 +1,67 @@
-function RotationsVisualizer(quatArray, timeArray, output)
-% RotationsVisualizer
-% Visualizes the orientation of a rocket over time based on quaternion data.
+function RotationsVisualizer(quatArray, timeArray, makeGif)
+% ROTATIONSVISUALIZER Visualizes rocket orientation over time using quaternions.
 %
 % Inputs: 
-% quatArray      - Array of quaternions for the rocket orientation.
-% timeArray      - Array of time values.
-% output         - If 1, output a GIF file; if 0, no output.
-%
-% Outputs:
-% A figure showing the rocket's orientation over time.
+%   quatArray - 4xN or Nx4 matrix of quaternions [w, x, y, z]
+%   timeArray - 1xN vector of timestamps corresponding to each quaternion
+%   makeGif   - Logical flag (true/false or 1/0) to export animation to GIF
 
-% Set up the figure
-figure(6)
-qs = quaternion([45, 0, 0], 'eulerd', 'ZYX', 'frame');  % Initial orientation
-ps = [0, 0, 0];  % Initial position (can be adjusted if needed)
-
-% Create the 3D plot and mesh
-patch = poseplot(qs, ps, 'ENU', MeshFileName="Model.stl", ScaleFactor=1, PatchFaceColor='r');
-view(45, 25);
-axis square;
-xlabel('x');
-ylabel('y');
-zlabel('z');
-grid on;
-
-
-% Prepare GIF output if required
-if output == 1
-    gifFilename = 'RotationAnimation.gif';
-end
-
-% Animation loop
-for i = 1:2:length(timeArray)
-    % Update the orientation using the quaternion for the current time step
-    q = quaternion(quatArray(:, i)');
+    % Ensure correct orientation for quaternion conversion (expects Nx4)
+    if size(quatArray, 1) == 4
+        quatArray = quatArray';
+    end
     
-    % Set new orientation for the patch
-    set(patch, 'Orientation', q);
+    % Base quaternions from integration
+    qObjects = quaternion(quatArray);
     
-    % Update the title and redraw the figure
-    title(sprintf('Orientation at time %.1f s', timeArray(i)));
-    drawnow;
+    % Define 90-degree pitch/roll offset about the X-axis: [cos(pi/4), sin(pi/4), 0, 0]
+    qOffset = quaternion(cos(pi/4), sin(pi/4), 0, 0);
+    
+    % Apply constant offset to all frames via quaternion multiplication
+    qRotated = qObjects * qOffset;
 
-    % Create GIF if output is enabled
-    if output == 1
-        frame = getframe(gcf);  % Capture the frame
-        img = frame2im(frame);
-        [img, cmap] = rgb2ind(img, 256);
-
-        % Write the first frame or append the subsequent frames
-        if i == 1
-            imwrite(img, cmap, gifFilename, 'gif', 'LoopCount', Inf, 'DelayTime', 1/24);
-        else
-            imwrite(img, cmap, gifFilename, 'gif', 'WriteMode', 'append', 'DelayTime', 1/24);
+    % Initialize Visualization
+    fig = figure(6); 
+    clf(fig);
+    
+    % Create pose plot object with offset initial frame
+    pPlot = poseplot(qRotated(1), [0, 0, 0], 'ENU', ...
+        'MeshFileName', 'Model.stl', ...
+        'ScaleFactor', 1, ...
+        'PatchFaceColor', 'r');
+    
+    view(45, 25);
+    axis square;
+    grid on;
+    xlabel('X'); ylabel('Y'); zlabel('Z');
+    
+    % Setup GIF parameters
+    if makeGif
+        gifFilename = 'RotationAnimation.gif';
+        dt = mean(diff(timeArray(1:2:end))); 
+    end
+    
+    % Animation Loop
+    for i = 1:2:length(timeArray)
+        % Update pose orientation using the rotated quaternion array
+        pPlot.Orientation = qRotated(i);
+        title(sprintf('Orientation at time: %.2f s', timeArray(i)));
+        drawnow;
+        
+        if ~makeGif
+            pause(0.01);
+        end
+        
+        % Capture GIF frames
+        if makeGif
+            frame = getframe(fig);
+            [img, cmap] = rgb2ind(frame.cdata, 256);
+            
+            if i == 1
+                imwrite(img, cmap, gifFilename, 'gif', 'LoopCount', Inf, 'DelayTime', dt);
+            else
+                imwrite(img, cmap, gifFilename, 'gif', 'WriteMode', 'append', 'DelayTime', dt);
+            end
         end
     end
-end
 end
