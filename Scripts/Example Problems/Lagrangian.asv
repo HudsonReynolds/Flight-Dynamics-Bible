@@ -1,0 +1,172 @@
+% mass spring
+syms x(t) k
+
+L = 1/2*diff(x,t)^2 - 1/2*k*x^2 %[output:8431d651]
+
+q = {x};
+
+eom = createEOM(L, q) %[output:598e140e]
+%%
+% pendulum
+syms theta(t) m l g y
+
+L = 1/2*m*diff(theta)^2*l^2 + m*g*l*cos(theta) %[output:82c3cbe8]
+
+q = {theta};
+
+eom = createEOM(L,q) %[output:90525b09]
+%%
+% inverted pendulum
+syms M m x(t) I theta(t) l g
+
+L = 1/2*((M+m)*diff(x)^2+I*diff(theta)^2) + m*l*cos(theta)*diff(theta)*diff(x) - m*g*l*cos(theta) %[output:1b351546]
+
+q = {x, theta} %[output:1755af5a]
+
+eom = createEOM(L,q) %[output:3335c7e8]
+%%
+syms r(t) theta(t) phi(t) mu J2 R0 t
+
+assume(mu > 0);
+assume(J2 > 0);
+assume(R0 > 0);
+
+q = {r,theta,phi} %[output:07413f7d]
+
+L = 1/2*(diff(r,t)^2 + r^2*diff(theta,t)^2 + r^2*sin(theta)^2*diff(phi,t)^2) + mu/r - mu*J2*R0^2 / (2*r^3) * (3*cos(theta)^2 - 1) %[output:6f0b53f0]
+
+eom = createEOM(L,q) %[output:70f2d44c]
+
+syms r_ddot phi_ddot theta_ddot phi_dot r_dot theta_dot%phi theta
+
+equations = subs(eom, [diff(r(t),t,2), diff(theta(t),t,2), diff(phi(t),t,2), ... %[output:group:3071b2cd] %[output:31c7a191]
+    diff(r(t),t,1), diff(theta(t), t, 1), diff(phi(t), t, 1)],[r_ddot theta_ddot phi_ddot r_dot theta_dot phi_dot]) %[output:group:3071b2cd] %[output:31c7a191]
+
+
+
+
+
+%%
+% double pendulum
+syms m l theta(t) phi(t) g omega alpha
+
+assume(l > 0);
+assume(m > 0);
+
+L = 1/2*m*l^2*(2*diff(theta)^2+diff(phi)^2+2*diff(theta)*diff(phi)*cos(theta-phi))+m*g*l*(2*cos(theta)+cos(phi)) %[output:7508a9dd]
+
+q = {theta, phi} %[output:93e02308]
+
+eom = createEOM(L,q) %[output:6ccdc387]
+% Compute simplified symbolic expression %[task:01ce]
+simplifiedExpr = simplify(eom,"Steps",6400) %[task:01ce] %[output:5c6a0567]
+
+syms theta_ddot phi_ddot theta_dot phi_dot %phi theta
+
+equations = subs(simplifiedExpr, [diff(theta(t),t,2), diff(phi(t),t,2), ... %[output:group:1da9c037] %[output:778178af]
+    diff(theta(t), t, 1), diff(phi(t), t, 1)],[theta_ddot phi_ddot theta_dot phi_dot]) %[output:group:1da9c037] %[output:778178af]
+
+syms theta phi
+
+equations = [2*g*sin(theta) + 2*l*theta_ddot == l*phi_dot^2*sin(phi - theta) - l*phi_ddot*cos(phi - theta); l*sin(phi - theta)*theta_dot^2 + g*sin(phi) + l*phi_ddot == l*theta_ddot*(2*sin(phi/2 - theta/2)^2 - 1)] %[output:522f918a]
+
+sol = solve(equations == [0; 0], [theta_ddot, phi_ddot]) %[output:950d57fa]
+
+theta = simplify(sol.theta_ddot, "Steps", 6400) %[output:71f4e006]
+phi = simplify(sol.phi_ddot, "Steps", 6400) %[output:79a3f516]
+
+%%
+function eom = createEOM(L, q)
+% createEOM  Generate Euler–Lagrange equations
+%
+% L: symbolic Lagrangian
+% q: vector of generalized coordinates (symbolic functions of t)
+
+
+% create a time variable
+syms t
+
+% for each generalized coordinate, create an EOM
+
+for idx = 1:length(q)
+
+    % Generalized velocity
+    qd = diff(q{idx}, t);
+
+    % Euler–Lagrange equations
+    eom(idx) = diff(diff(L, qd), t) - diff(L, q{idx}) == 0;
+
+end
+
+eom = eom.';
+end
+
+
+%[appendix]{"version":"1.0"}
+%---
+%[metadata:view]
+%   data: {"layout":"onright","rightPanelPercent":42.1}
+%---
+%[task:01ce]
+%   data: {"appState":"{\"Version\":\"1.0\",\"Expression\":\"eom\",\"Method\":\"simplify\",\"SimplifyEffort\":\"6400\",\"RewriteTarget\":\"sincos\",\"ExpandArithmeticOnly\":false,\"ExpandIgnoreAnalyticConstraints\":false,\"CombineTarget\":\"Operators only\",\"CombineItems\":[\"Operators only\",\"atan\",\"exp\",\"gamma\",\"int\",\"log\",\"sincos\",\"sinhcosh\"],\"CombineIgnoreAnalyticConstraints\":false,\"SimplifyFractionExpand\":false,\"DisplayExpression\":false,\"DisplaySimplified\":true}","autorun":"1","collapsed":"0","outputs":"simplifiedExpr","run":"section","taskClassDefFile":"matlab.internal.symbolic.task.Simplify","uniqueId":"symbolic\/SimplifySymbolicExpression","variablesMap":"{\"simplifiedExpr\":\"simplifiedExpr\"}","view":"controls-and-code"}
+%---
+%[output:8431d651]
+%   data: {"dataType":"symbolic","outputData":{"name":"L(t)","value":"\\frac{{{\\left(\\frac{\\partial }{\\partial t}\\;x\\left(t\\right)\\right)}}^2 }{2}-\\frac{k\\,{x\\left(t\\right)}^2 }{2}"}}
+%---
+%[output:598e140e]
+%   data: {"dataType":"symbolic","outputData":{"name":"eom","value":"\\frac{\\partial^2 }{\\partial t^2 }\\;x\\left(t\\right)+k\\,x\\left(t\\right)=0"}}
+%---
+%[output:82c3cbe8]
+%   data: {"dataType":"symbolic","outputData":{"name":"L(t)","value":"\\frac{m\\,l^2 \\,{{\\left(\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\right)}}^2 }{2}+g\\,m\\,\\cos \\left(\\theta \\left(t\\right)\\right)\\,l"}}
+%---
+%[output:90525b09]
+%   data: {"dataType":"symbolic","outputData":{"name":"eom","value":"m\\,l^2 \\,\\frac{\\partial^2 }{\\partial t^2 }\\;\\theta \\left(t\\right)+g\\,m\\,\\sin \\left(\\theta \\left(t\\right)\\right)\\,l=0"}}
+%---
+%[output:1b351546]
+%   data: {"dataType":"symbolic","outputData":{"name":"L(t)","value":"\\frac{{\\left(M+m\\right)}\\,{{\\left(\\frac{\\partial }{\\partial t}\\;x\\left(t\\right)\\right)}}^2 }{2}+\\frac{\\textrm{I}\\,{{\\left(\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\right)}}^2 }{2}-g\\,l\\,m\\,\\cos \\left(\\theta \\left(t\\right)\\right)+l\\,m\\,\\cos \\left(\\theta \\left(t\\right)\\right)\\,\\frac{\\partial }{\\partial t}\\;x\\left(t\\right)\\,\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)"}}
+%---
+%[output:1755af5a]
+%   data: {"dataType":"tabular","outputData":{"columns":2,"header":"1×2 cell array","name":"q","rows":1,"type":"cell","value":[["1×1 symfun","1×1 symfun"]]}}
+%---
+%[output:3335c7e8]
+%   data: {"dataType":"symbolic","outputData":{"name":"eom","value":"\\begin{array}{l}\n\\left(\\begin{array}{c}\n{\\left(M+m\\right)}\\,\\sigma_1 -l\\,m\\,\\sin \\left(\\theta \\left(t\\right)\\right)\\,{{\\left(\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\right)}}^2 +l\\,m\\,\\cos \\left(\\theta \\left(t\\right)\\right)\\,\\sigma_2 =0\\\\\n\\textrm{I}\\,\\sigma_2 +l\\,m\\,\\cos \\left(\\theta \\left(t\\right)\\right)\\,\\sigma_1 -g\\,l\\,m\\,\\sin \\left(\\theta \\left(t\\right)\\right)=0\n\\end{array}\\right)\\\\\n\\mathrm{}\\\\\n\\textrm{where}\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_1 =\\frac{\\partial^2 }{\\partial t^2 }\\;x\\left(t\\right)\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_2 =\\frac{\\partial^2 }{\\partial t^2 }\\;\\theta \\left(t\\right)\n\\end{array}"}}
+%---
+%[output:07413f7d]
+%   data: {"dataType":"tabular","outputData":{"columns":3,"header":"1×3 cell array","name":"q","rows":1,"type":"cell","value":[["1×1 symfun","1×1 symfun","1×1 symfun"]]}}
+%---
+%[output:6f0b53f0]
+%   data: {"dataType":"symbolic","outputData":{"name":"L(t)","value":"\\frac{\\mu }{r\\left(t\\right)}+\\frac{{{\\left(\\frac{\\partial }{\\partial t}\\;r\\left(t\\right)\\right)}}^2 }{2}+\\frac{{r\\left(t\\right)}^2 \\,{{\\left(\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\right)}}^2 }{2}+\\frac{{\\sin \\left(\\theta \\left(t\\right)\\right)}^2 \\,{r\\left(t\\right)}^2 \\,{{\\left(\\frac{\\partial }{\\partial t}\\;\\phi \\left(t\\right)\\right)}}^2 }{2}-\\frac{J_2 \\,{R_0 }^2 \\,\\mu \\,{\\left(3\\,{\\cos \\left(\\theta \\left(t\\right)\\right)}^2 -1\\right)}}{2\\,{r\\left(t\\right)}^3 }"}}
+%---
+%[output:70f2d44c]
+%   data: {"dataType":"symbolic","outputData":{"name":"eom","value":"\\begin{array}{l}\n\\left(\\begin{array}{c}\n\\frac{\\mu }{{r\\left(t\\right)}^2 }-r\\left(t\\right)\\,{{\\left(\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\right)}}^2 -\\sigma_1 \\,r\\left(t\\right)\\,\\sigma_2 +\\frac{\\partial^2 }{\\partial t^2 }\\;r\\left(t\\right)-\\frac{3\\,J_2 \\,{R_0 }^2 \\,\\mu \\,{\\left(3\\,{\\cos \\left(\\theta \\left(t\\right)\\right)}^2 -1\\right)}}{2\\,{r\\left(t\\right)}^4 }=0\\\\\n{r\\left(t\\right)}^2 \\,\\frac{\\partial^2 }{\\partial t^2 }\\;\\theta \\left(t\\right)+2\\,r\\left(t\\right)\\,\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\,\\frac{\\partial }{\\partial t}\\;r\\left(t\\right)-\\cos \\left(\\theta \\left(t\\right)\\right)\\,\\sin \\left(\\theta \\left(t\\right)\\right)\\,{r\\left(t\\right)}^2 \\,\\sigma_2 -\\frac{3\\,J_2 \\,{R_0 }^2 \\,\\mu \\,\\cos \\left(\\theta \\left(t\\right)\\right)\\,\\sin \\left(\\theta \\left(t\\right)\\right)}{{r\\left(t\\right)}^3 }=0\\\\\n\\sigma_1 \\,{r\\left(t\\right)}^2 \\,\\frac{\\partial^2 }{\\partial t^2 }\\;\\phi \\left(t\\right)+2\\,\\sigma_1 \\,r\\left(t\\right)\\,\\frac{\\partial }{\\partial t}\\;r\\left(t\\right)\\,\\frac{\\partial }{\\partial t}\\;\\phi \\left(t\\right)+2\\,\\cos \\left(\\theta \\left(t\\right)\\right)\\,\\sin \\left(\\theta \\left(t\\right)\\right)\\,{r\\left(t\\right)}^2 \\,\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\,\\frac{\\partial }{\\partial t}\\;\\phi \\left(t\\right)=0\n\\end{array}\\right)\\\\\n\\mathrm{}\\\\\n\\textrm{where}\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_1 ={\\sin \\left(\\theta \\left(t\\right)\\right)}^2 \\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_2 ={{\\left(\\frac{\\partial }{\\partial t}\\;\\phi \\left(t\\right)\\right)}}^2 \n\\end{array}"}}
+%---
+%[output:31c7a191]
+%   data: {"dataType":"symbolic","outputData":{"name":"equations","value":"\\begin{array}{l}\n\\left(\\begin{array}{c}\n\\ddot{r} +\\frac{\\mu }{{r\\left(t\\right)}^2 }-{\\dot{\\theta} }^2 \\,r\\left(t\\right)-{\\dot{\\phi} }^2 \\,\\sigma_1 \\,r\\left(t\\right)-\\frac{3\\,J_2 \\,{R_0 }^2 \\,\\mu \\,{\\left(3\\,{\\cos \\left(\\theta \\left(t\\right)\\right)}^2 -1\\right)}}{2\\,{r\\left(t\\right)}^4 }=0\\\\\n\\ddot{\\theta} \\,{r\\left(t\\right)}^2 +2\\,\\dot{r} \\,\\dot{\\theta} \\,r\\left(t\\right)-{\\dot{\\phi} }^2 \\,\\cos \\left(\\theta \\left(t\\right)\\right)\\,\\sin \\left(\\theta \\left(t\\right)\\right)\\,{r\\left(t\\right)}^2 -\\frac{3\\,J_2 \\,{R_0 }^2 \\,\\mu \\,\\cos \\left(\\theta \\left(t\\right)\\right)\\,\\sin \\left(\\theta \\left(t\\right)\\right)}{{r\\left(t\\right)}^3 }=0\\\\\n\\ddot{\\phi} \\,\\sigma_1 \\,{r\\left(t\\right)}^2 +2\\,\\dot{\\phi} \\,\\dot{r} \\,\\sigma_1 \\,r\\left(t\\right)+2\\,\\dot{\\phi} \\,\\dot{\\theta} \\,\\cos \\left(\\theta \\left(t\\right)\\right)\\,\\sin \\left(\\theta \\left(t\\right)\\right)\\,{r\\left(t\\right)}^2 =0\n\\end{array}\\right)\\\\\n\\mathrm{}\\\\\n\\textrm{where}\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_1 ={\\sin \\left(\\theta \\left(t\\right)\\right)}^2 \n\\end{array}"}}
+%---
+%[output:7508a9dd]
+%   data: {"dataType":"symbolic","outputData":{"name":"L(t)","value":"\\frac{l^2 \\,m\\,{\\left({{\\left(\\frac{\\partial }{\\partial t}\\;\\phi \\left(t\\right)\\right)}}^2 +2\\,{{\\left(\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\right)}}^2 +2\\,\\cos \\left(\\phi \\left(t\\right)-\\theta \\left(t\\right)\\right)\\,\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\,\\frac{\\partial }{\\partial t}\\;\\phi \\left(t\\right)\\right)}}{2}+g\\,l\\,m\\,{\\left(\\cos \\left(\\phi \\left(t\\right)\\right)+2\\,\\cos \\left(\\theta \\left(t\\right)\\right)\\right)}"}}
+%---
+%[output:93e02308]
+%   data: {"dataType":"tabular","outputData":{"columns":2,"header":"1×2 cell array","name":"q","rows":1,"type":"cell","value":[["1×1 symfun","1×1 symfun"]]}}
+%---
+%[output:6ccdc387]
+%   data: {"dataType":"symbolic","outputData":{"name":"eom","value":"\\begin{array}{l}\n\\left(\\begin{array}{c}\n\\frac{l^2 \\,m\\,{\\left(2\\,\\cos \\left(\\sigma_2 \\right)\\,\\sigma_4 +4\\,\\sigma_3 -2\\,\\sin \\left(\\sigma_2 \\right)\\,\\sigma_1 \\,\\frac{\\partial }{\\partial t}\\;\\phi \\left(t\\right)\\right)}}{2}+2\\,g\\,l\\,m\\,\\sin \\left(\\theta \\left(t\\right)\\right)-l^2 \\,m\\,\\sin \\left(\\sigma_2 \\right)\\,\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\,\\frac{\\partial }{\\partial t}\\;\\phi \\left(t\\right)=0\\\\\n\\frac{l^2 \\,m\\,{\\left(2\\,\\cos \\left(\\sigma_2 \\right)\\,\\sigma_3 +2\\,\\sigma_4 -2\\,\\sin \\left(\\sigma_2 \\right)\\,\\sigma_1 \\,\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\right)}}{2}+g\\,l\\,m\\,\\sin \\left(\\phi \\left(t\\right)\\right)-l^2 \\,m\\,\\sin \\left(\\theta \\left(t\\right)-\\phi \\left(t\\right)\\right)\\,\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\,\\frac{\\partial }{\\partial t}\\;\\phi \\left(t\\right)=0\n\\end{array}\\right)\\\\\n\\mathrm{}\\\\\n\\textrm{where}\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_1 =\\frac{\\partial }{\\partial t}\\;\\phi \\left(t\\right)-\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_2 =\\phi \\left(t\\right)-\\theta \\left(t\\right)\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_3 =\\frac{\\partial^2 }{\\partial t^2 }\\;\\theta \\left(t\\right)\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_4 =\\frac{\\partial^2 }{\\partial t^2 }\\;\\phi \\left(t\\right)\n\\end{array}"}}
+%---
+%[output:5c6a0567]
+%   data: {"dataType":"symbolic","outputData":{"name":"simplifiedExpr","value":"\\begin{array}{l}\n\\left(\\begin{array}{c}\n2\\,l\\,\\sigma_2 +2\\,g\\,\\sin \\left(\\theta \\left(t\\right)\\right)=l\\,\\sin \\left(\\sigma_1 \\right)\\,{{\\left(\\frac{\\partial }{\\partial t}\\;\\phi \\left(t\\right)\\right)}}^2 -l\\,\\cos \\left(\\sigma_1 \\right)\\,\\sigma_3 \\\\\nl\\,\\sigma_3 +l\\,\\sin \\left(\\sigma_1 \\right)\\,{{\\left(\\frac{\\partial }{\\partial t}\\;\\theta \\left(t\\right)\\right)}}^2 +g\\,\\sin \\left(\\phi \\left(t\\right)\\right)=l\\,{\\left(2\\,{\\sin \\left(\\frac{\\phi \\left(t\\right)}{2}-\\frac{\\theta \\left(t\\right)}{2}\\right)}^2 -1\\right)}\\,\\sigma_2 \n\\end{array}\\right)\\\\\n\\mathrm{}\\\\\n\\textrm{where}\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_1 =\\phi \\left(t\\right)-\\theta \\left(t\\right)\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_2 =\\frac{\\partial^2 }{\\partial t^2 }\\;\\theta \\left(t\\right)\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_3 =\\frac{\\partial^2 }{\\partial t^2 }\\;\\phi \\left(t\\right)\n\\end{array}"}}
+%---
+%[output:778178af]
+%   data: {"dataType":"symbolic","outputData":{"name":"equations","value":"\\begin{array}{l}\n\\left(\\begin{array}{c}\n2\\,g\\,\\sin \\left(\\theta \\left(t\\right)\\right)+2\\,l\\,\\ddot{\\theta} =l\\,{\\dot{\\phi} }^2 \\,\\sigma_1 -l\\,\\ddot{\\phi} \\,\\cos \\left(\\phi \\left(t\\right)-\\theta \\left(t\\right)\\right)\\\\\nl\\,\\sigma_1 \\,{\\dot{\\theta} }^2 +g\\,\\sin \\left(\\phi \\left(t\\right)\\right)+l\\,\\ddot{\\phi} =l\\,\\ddot{\\theta} \\,{\\left(2\\,{\\sin \\left(\\frac{\\phi \\left(t\\right)}{2}-\\frac{\\theta \\left(t\\right)}{2}\\right)}^2 -1\\right)}\n\\end{array}\\right)\\\\\n\\mathrm{}\\\\\n\\textrm{where}\\\\\n\\mathrm{}\\\\\n\\;\\;\\sigma_1 =\\sin \\left(\\phi \\left(t\\right)-\\theta \\left(t\\right)\\right)\n\\end{array}"}}
+%---
+%[output:522f918a]
+%   data: {"dataType":"symbolic","outputData":{"name":"equations","value":"\\left(\\begin{array}{c}\n2\\,l\\,\\ddot{\\theta} +2\\,g\\,\\sin \\left(\\theta \\right)=l\\,{\\dot{\\phi} }^2 \\,\\sin \\left(\\phi -\\theta \\right)-l\\,\\ddot{\\phi} \\,\\cos \\left(\\phi -\\theta \\right)\\\\\nl\\,\\sin \\left(\\phi -\\theta \\right)\\,{\\dot{\\theta} }^2 +l\\,\\ddot{\\phi} +g\\,\\sin \\left(\\phi \\right)=l\\,\\ddot{\\theta} \\,{\\left(2\\,{\\sin \\left(\\frac{\\phi }{2}-\\frac{\\theta }{2}\\right)}^2 -1\\right)}\n\\end{array}\\right)"}}
+%---
+%[output:950d57fa]
+%   data: {"dataType":"textualVariable","outputData":{"header":"struct with fields:","name":"sol","value":"    theta_ddot: (l*sin(phi - theta)*phi_dot^2 + l*cos(phi - theta)*sin(phi - theta)*theta_dot^2 - 2*g*sin(theta) + g*cos(phi - theta)*sin(phi))\/(l*(2*cos(phi - theta)*sin(phi\/2 - theta\/2)^2 - cos(phi - theta) + 2))\n      phi_ddot: -(2*g*sin(phi) - 2*g*sin(theta) + 4*g*sin(phi\/2 - theta\/2)^2*sin(theta) + l*phi_dot^2*sin(phi - theta) + 2*l*theta_dot^2*sin(phi - theta) - 2*l*phi_dot^2*sin(phi - theta)*sin(phi\/2 - theta\/2)^2)\/(2*l - l*cos(phi - theta) + 2*l*cos(phi -…\n"}}
+%---
+%[output:71f4e006]
+%   data: {"dataType":"symbolic","outputData":{"name":"theta","value":"-\\frac{l\\,\\sin \\left(\\phi -\\theta \\right)\\,{\\dot{\\phi} }^2 +\\cos \\left(\\phi -\\theta \\right)\\,{\\left(l\\,\\sin \\left(\\phi -\\theta \\right)\\,{\\dot{\\theta} }^2 +g\\,\\sin \\left(\\phi \\right)\\right)}-2\\,g\\,\\sin \\left(\\theta \\right)}{l\\,{\\left({\\cos \\left(\\phi -\\theta \\right)}^2 -2\\right)}}"}}
+%---
+%[output:79a3f516]
+%   data: {"dataType":"symbolic","outputData":{"name":"phi","value":"\\frac{2\\,l\\,\\sin \\left(\\phi -\\theta \\right)\\,{\\dot{\\theta} }^2 -\\cos \\left(\\phi -\\theta \\right)\\,{\\left(2\\,g\\,\\sin \\left(\\theta \\right)-l\\,{\\dot{\\phi} }^2 \\,\\sin \\left(\\phi -\\theta \\right)\\right)}+2\\,g\\,\\sin \\left(\\phi \\right)}{l\\,{\\left({\\cos \\left(\\phi -\\theta \\right)}^2 -2\\right)}}"}}
+%---
